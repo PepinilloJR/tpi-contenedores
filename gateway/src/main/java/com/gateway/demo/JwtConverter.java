@@ -3,6 +3,8 @@ package com.gateway.demo;
 // es necesario crear un jwt converter para poder extraer datos como los roles
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -16,10 +18,12 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
    @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
 
-        String roles = jwt.getClaim("realm_access");
+        Map<String, List<String>> realmAccess = jwt.getClaim("realm_access");
 
-        
+        List roles = realmAccess.get("roles");
 
+        System.out.println(realmAccess.toString());
+        //ArrayList<GrantedAuthority> autoridades = roles.stream().map()
         return new JwtAuthenticationToken(jwt, new ArrayList<GrantedAuthority>());
     }
 
