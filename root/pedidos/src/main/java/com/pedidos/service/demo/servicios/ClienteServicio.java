@@ -1,18 +1,15 @@
 package com.pedidos.service.demo.servicios;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.pedidos.service.demo.entidades.Cliente;
+import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.repositorios.ClienteRepositorio;
 
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-import com.pedidos.service.demo.servicios.exepciones.ResourceNotFoundException;
-// Cambiar de paquete las expeciones
-// Ojo hay que ver el tema de las validaciones!
 
 @Service
 @RequiredArgsConstructor
@@ -30,14 +27,15 @@ public class ClienteServicio {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Cliente> buscarPorId(Long id) {
-        return repositorio.findById(id);
+    public Cliente obtenerPorId(Long id) {
+        return repositorio.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id " + id));
     }
 
     // Maybe al pedo?
 
     @Transactional(readOnly = true)
-    public List<Cliente> buscarPorNombre(String nombre) {
+    public List<Cliente> obtenerPorNombre(String nombre) {
         return repositorio.findByNombre(nombre);
     }
 

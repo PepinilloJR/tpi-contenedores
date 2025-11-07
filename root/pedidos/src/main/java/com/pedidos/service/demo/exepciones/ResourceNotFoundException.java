@@ -1,4 +1,4 @@
-package com.pedidos.service.demo.servicios.exepciones;
+package com.pedidos.service.demo.exepciones;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String mensaje) {
