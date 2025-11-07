@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import com.pedidos.service.demo.servicios.exepciones.ResourceNotFoundException;
 // Cambiar de paquete las expeciones
+// Ojo hay que ver el tema de las validaciones!
 
 @Service
 @RequiredArgsConstructor
