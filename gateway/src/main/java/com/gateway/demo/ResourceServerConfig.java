@@ -12,12 +12,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class ResourceServerConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        
         http.authorizeHttpRequests(auth -> 
         auth.requestMatchers("/protected/**")
-        .hasRole("ADMIN")
-        .anyRequest()
+
         .authenticated())
-        .oauth2ResourceServer(o -> o.jwt());
+        .oauth2ResourceServer(o -> o.jwt().jwtAuthenticationConverter(new JwtConverter()));
         return http.build();
 
     }
