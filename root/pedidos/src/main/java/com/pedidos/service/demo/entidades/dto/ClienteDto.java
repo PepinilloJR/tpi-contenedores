@@ -1,11 +1,13 @@
 package com.pedidos.service.demo.entidades.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record ClienteDto(
-        Long id,
-        String nombre,
-        String apellido,
-        String telefono,
-        String direccion,
-        Integer dni
-        ) {
+                Long id,
+                @NotBlank(message = "El nombre es obligatorio") String nombre,
+                @NotBlank(message = "El apellido es obligatorio") String apellido,
+                @NotBlank(message = "El telefono es obligatorio") String telefono,
+                @NotBlank(message = "La direccion es obligatoria") String direccion,
+                @NotBlank(message = "El dni es obligatorio") Integer dni
+                ) {
 }

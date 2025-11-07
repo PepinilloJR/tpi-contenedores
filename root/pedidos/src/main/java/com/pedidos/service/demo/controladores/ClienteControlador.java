@@ -7,6 +7,8 @@ import com.pedidos.service.demo.entidades.Cliente;
 import com.pedidos.service.demo.entidades.dto.ClienteDto;
 import com.pedidos.service.demo.servicios.ClienteServicio;
 
+import jakarta.validation.Valid;
+
 import java.util.stream.Collectors;
 import java.util.List;
 
@@ -46,11 +48,12 @@ public class ClienteControlador {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteDto> crear(@RequestBody ClienteDto clienteDto) {
+    public ResponseEntity<ClienteDto> crear(@Valid @RequestBody ClienteDto clienteDto) {
         Cliente ClienteEntidad = convertirEntidad(clienteDto);
         Cliente ClienteCreado = servicio.crear(ClienteEntidad);
         return ResponseEntity.status(201).body(convertirDto(ClienteCreado));
     }
+    
 
     @PutMapping("/{id}")
     public ResponseEntity<ClienteDto> actualizar(@PathVariable Long id, @RequestBody ClienteDto clienteDto) {
@@ -70,11 +73,13 @@ public class ClienteControlador {
         return ResponseEntity.ok(convertirDto(clienteActualizado));
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDto> obtener(@PathVariable Long id) {
         Cliente cliente = servicio.obtenerPorId(id);
         return ResponseEntity.ok(convertirDto(cliente));
     }
+
 
     @GetMapping
     public ResponseEntity<List<ClienteDto>> obtenerTodos() {
@@ -82,6 +87,7 @@ public class ClienteControlador {
         List<ClienteDto> dtos = lista.stream().map(this::convertirDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
