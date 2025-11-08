@@ -1,10 +1,10 @@
 package com.pedidos.service.demo.exepciones;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.time.LocalDateTime;
 
 // Actua como una especie de middleware como en node
 
@@ -14,7 +14,7 @@ public class ExepcionesManejadorGlobal {
     public ResponseEntity<ErrorResponse> manejarRecursoNoEncontrado(ResourceNotFoundException ex) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
-                ex.getMessage(),
+                "Llego la peticion pero no hay recursos" + ex.getMessage(),
                 LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
