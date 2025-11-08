@@ -23,10 +23,12 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
         Map<String, List<String>> realmAccess = jwt.getClaim("realm_access");
 
         //simplegranted Authority es la implementacion de grantedAuthority
-        ArrayList<GrantedAuthority> roles = realmAccess.get("roles").stream().map(r -> "ROLE_" + r.toUpperCase()).map(g -> new SimpleGrantedAuthority(g)).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<GrantedAuthority> roles = 
+        realmAccess.get("roles").stream()
+        .map(r -> "ROLE_" + r.toUpperCase())
+        .map(g -> new SimpleGrantedAuthority(g)).collect(Collectors.toCollection(ArrayList::new));
 
         System.out.println(realmAccess.toString());
-        //ArrayList<GrantedAuthority> autoridades = roles.stream().map()
         return new JwtAuthenticationToken(jwt, roles);
     }
 
