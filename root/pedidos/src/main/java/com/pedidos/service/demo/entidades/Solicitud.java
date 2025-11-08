@@ -1,4 +1,5 @@
 package com.pedidos.service.demo.entidades;
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
 public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
