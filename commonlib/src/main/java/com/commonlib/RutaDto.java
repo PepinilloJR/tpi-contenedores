@@ -1,4 +1,4 @@
-package com.pedidos.service.demo.entidades.dto;
+package com.commonlib;
 
 import java.math.BigDecimal;
 
@@ -8,5 +8,4 @@ public record RutaDto(
     Integer cantidadDepositos,
     BigDecimal costoPorTramo
     ) {
-
 }
