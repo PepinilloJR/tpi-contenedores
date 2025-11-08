@@ -1,4 +1,4 @@
-package com.pedidos.service.demo.entidades.dto;
+package com.commonlib;
 
 public record SolicitudDto(
         Long id,
@@ -7,5 +7,4 @@ public record SolicitudDto(
         Double tiempoReal,
         Double costoFinal
         ) {
-
 }

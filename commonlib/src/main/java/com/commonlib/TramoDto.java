@@ -1,4 +1,4 @@
-package com.pedidos.service.demo.entidades.dto;
+package com.commonlib;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,5 +13,4 @@ public record TramoDto(Long id,
         LocalDateTime fechaHoraInicio,
         LocalDateTime fechaHoraFin
         ) {
-
 }

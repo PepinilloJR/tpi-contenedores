@@ -3,8 +3,8 @@ package com.pedidos.service.demo.controladores;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.commonlib.ClienteDto;
 import com.pedidos.service.demo.entidades.Cliente;
-import com.pedidos.service.demo.entidades.dto.ClienteDto;
 import com.pedidos.service.demo.servicios.ClienteServicio;
 
 import jakarta.validation.Valid;
