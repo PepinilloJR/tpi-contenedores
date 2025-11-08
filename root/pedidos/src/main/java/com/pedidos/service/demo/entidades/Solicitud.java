@@ -29,13 +29,13 @@ public class Solicitud {
     private Double tiempoReal;
     private Double costoFinal;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idCliente", 
+    @JoinColumn(name = "id_cliente", 
     nullable = false, referencedColumnName = "id", 
     foreignKey = @ForeignKey(name = "fk_solicitud_cliente"))
     private Cliente cliente;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idContenedor",
+    @JoinColumn(name = "id_contenedor",
     nullable = false, referencedColumnName = "id",
     foreignKey = @ForeignKey(name = "fk_solicitud_contenedor"))
     private Contenedor contenedor;
