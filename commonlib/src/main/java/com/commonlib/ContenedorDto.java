@@ -5,6 +5,6 @@ public record ContenedorDto(
         Double peso,
         Double volumen,
         String estado,
-        ClienteDto clienteDto
+        Double costoVolumen
         ) {
 }

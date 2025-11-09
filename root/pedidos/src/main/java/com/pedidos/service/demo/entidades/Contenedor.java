@@ -24,5 +24,6 @@ public class Contenedor {
     private Double peso;
     private Double volumen;
     private String estado;
+    private Double costoVolumen;
 
 }
