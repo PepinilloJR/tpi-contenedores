@@ -81,10 +81,10 @@ public class ClienteControlador {
 
 
     @GetMapping
-    public ResponseEntity<String> obtenerTodos() {
+    public ResponseEntity<List<ClienteDto>> obtenerTodos() {
         List<Cliente> lista = servicio.listarTodos();
         List<ClienteDto> dtos = lista.stream().map(this::convertirDto).collect(Collectors.toList());
-        return ResponseEntity.ok("server loco");
+        return ResponseEntity.ok(dtos);
     }
 
 
