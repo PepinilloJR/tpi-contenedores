@@ -48,9 +48,9 @@ public class ClienteControlador {
 
     @PostMapping
     public ResponseEntity<ClienteDto> crear(@Valid @RequestBody ClienteDto clienteDto) {
-        Cliente ClienteEntidad = convertirEntidad(clienteDto);
-        Cliente ClienteCreado = servicio.crear(ClienteEntidad);
-        return ResponseEntity.status(201).body(convertirDto(ClienteCreado));
+        Cliente clienteEntidad = convertirEntidad(clienteDto);
+        Cliente clienteCreado = servicio.crear(clienteEntidad);
+        return ResponseEntity.status(201).body(convertirDto(clienteCreado));
     }
     
 
