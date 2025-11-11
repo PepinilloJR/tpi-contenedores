@@ -29,7 +29,7 @@ public class Tramo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_destino", 
+    @JoinColumn(name = "id_origen", 
     nullable = false, referencedColumnName = "id", 
     foreignKey = @ForeignKey(name = "fk_tramo_ubicacion_origen"))
     private Ubicacion origen;
