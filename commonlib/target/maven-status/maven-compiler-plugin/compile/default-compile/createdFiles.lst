@@ -3,3 +3,4 @@ com/commonlib/TramoDto.class
 com/commonlib/ClienteDto.class
 com/commonlib/SolicitudDto.class
 com/commonlib/RutaDto.class
+com/commonlib/UbicacionDto.class
