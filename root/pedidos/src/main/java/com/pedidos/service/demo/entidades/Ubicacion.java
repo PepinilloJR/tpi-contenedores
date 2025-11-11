@@ -1,7 +1,5 @@
 package com.pedidos.service.demo.entidades;
 
-import java.math.BigDecimal;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,12 +16,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Ruta {
+
+public class Ubicacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer cantidadTramos;
-    private Integer cantidadDepositos;
-    private BigDecimal costoPorTramo;
-
+    private String nombre;
+    private Double latitud;
+    private Double longitud;
 }
