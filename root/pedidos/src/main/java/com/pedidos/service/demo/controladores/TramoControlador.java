@@ -3,15 +3,25 @@ package com.pedidos.service.demo.controladores;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.commonlib.ClienteDto;
 import com.commonlib.RutaDto;
 import com.commonlib.TramoDto;
 import com.commonlib.UbicacionDto;
-import com.pedidos.service.demo.entidades.Cliente;
 import com.pedidos.service.demo.entidades.Ruta;
 import com.pedidos.service.demo.entidades.Tramo;
 import com.pedidos.service.demo.entidades.Ubicacion;
 import com.pedidos.service.demo.servicios.TramoServicio;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/tramos")
@@ -89,6 +99,52 @@ public class TramoControlador {
         t.setFechaHoraFin(dto.fechaHoraFin());
 
         return t;
+    }
+
+    // Maybe validate
+    @PostMapping
+    public ResponseEntity<TramoDto> crear(@RequestBody TramoDto tramoDto) {
+        Tramo tramoEntidad = convertirTramoEntidad(tramoDto);
+        Tramo tramoCreado = servicio.crear(tramoEntidad);
+        return ResponseEntity.status(201).body(convertirTramoDto(tramoCreado));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TramoDto> actualizar(@PathVariable Long id, @RequestBody TramoDto tramoDto) {
+        // Soporta la actualizacion parcial, y hay que ver reglas en el servicio
+        Tramo tramoActual = servicio.obtenerPorId(id);
+        tramoActual.setEstado(tramoDto.estado() != null ? tramoDto.estado() : tramoActual.getEstado());
+        tramoActual.setFechaHoraFin(tramoDto.fechaHoraFin() != null ? tramoDto.fechaHoraFin() : tramoActual.getFechaHoraFin());
+
+        Tramo tramoActualizado = servicio.actualizar(id, tramoActual);
+
+        return ResponseEntity.ok(convertirTramoDto(tramoActualizado));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TramoDto> obtener(@PathVariable Long id) {
+        Tramo tramo = servicio.obtenerPorId(id);
+        return ResponseEntity.ok(convertirTramoDto(tramo));
+    }
+
+    // por ejemplo -> GET /api/tramos?idRuta=5
+
+    @GetMapping
+    public ResponseEntity<List<TramoDto>> obtenerTodos(@RequestParam(required = false) Long rutaId) {
+        List<Tramo> lista;
+        if (rutaId != null) {
+            lista = servicio.obtenerPorIdRuta(rutaId);
+        } else {
+            lista = servicio.listarTodos();
+        }
+        List<TramoDto> dtos = lista.stream().map(this::convertirTramoDto).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        servicio.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
