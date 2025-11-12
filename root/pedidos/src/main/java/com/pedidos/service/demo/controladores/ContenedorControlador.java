@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -75,7 +74,7 @@ public class ContenedorControlador {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<ContenedorDto> obtener(@RequestParam Long id) {
+    public ResponseEntity<ContenedorDto> obtener(@PathVariable Long id) {
         Contenedor contenedor = servicio.obtenerPorId(id);
         return ResponseEntity.ok(convertirDto(contenedor));
     }
