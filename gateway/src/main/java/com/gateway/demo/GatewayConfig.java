@@ -14,13 +14,21 @@ public class GatewayConfig {
 
     @Bean
     public RouterFunction<ServerResponse> getRoute() {
-        return route("client").path("/protected/clientes", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+        return route("pedidos").path("/protected/clientes", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/clientes", "/api/clientes"))
                 .before(BeforeFilterFunctions.uri("http://localhost:8001/api/clientes"))
-                
+
                 .path("/protected/contenedores", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/contenedores", "/api/contenedores"))
                 .before(BeforeFilterFunctions.uri("http://localhost:8001/api/contenedores"))
-                .build();
+
+                .path("/protected/tramos", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/tramos", "/api/tramos"))
+
+                .path("/protected/camiones", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/camiones", "/api/camiones"))
+                .before(BeforeFilterFunctions.uri("http://localhost:8002/api/camiones"))
+            
+            .build();
     }
 }
