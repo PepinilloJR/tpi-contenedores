@@ -23,6 +23,19 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/*
+!!!!!!!!!
+!!!!!!!!!
+!!!!!!!!!
+!!!!!!!!!
+ * Repasar todos los servicios y ver las reglas!!!!!!!!!
+ * Tambien en los dto usar los validate!!!!!!!!!
+!!!!!!!!!
+!!!!!!!!!
+!!!!!!!!!
+!!!!!!!!!
+ */
+
 @RestController
 @RequestMapping("/api/tramos")
 public class TramoControlador {
