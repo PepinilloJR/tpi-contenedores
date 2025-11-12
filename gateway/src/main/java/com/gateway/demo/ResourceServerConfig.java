@@ -2,6 +2,7 @@ package com.gateway.demo;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
@@ -12,8 +13,22 @@ public class ResourceServerConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         
         http.authorizeHttpRequests(auth -> 
-        auth.requestMatchers("/protected/**")
-        .hasRole("ADMIN")
+        auth
+
+
+        .requestMatchers(HttpMethod.GET,"/protected/solicitudes")
+            .hasAnyRole("CLIENTE")
+        .requestMatchers(HttpMethod.POST,"/protected/solicitudes")
+            .hasAnyRole( "CLIENTE")
+
+        .requestMatchers(HttpMethod.PUT,"/protected/tramos")
+            .hasAnyRole( "TRANSPORTISTA")
+        .requestMatchers(HttpMethod.GET,"/protected/tramos")
+            .hasAnyRole( "TRANSPORTISTA")
+
+        .requestMatchers("/protected/**")
+            .hasRole("ADMIN")
+
         .anyRequest()
         .authenticated()
         )
