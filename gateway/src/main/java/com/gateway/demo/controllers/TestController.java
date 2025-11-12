@@ -15,6 +15,8 @@ public class TestController {
     
     @GetMapping
     public Map<String, Object> getString(@AuthenticationPrincipal Jwt jwt) {
+        // puedo obtener datos del jwt, podria en este caso obtener el nombre o datos para asociar un cliente o camionero que esta 
+        // en sesion y buscar lo que le corresponde a el
         return jwt.getClaims();
 
     } 
