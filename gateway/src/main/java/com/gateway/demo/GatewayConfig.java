@@ -17,6 +17,10 @@ public class GatewayConfig {
         return route("client").path("/protected/clientes", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/clientes", "/api/clientes"))
                 .before(BeforeFilterFunctions.uri("http://localhost:8001/api/clientes"))
+                
+                .path("/protected/contenedores", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/contenedores", "/api/contenedores"))
+                .before(BeforeFilterFunctions.uri("http://localhost:8001/api/contenedores"))
                 .build();
     }
 }
