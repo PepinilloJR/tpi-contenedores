@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.pedidos.service.demo.entidades.Solicitud;
 
+import java.util.List;
+
 public interface SolicitudRepositorio extends JpaRepository<Solicitud, Long>{
-    
+    List<Solicitud> findByClienteId(Long id);
 }
