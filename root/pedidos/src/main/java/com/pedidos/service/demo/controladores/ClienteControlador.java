@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.commonlib.ClienteDto;
-import com.pedidos.service.demo.entidades.Cliente;
+import com.commonlib.dto.ClienteDto;
+import com.commonlib.entidades.Cliente;
 import com.pedidos.service.demo.servicios.ClienteServicio;
 
 import jakarta.validation.Valid;

@@ -7,8 +7,8 @@ import com.pedidos.service.demo.servicios.ContenedorServicio;
 
 import jakarta.validation.Valid;
 
-import com.pedidos.service.demo.entidades.Contenedor;
-import com.commonlib.ContenedorDto;
+import com.commonlib.dto.ContenedorDto;
+import com.commonlib.entidades.Contenedor;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,14 +34,14 @@ public class ContenedorControlador {
     }
 
     // helper privado entidad -> dto
-    private ContenedorDto convertirDto(Contenedor c) {
+    private ContenedorDto convertirContenedorDto(Contenedor c) {
         if (c == null)
             return null;
         return new ContenedorDto(c.getId(), c.getPeso(), c.getVolumen(), c.getEstado(), c.getCostoVolumen());
     }
 
     // helper privado dto -> entidad (para crear)
-    private Contenedor convertirEntidad(ContenedorDto dto) {
+    private Contenedor convertirContenedorEntidad(ContenedorDto dto) {
         Contenedor c = new Contenedor();
         c.setPeso(dto.peso());
         c.setVolumen(dto.volumen());
@@ -52,9 +52,9 @@ public class ContenedorControlador {
 
     @PostMapping
     public ResponseEntity<ContenedorDto> crear(@Valid @RequestBody ContenedorDto contenedorDto) {
-        Contenedor contenedorEntidad = convertirEntidad(contenedorDto);
+        Contenedor contenedorEntidad = convertirContenedorEntidad(contenedorDto);
         Contenedor contenedorCreado = servicio.crear(contenedorEntidad);
-        return ResponseEntity.status(201).body(convertirDto(contenedorCreado));
+        return ResponseEntity.status(201).body(convertirContenedorDto(contenedorCreado));
     }
 
     // En el servicio hay que controlar el costoVolumen
@@ -69,21 +69,21 @@ public class ContenedorControlador {
         contenedorActual.setCostoVolumen(contenedorDto.costoVolumen() != null ? contenedorDto.costoVolumen() : contenedorActual.getCostoVolumen());
         
         Contenedor contenedorActualizado = servicio.actualizar(id, contenedorActual);
-        return ResponseEntity.ok(convertirDto(contenedorActualizado));
+        return ResponseEntity.ok(convertirContenedorDto(contenedorActualizado));
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<ContenedorDto> obtener(@PathVariable Long id) {
         Contenedor contenedor = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(convertirDto(contenedor));
+        return ResponseEntity.ok(convertirContenedorDto(contenedor));
     }
     
 
     @GetMapping
     public ResponseEntity<List<ContenedorDto>> obtenerTodos() {
         List<Contenedor> lista = servicio.listarTodos();
-        List<ContenedorDto> dtos = lista.stream().map(this::convertirDto).collect(Collectors.toList());
+        List<ContenedorDto> dtos = lista.stream().map(this::convertirContenedorDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 

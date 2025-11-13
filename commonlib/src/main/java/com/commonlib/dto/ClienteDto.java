@@ -1,4 +1,4 @@
-package com.commonlib;
+package com.commonlib.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

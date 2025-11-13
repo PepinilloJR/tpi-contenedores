@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.pedidos.service.demo.entidades.Solicitud;
+import com.commonlib.entidades.Solicitud;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.repositorios.SolicitudRepositorio;
 

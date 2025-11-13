@@ -3,12 +3,12 @@ package com.pedidos.service.demo.controladores;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.commonlib.RutaDto;
-import com.commonlib.TramoDto;
-import com.commonlib.UbicacionDto;
-import com.pedidos.service.demo.entidades.Ruta;
-import com.pedidos.service.demo.entidades.Tramo;
-import com.pedidos.service.demo.entidades.Ubicacion;
+import com.commonlib.dto.RutaDto;
+import com.commonlib.dto.TramoDto;
+import com.commonlib.dto.UbicacionDto;
+import com.commonlib.entidades.Ruta;
+import com.commonlib.entidades.Tramo;
+import com.commonlib.entidades.Ubicacion;
 import com.pedidos.service.demo.servicios.TramoServicio;
 
 import java.util.List;

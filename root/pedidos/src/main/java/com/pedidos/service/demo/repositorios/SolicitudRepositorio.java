@@ -2,7 +2,7 @@ package com.pedidos.service.demo.repositorios;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.pedidos.service.demo.entidades.Solicitud;
+import com.commonlib.entidades.Solicitud;
 
 import java.util.List;
 

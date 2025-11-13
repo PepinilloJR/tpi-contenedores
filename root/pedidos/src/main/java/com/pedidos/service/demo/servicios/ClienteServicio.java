@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.pedidos.service.demo.entidades.Cliente;
+import com.commonlib.entidades.Cliente;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.repositorios.ClienteRepositorio;
 

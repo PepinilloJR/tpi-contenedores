@@ -1,4 +1,5 @@
-package com.pedidos.service.demo.entidades;
+package com.commonlib.entidades;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;

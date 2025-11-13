@@ -1,4 +1,4 @@
-package com.pedidos.service.demo.entidades;
+package com.commonlib.entidades;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

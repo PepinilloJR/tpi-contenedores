@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.pedidos.service.demo.repositorios.RutaRepositorio;
-import com.pedidos.service.demo.entidades.Ruta;
+import com.commonlib.entidades.Ruta;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 
 import org.springframework.transaction.annotation.Transactional;

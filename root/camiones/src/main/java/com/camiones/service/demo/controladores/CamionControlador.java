@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.commonlib.CamionDto;
 import com.camiones.service.demo.entidades.Camion;
 import com.camiones.service.demo.servicios.CamionServicio;
+import com.commonlib.dto.CamionDto;
 
 import jakarta.validation.Valid;
 

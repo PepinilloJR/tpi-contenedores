@@ -1,6 +1,4 @@
-package com.pedidos.service.demo.entidades;
-
-
+package com.commonlib.entidades;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,13 +15,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Contenedor {
+public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double peso;
-    private Double volumen;
-    private String estado;
-    private Double costoVolumen;
-
+    private String nombre;
+    private String apellido;
+    private String telefono;
+    private String direccion;
+    private Integer dni;
 }

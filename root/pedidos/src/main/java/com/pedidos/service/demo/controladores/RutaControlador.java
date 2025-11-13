@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.commonlib.RutaDto;
-import com.pedidos.service.demo.entidades.Ruta;
+import com.commonlib.dto.RutaDto;
+import com.commonlib.entidades.Ruta;
 import com.pedidos.service.demo.servicios.RutaServicio;
 
 import org.springframework.http.ResponseEntity;

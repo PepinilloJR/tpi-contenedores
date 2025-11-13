@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.commonlib.UbicacionDto;
-import com.pedidos.service.demo.entidades.Ubicacion;
+import com.commonlib.dto.UbicacionDto;
+import com.commonlib.entidades.Ubicacion;
 import com.pedidos.service.demo.servicios.UbicacionServicio;
 
 import org.springframework.http.ResponseEntity;

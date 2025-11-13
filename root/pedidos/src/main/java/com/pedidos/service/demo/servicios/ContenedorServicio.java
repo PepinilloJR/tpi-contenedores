@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
-import com.pedidos.service.demo.entidades.Contenedor;
+import com.commonlib.entidades.Contenedor;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.repositorios.ContenedorRepositorio;
 
