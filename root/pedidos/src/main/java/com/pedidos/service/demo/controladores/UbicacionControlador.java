@@ -71,7 +71,7 @@ public class UbicacionControlador {
     }
 
     @GetMapping
-    public ResponseEntity<List<UbicacionDto>> getMethodName(@RequestParam String param) {
+    public ResponseEntity<List<UbicacionDto>> getMethodName() {
         List<Ubicacion> lista = servicio.listarTodos();
         List<UbicacionDto> dtos = lista.stream().map(this::convertirUbicacionDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);

@@ -1,0 +1,87 @@
+### Crear una ruta
+POST http://localhost:8001/api/rutas
+Content-Type: application/json
+
+{
+  "cantidadTramos": 0,
+  "cantidadDepositos": 0,
+  "costoPorTramo": 1200.50
+}
+
+### Obtener todas las rutas
+GET http://localhost:8001/api/rutas
+
+### Crear ubicación origen
+POST http://localhost:8001/api/ubicaciones
+Content-Type: application/json
+
+{
+  "nombre": "Córdoba",
+  "latitud": -31.4135,
+  "longitud": -64.18105
+}
+
+### Crear ubicación destino
+POST http://localhost:8001/api/ubicaciones
+Content-Type: application/json
+
+{
+  "nombre": "Rosario",
+  "latitud": -32.9442,
+  "longitud": -60.6505
+}
+
+### Obtener todas las ubicaciones
+GET http://localhost:8001/api/ubicaciones
+
+### Crear tramo (usar IDs reales obtenidos antes)
+POST http://localhost:8001/api/tramos
+Content-Type: application/json
+
+{
+  "origen": {
+    "id": 1,
+    "nombre": "Córdoba",
+    "latitud": -31.4135,
+    "longitud": -64.18105
+  },
+  "destino": {
+    "id": 2,
+    "nombre": "Rosario",
+    "latitud": -32.9442,
+    "longitud": -60.6505
+  },
+  "ruta": {
+    "id": 1,
+    "cantidadTramos": 0,
+    "cantidadDepositos": 0,
+    "costoPorTramo": 1200.50
+  },
+  "tipo": "camino principal",
+  "estado": "pendiente",
+  "costoAproximado": 1500.00,
+  "costoReal": null,
+  "fechaHoraInicio": null,
+  "fechaHoraFin": null
+}
+
+### Obtener todos los tramos
+GET http://localhost:8001/api/tramos
+
+### Obtener tramos por ruta (ejemplo: ruta id=1)
+GET http://localhost:8001/api/tramos?rutaId=1
+
+### Obtener tramo por id
+GET http://localhost:8001/api/tramos/1
+
+### Actualizar tramo parcialmente (solo estado y fecha fin)
+PUT http://localhost:8001/api/tramos/1
+Content-Type: application/json
+
+{
+  "estado": "completado",
+  "fechaHoraFin": "2025-11-12T18:00:00"
+}
+
+### Eliminar tramo
+DELETE http://localhost:8001/api/tramos/1
