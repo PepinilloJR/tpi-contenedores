@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 // Hacer una interfaz de uso comun para el manejo de los dto
 
 @RestController
-@RequestMapping("/api/clientes")
+@RequestMapping("/api/rutas")
 public class RutaControlador {
     private final RutaServicio servicio;
 
