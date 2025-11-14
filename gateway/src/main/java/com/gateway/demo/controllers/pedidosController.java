@@ -22,7 +22,7 @@ public class pedidosController {
 
     @Autowired
     RestClient camionesClient;
-
+/* 
     @PostMapping
     public ResponseEntity<SolicitudDto> crear(@RequestBody SolicitudDto solicitudDto) {
         try {
@@ -43,5 +43,6 @@ public class pedidosController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+        */
 
 }
