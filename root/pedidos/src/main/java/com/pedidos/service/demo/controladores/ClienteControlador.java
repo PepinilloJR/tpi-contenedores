@@ -19,6 +19,8 @@ import com.pedidos.service.demo.servicios.ClienteServicio;
 
 import jakarta.validation.Valid;
 
+import com.commonlib.dto.DtoHandler;
+
 @RestController
 @RequestMapping("/api/clientes")
 public class ClienteControlador {
@@ -28,29 +30,12 @@ public class ClienteControlador {
         this.servicio = servicio;
     }
 
-    // helper privado entidad -> dto
-    private ClienteDto convertirClienteDto(Cliente c) {
-        if (c == null)
-            return null;
-        return new ClienteDto(c.getId(), c.getNombre(), c.getApellido(), c.getTelefono(), c.getDireccion(), c.getDni());
-    }
-
-    // helper privado dto -> entidad (para crear)
-    private Cliente convertirClienteEntidad(ClienteDto dto) {
-        Cliente c = new Cliente();
-        c.setNombre(dto.nombre());
-        c.setApellido(dto.apellido());
-        c.setTelefono(dto.telefono());
-        c.setDireccion(dto.direccion());
-        c.setDni(dto.dni());
-        return c;
-    }
 
     @PostMapping
     public ResponseEntity<ClienteDto> crear(@Valid @RequestBody ClienteDto clienteDto) {
-        Cliente clienteEntidad = convertirClienteEntidad(clienteDto);
+        Cliente clienteEntidad = DtoHandler.convertirClienteEntidad(clienteDto);
         Cliente clienteCreado = servicio.crear(clienteEntidad);
-        return ResponseEntity.status(201).body(convertirClienteDto(clienteCreado));
+        return ResponseEntity.status(201).body(DtoHandler.convertirClienteDto(clienteCreado));
     }
     
 
@@ -69,21 +54,21 @@ public class ClienteControlador {
 
         Cliente clienteActualizado = servicio.actualizar(id, clienteActual);
 
-        return ResponseEntity.ok(convertirClienteDto(clienteActualizado));
+        return ResponseEntity.ok(DtoHandler.convertirClienteDto(clienteActualizado));
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDto> obtener(@PathVariable Long id) {
         Cliente cliente = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(convertirClienteDto(cliente));
+        return ResponseEntity.ok(DtoHandler.convertirClienteDto(cliente));
     }
 
 
     @GetMapping
     public ResponseEntity<List<ClienteDto>> obtenerTodos() {
         List<Cliente> lista = servicio.listarTodos();
-        List<ClienteDto> dtos = lista.stream().map(this::convertirClienteDto).collect(Collectors.toList());
+        List<ClienteDto> dtos = lista.stream().map(DtoHandler::convertirClienteDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 

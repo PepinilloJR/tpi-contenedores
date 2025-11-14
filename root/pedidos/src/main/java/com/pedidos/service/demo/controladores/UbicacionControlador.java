@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.commonlib.dto.DtoHandler;
+
+
 @RestController
 @RequestMapping("/api/ubicaciones")
 public class UbicacionControlador {
@@ -28,26 +31,13 @@ public class UbicacionControlador {
         this.servicio = servicio;
     }
 
-    private UbicacionDto convertirUbicacionDto(Ubicacion u) {
-        if (u == null)
-            return null;
-        return new UbicacionDto(u.getId(), u.getNombre(), u.getLatitud(), u.getLongitud());
-    }
-
-    private Ubicacion convertirUbicacionEntidad(UbicacionDto dto) {
-        Ubicacion u = new Ubicacion();
-        u.setNombre(dto.nombre());
-        u.setLongitud(dto.longitud());
-        u.setLatitud(dto.latitud());
-        return u;
-    }
 
     @PostMapping
     public ResponseEntity<UbicacionDto> crear(@RequestBody UbicacionDto ubicacionDto) {
-        Ubicacion ubicacionEntidad = convertirUbicacionEntidad(ubicacionDto);
+        Ubicacion ubicacionEntidad = DtoHandler.convertirUbicacionEntidad(ubicacionDto);
         Ubicacion ubicacionCreada = servicio.crear(ubicacionEntidad);
 
-        return ResponseEntity.status(201).body(convertirUbicacionDto(ubicacionCreada));
+        return ResponseEntity.status(201).body(DtoHandler.convertirUbicacionDto(ubicacionCreada));
     }
 
     @PutMapping("/{id}")
@@ -61,19 +51,19 @@ public class UbicacionControlador {
 
         Ubicacion ubicacionActualizada = servicio.actualizar(id, ubicacionActual);
 
-        return ResponseEntity.ok(convertirUbicacionDto(ubicacionActualizada));
+        return ResponseEntity.ok(DtoHandler.convertirUbicacionDto(ubicacionActualizada));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UbicacionDto> obtener(@RequestParam Long id) {
         Ubicacion ubicacion = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(convertirUbicacionDto(ubicacion));
+        return ResponseEntity.ok(DtoHandler.convertirUbicacionDto(ubicacion));
     }
 
     @GetMapping
     public ResponseEntity<List<UbicacionDto>> getMethodName() {
         List<Ubicacion> lista = servicio.listarTodos();
-        List<UbicacionDto> dtos = lista.stream().map(this::convertirUbicacionDto).collect(Collectors.toList());
+        List<UbicacionDto> dtos = lista.stream().map(DtoHandler::convertirUbicacionDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 

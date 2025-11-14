@@ -45,5 +45,5 @@ public class Camion {
     private Double consumoCombustibleLx100km;
 
     @Column(nullable = false)
-    private Boolean disponible = true;
+    private Boolean disponible;
 }

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.commonlib.dto.DtoHandler;
+
 
 // Hacer una interfaz de uso comun para el manejo de los dto
 
@@ -30,28 +32,12 @@ public class RutaControlador {
         this.servicio = servicio;
     }
 
-    private Ruta convertirRutaEntidad(RutaDto dto) {
-        if (dto == null)
-            return null;
-        Ruta r = new Ruta();
-        r.setId(dto.id());
-        r.setCantidadTramos(dto.cantidadTramos());
-        r.setCantidadDepositos(dto.cantidadDepositos());
-        r.setCostoPorTramo(dto.costoPorTramo());
-        return r;
-    }
-
-    private RutaDto convertirRutaDto(Ruta r) {
-        if (r == null)
-            return null;
-        return new RutaDto(r.getId(), r.getCantidadTramos(), r.getCantidadDepositos(), r.getCostoPorTramo());
-    }
 
     @PostMapping
     public ResponseEntity<RutaDto> crear(@RequestBody RutaDto rutaDto) {
-        Ruta rutaEntidad = convertirRutaEntidad(rutaDto);
+        Ruta rutaEntidad = DtoHandler.convertirRutaEntidad(rutaDto);
         Ruta rutaCreada = servicio.crear(rutaEntidad);
-        return ResponseEntity.status(201).body(convertirRutaDto(rutaCreada));
+        return ResponseEntity.status(201).body(DtoHandler.convertirRutaDto(rutaCreada));
     }
 
     // Recordar siempre lo de actualizacion parcial
@@ -67,19 +53,19 @@ public class RutaControlador {
 
         Ruta rutaActualizada = servicio.actualizar(id, rutaActual);
 
-        return ResponseEntity.ok(convertirRutaDto(rutaActualizada));
+        return ResponseEntity.ok(DtoHandler.convertirRutaDto(rutaActualizada));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<RutaDto> obtener(@PathVariable Long id) {
         Ruta ruta = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(convertirRutaDto(ruta));
+        return ResponseEntity.ok(DtoHandler.convertirRutaDto(ruta));
     }
 
     @GetMapping
     public ResponseEntity<List<RutaDto>> obtenerTodos() {
         List<Ruta> lista = servicio.listarTodos();
-        List<RutaDto> dtos = lista.stream().map(this::convertirRutaDto).collect(Collectors.toList());
+        List<RutaDto> dtos = lista.stream().map(DtoHandler::convertirRutaDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 

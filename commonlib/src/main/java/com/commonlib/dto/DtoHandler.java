@@ -10,13 +10,13 @@ import com.commonlib.entidades.Ubicacion;
 public interface DtoHandler {
 
     // Contenedor
-    private ContenedorDto convertirContenedorDto(Contenedor c) {
+    public static ContenedorDto convertirContenedorDto(Contenedor c) {
         if (c == null)
             return null;
         return new ContenedorDto(c.getId(), c.getPeso(), c.getVolumen(), c.getEstado(), c.getCostoVolumen());
     }
 
-    private Contenedor convertirContenedorEntidad(ContenedorDto dto) {
+    public static Contenedor convertirContenedorEntidad(ContenedorDto dto) {
         Contenedor c = new Contenedor();
         c.setPeso(dto.peso());
         c.setVolumen(dto.volumen());
@@ -27,13 +27,13 @@ public interface DtoHandler {
 
     // Ubicacion
 
-    private UbicacionDto convertirUbicacionDto(Ubicacion u) {
+    public static UbicacionDto convertirUbicacionDto(Ubicacion u) {
         if (u == null)
             return null;
         return new UbicacionDto(u.getId(), u.getNombre(), u.getLatitud(), u.getLongitud());
     }
 
-    private Ubicacion convertirUbicacionEntidad(UbicacionDto dto) {
+    public static Ubicacion convertirUbicacionEntidad(UbicacionDto dto) {
         if (dto == null)
             return null;
         Ubicacion u = new Ubicacion();
@@ -46,13 +46,13 @@ public interface DtoHandler {
 
     // Ruta
 
-    private RutaDto convertirRutaDto(Ruta r) {
+    public static RutaDto convertirRutaDto(Ruta r) {
         if (r == null)
             return null;
         return new RutaDto(r.getId(), r.getCantidadTramos(), r.getCantidadDepositos(), r.getCostoPorTramo());
     }
 
-    private Ruta convertirRutaEntidad(RutaDto dto) {
+    public static Ruta convertirRutaEntidad(RutaDto dto) {
         if (dto == null)
             return null;
         Ruta r = new Ruta();
@@ -65,7 +65,7 @@ public interface DtoHandler {
 
     // Tramo
 
-    private TramoDto convertirTramoDto(Tramo t) {
+    public static TramoDto convertirTramoDto(Tramo t) {
         if (t == null)
             return null;
         return new TramoDto(
@@ -81,7 +81,7 @@ public interface DtoHandler {
                 t.getFechaHoraFin());
     }
 
-    private Tramo convertirTramoEntidad(TramoDto dto) {
+    public static Tramo convertirTramoEntidad(TramoDto dto) {
         if (dto == null)
             return null;
 
@@ -102,13 +102,13 @@ public interface DtoHandler {
 
     // Cliente
 
-    private ClienteDto convertirClienteDto(Cliente c) {
+    public static ClienteDto convertirClienteDto(Cliente c) {
         if (c == null)
             return null;
         return new ClienteDto(c.getId(), c.getNombre(), c.getApellido(), c.getTelefono(), c.getDireccion(), c.getDni());
     }
 
-    private Cliente convertirClienteEntidad(ClienteDto dto) {
+    public static Cliente convertirClienteEntidad(ClienteDto dto) {
         Cliente c = new Cliente();
         c.setNombre(dto.nombre());
         c.setApellido(dto.apellido());
@@ -120,7 +120,7 @@ public interface DtoHandler {
 
 
     // Solicitud
-    private SolicitudDto convertirSolicitudDto(Solicitud s) {
+    public static SolicitudDto convertirSolicitudDto(Solicitud s) {
         if (s == null)
             return null;
 
@@ -135,7 +135,7 @@ public interface DtoHandler {
                 convertirRutaDto(s.getRuta()));
     }
 
-    private Solicitud convertirSolicitudEntidad(SolicitudDto dto) {
+    public static Solicitud convertirSolicitudEntidad(SolicitudDto dto) {
         if (dto == null)
             return null;
 

@@ -2,6 +2,8 @@ package com.camiones.service.demo.repositorios;
 
 import com.camiones.service.demo.entidades.Camion;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CamionRepositorio extends JpaRepository<Camion, Long> {
@@ -16,5 +18,5 @@ public interface CamionRepositorio extends JpaRepository<Camion, Long> {
     List<Camion> findByNombreTransportista(String nombreTransportista);
 
     // Buscar por disponibilidad
-    List<Camion> findByDisponible(Boolean disponible);
+    Optional<Camion> findByDisponibleTrueOrderByIdAsc();
 }

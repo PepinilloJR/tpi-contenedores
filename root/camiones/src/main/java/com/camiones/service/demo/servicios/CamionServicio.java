@@ -17,7 +17,6 @@ public class CamionServicio {
 
     private final CamionRepositorio repositorio;
 
-    /* ----------------- CREATE ----------------- */
     @Transactional
     public Camion crear(Camion camion) {
         validarDatos(camion);
@@ -28,12 +27,12 @@ public class CamionServicio {
         }
 
         // disponible por defecto = true
-        if (camion.getDisponible() == null) camion.setDisponible(true);
+        if (camion.getDisponible() == null)
+            camion.setDisponible(true);
 
         return repositorio.save(camion);
     }
 
-    /* ----------------- READ ----------------- */
     @Transactional(readOnly = true)
     public List<Camion> listarTodos() {
         return repositorio.findAll();
@@ -42,7 +41,7 @@ public class CamionServicio {
     @Transactional(readOnly = true)
     public Camion obtenerPorId(Long id) {
         return repositorio.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Camión no encontrado con id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Camión no encontrado con id " + id));
     }
 
     @Transactional(readOnly = true)
@@ -50,11 +49,16 @@ public class CamionServicio {
         return repositorio.findByPatente(patente);
     }
 
-    /* ----------------- UPDATE ----------------- */
+    @Transactional(readOnly = true)
+    public Camion obtenerDisponible() {
+        return repositorio.findByDisponibleTrueOrderByIdAsc()
+                .orElseThrow(() -> new ResourceNotFoundException("No hay ningun camion disponible"));
+    }
+
     @Transactional
     public Camion actualizar(Long id, Camion datos) {
         Camion existente = repositorio.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Camión no encontrado con id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Camión no encontrado con id " + id));
 
         validarDatos(datos);
 
@@ -96,5 +100,7 @@ public class CamionServicio {
         }
     }
 
-    private boolean neg(Double v) { return v != null && v < 0; }
+    private boolean neg(Double v) {
+        return v != null && v < 0;
+    }
 }

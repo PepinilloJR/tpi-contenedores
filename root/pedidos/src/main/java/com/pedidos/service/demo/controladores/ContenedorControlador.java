@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
+import com.commonlib.dto.DtoHandler;
 
 
 @RestController
@@ -33,28 +33,12 @@ public class ContenedorControlador {
         this.servicio = servicio;
     }
 
-    // helper privado entidad -> dto
-    private ContenedorDto convertirContenedorDto(Contenedor c) {
-        if (c == null)
-            return null;
-        return new ContenedorDto(c.getId(), c.getPeso(), c.getVolumen(), c.getEstado(), c.getCostoVolumen());
-    }
-
-    // helper privado dto -> entidad (para crear)
-    private Contenedor convertirContenedorEntidad(ContenedorDto dto) {
-        Contenedor c = new Contenedor();
-        c.setPeso(dto.peso());
-        c.setVolumen(dto.volumen());
-        c.setEstado(dto.estado());
-        c.setCostoVolumen(dto.costoVolumen());
-        return c;
-    }
 
     @PostMapping
     public ResponseEntity<ContenedorDto> crear(@Valid @RequestBody ContenedorDto contenedorDto) {
-        Contenedor contenedorEntidad = convertirContenedorEntidad(contenedorDto);
+        Contenedor contenedorEntidad = DtoHandler.convertirContenedorEntidad(contenedorDto);
         Contenedor contenedorCreado = servicio.crear(contenedorEntidad);
-        return ResponseEntity.status(201).body(convertirContenedorDto(contenedorCreado));
+        return ResponseEntity.status(201).body(DtoHandler.convertirContenedorDto(contenedorCreado));
     }
 
     // En el servicio hay que controlar el costoVolumen
@@ -69,21 +53,21 @@ public class ContenedorControlador {
         contenedorActual.setCostoVolumen(contenedorDto.costoVolumen() != null ? contenedorDto.costoVolumen() : contenedorActual.getCostoVolumen());
         
         Contenedor contenedorActualizado = servicio.actualizar(id, contenedorActual);
-        return ResponseEntity.ok(convertirContenedorDto(contenedorActualizado));
+        return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedorActualizado));
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<ContenedorDto> obtener(@PathVariable Long id) {
         Contenedor contenedor = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(convertirContenedorDto(contenedor));
+        return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedor));
     }
     
 
     @GetMapping
     public ResponseEntity<List<ContenedorDto>> obtenerTodos() {
         List<Contenedor> lista = servicio.listarTodos();
-        List<ContenedorDto> dtos = lista.stream().map(this::convertirContenedorDto).collect(Collectors.toList());
+        List<ContenedorDto> dtos = lista.stream().map(DtoHandler::convertirContenedorDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 

@@ -19,6 +19,7 @@ import com.commonlib.dto.CamionDto;
 
 import jakarta.validation.Valid;
 
+
 @RestController
 @RequestMapping("/api/camiones")
 public class CamionControlador {
@@ -31,7 +32,8 @@ public class CamionControlador {
 
     // helper: entidad -> dto
     private CamionDto convertirDto(Camion c) {
-        if (c == null) return null;
+        if (c == null)
+            return null;
         return new CamionDto(
                 c.getId(),
                 c.getPatente(),
@@ -71,14 +73,22 @@ public class CamionControlador {
         // actualización parcial: aplica solo campos no nulos
         Camion actual = servicio.obtenerPorId(id);
 
-        if (dto.patente() != null) actual.setPatente(dto.patente());
-        if (dto.nombreTransportista() != null) actual.setNombreTransportista(dto.nombreTransportista());
-        if (dto.telefono() != null) actual.setTelefono(dto.telefono());
-        if (dto.capacidadPesoKg() != null) actual.setCapacidadPesoKg(dto.capacidadPesoKg());
-        if (dto.capacidadVolumenM3() != null) actual.setCapacidadVolumenM3(dto.capacidadVolumenM3());
-        if (dto.costoPorKm() != null) actual.setCostoPorKm(dto.costoPorKm());
-        if (dto.consumoCombustibleLx100km() != null) actual.setConsumoCombustibleLx100km(dto.consumoCombustibleLx100km());
-        if (dto.disponible() != null) actual.setDisponible(dto.disponible());
+        if (dto.patente() != null)
+            actual.setPatente(dto.patente());
+        if (dto.nombreTransportista() != null)
+            actual.setNombreTransportista(dto.nombreTransportista());
+        if (dto.telefono() != null)
+            actual.setTelefono(dto.telefono());
+        if (dto.capacidadPesoKg() != null)
+            actual.setCapacidadPesoKg(dto.capacidadPesoKg());
+        if (dto.capacidadVolumenM3() != null)
+            actual.setCapacidadVolumenM3(dto.capacidadVolumenM3());
+        if (dto.costoPorKm() != null)
+            actual.setCostoPorKm(dto.costoPorKm());
+        if (dto.consumoCombustibleLx100km() != null)
+            actual.setConsumoCombustibleLx100km(dto.consumoCombustibleLx100km());
+        if (dto.disponible() != null)
+            actual.setDisponible(dto.disponible());
 
         Camion actualizado = servicio.actualizar(id, actual);
         return ResponseEntity.ok(convertirDto(actualizado));
@@ -95,6 +105,12 @@ public class CamionControlador {
         List<Camion> lista = servicio.listarTodos();
         List<CamionDto> dtos = lista.stream().map(this::convertirDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/disponible")
+    public ResponseEntity<CamionDto> obtenerDisponible() {
+        Camion camionDisponible = servicio.obtenerDisponible();
+        return ResponseEntity.ok(convertirDto(camionDisponible));
     }
 
     @DeleteMapping("/{id}")
