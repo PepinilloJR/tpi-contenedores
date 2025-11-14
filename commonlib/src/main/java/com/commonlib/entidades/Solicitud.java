@@ -40,4 +40,10 @@ public class Solicitud {
     nullable = false, referencedColumnName = "id",
     foreignKey = @ForeignKey(name = "fk_solicitud_contenedor"))
     private Contenedor contenedor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_ruta", 
+    nullable = false, referencedColumnName = "id",
+    foreignKey = @ForeignKey(name = "fk_solicitud_ruta"))
+    private Ruta ruta;
 }

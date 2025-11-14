@@ -29,14 +29,14 @@ public class ClienteControlador {
     }
 
     // helper privado entidad -> dto
-    private ClienteDto convertirDto(Cliente c) {
+    private ClienteDto convertirClienteDto(Cliente c) {
         if (c == null)
             return null;
         return new ClienteDto(c.getId(), c.getNombre(), c.getApellido(), c.getTelefono(), c.getDireccion(), c.getDni());
     }
 
     // helper privado dto -> entidad (para crear)
-    private Cliente convertirEntidad(ClienteDto dto) {
+    private Cliente convertirClienteEntidad(ClienteDto dto) {
         Cliente c = new Cliente();
         c.setNombre(dto.nombre());
         c.setApellido(dto.apellido());
@@ -48,9 +48,9 @@ public class ClienteControlador {
 
     @PostMapping
     public ResponseEntity<ClienteDto> crear(@Valid @RequestBody ClienteDto clienteDto) {
-        Cliente clienteEntidad = convertirEntidad(clienteDto);
+        Cliente clienteEntidad = convertirClienteEntidad(clienteDto);
         Cliente clienteCreado = servicio.crear(clienteEntidad);
-        return ResponseEntity.status(201).body(convertirDto(clienteCreado));
+        return ResponseEntity.status(201).body(convertirClienteDto(clienteCreado));
     }
     
 
@@ -69,21 +69,21 @@ public class ClienteControlador {
 
         Cliente clienteActualizado = servicio.actualizar(id, clienteActual);
 
-        return ResponseEntity.ok(convertirDto(clienteActualizado));
+        return ResponseEntity.ok(convertirClienteDto(clienteActualizado));
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDto> obtener(@PathVariable Long id) {
         Cliente cliente = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(convertirDto(cliente));
+        return ResponseEntity.ok(convertirClienteDto(cliente));
     }
 
 
     @GetMapping
     public ResponseEntity<List<ClienteDto>> obtenerTodos() {
         List<Cliente> lista = servicio.listarTodos();
-        List<ClienteDto> dtos = lista.stream().map(this::convertirDto).collect(Collectors.toList());
+        List<ClienteDto> dtos = lista.stream().map(this::convertirClienteDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 

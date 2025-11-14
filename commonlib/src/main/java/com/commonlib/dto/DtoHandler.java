@@ -1,15 +1,21 @@
 package com.commonlib.dto;
 
+import com.commonlib.entidades.Cliente;
 import com.commonlib.entidades.Contenedor;
+import com.commonlib.entidades.Ruta;
+import com.commonlib.entidades.Solicitud;
+import com.commonlib.entidades.Tramo;
+import com.commonlib.entidades.Ubicacion;
 
 public interface DtoHandler {
-       private ContenedorDto convertirContenedorDto(Contenedor c) {
+
+    // Contenedor
+    private ContenedorDto convertirContenedorDto(Contenedor c) {
         if (c == null)
             return null;
         return new ContenedorDto(c.getId(), c.getPeso(), c.getVolumen(), c.getEstado(), c.getCostoVolumen());
     }
 
-    
     private Contenedor convertirContenedorEntidad(ContenedorDto dto) {
         Contenedor c = new Contenedor();
         c.setPeso(dto.peso());
@@ -19,4 +25,130 @@ public interface DtoHandler {
         return c;
     }
 
+    // Ubicacion
+
+    private UbicacionDto convertirUbicacionDto(Ubicacion u) {
+        if (u == null)
+            return null;
+        return new UbicacionDto(u.getId(), u.getNombre(), u.getLatitud(), u.getLongitud());
+    }
+
+    private Ubicacion convertirUbicacionEntidad(UbicacionDto dto) {
+        if (dto == null)
+            return null;
+        Ubicacion u = new Ubicacion();
+        u.setId(dto.id());
+        u.setNombre(dto.nombre());
+        u.setLatitud(dto.latitud());
+        u.setLongitud(dto.longitud());
+        return u;
+    }
+
+    // Ruta
+
+    private RutaDto convertirRutaDto(Ruta r) {
+        if (r == null)
+            return null;
+        return new RutaDto(r.getId(), r.getCantidadTramos(), r.getCantidadDepositos(), r.getCostoPorTramo());
+    }
+
+    private Ruta convertirRutaEntidad(RutaDto dto) {
+        if (dto == null)
+            return null;
+        Ruta r = new Ruta();
+        r.setId(dto.id());
+        r.setCantidadTramos(dto.cantidadTramos());
+        r.setCantidadDepositos(dto.cantidadDepositos());
+        r.setCostoPorTramo(dto.costoPorTramo());
+        return r;
+    }
+
+    // Tramo
+
+    private TramoDto convertirTramoDto(Tramo t) {
+        if (t == null)
+            return null;
+        return new TramoDto(
+                t.getId(),
+                convertirUbicacionDto(t.getOrigen()),
+                convertirUbicacionDto(t.getDestino()),
+                convertirRutaDto(t.getRuta()),
+                t.getTipo(),
+                t.getEstado(),
+                t.getCostoAproximado(),
+                t.getCostoReal(),
+                t.getFechaHoraInicio(),
+                t.getFechaHoraFin());
+    }
+
+    private Tramo convertirTramoEntidad(TramoDto dto) {
+        if (dto == null)
+            return null;
+
+        Tramo t = new Tramo();
+        t.setId(dto.id());
+        t.setOrigen(convertirUbicacionEntidad(dto.origen()));
+        t.setDestino(convertirUbicacionEntidad(dto.destino()));
+        t.setRuta(convertirRutaEntidad(dto.ruta()));
+        t.setTipo(dto.tipo());
+        t.setEstado(dto.estado());
+        t.setCostoAproximado(dto.costoAproximado());
+        t.setCostoReal(dto.costoReal());
+        t.setFechaHoraInicio(dto.fechaHoraInicio());
+        t.setFechaHoraFin(dto.fechaHoraFin());
+
+        return t;
+    }
+
+    // Cliente
+
+    private ClienteDto convertirClienteDto(Cliente c) {
+        if (c == null)
+            return null;
+        return new ClienteDto(c.getId(), c.getNombre(), c.getApellido(), c.getTelefono(), c.getDireccion(), c.getDni());
+    }
+
+    private Cliente convertirClienteEntidad(ClienteDto dto) {
+        Cliente c = new Cliente();
+        c.setNombre(dto.nombre());
+        c.setApellido(dto.apellido());
+        c.setTelefono(dto.telefono());
+        c.setDireccion(dto.direccion());
+        c.setDni(dto.dni());
+        return c;
+    }
+
+
+    // Solicitud
+    private SolicitudDto convertirSolicitudDto(Solicitud s) {
+        if (s == null)
+            return null;
+
+        return new SolicitudDto(
+                s.getId(),
+                s.getCostoEstimado(),
+                s.getTiempoEstimado(),
+                s.getTiempoReal(),
+                s.getCostoFinal(),
+                convertirClienteDto(s.getCliente()),
+                convertirContenedorDto(s.getContenedor()),
+                convertirRutaDto(s.getRuta()));
+    }
+
+    private Solicitud convertirSolicitudEntidad(SolicitudDto dto) {
+        if (dto == null)
+            return null;
+
+        Solicitud s = new Solicitud();
+        s.setId(dto.id());
+        s.setCostoEstimado(dto.costoEstimado());
+        s.setTiempoEstimado(dto.tiempoEstimado());
+        s.setTiempoReal(dto.tiempoReal());
+        s.setCostoFinal(dto.costoFinal());
+        s.setCliente(convertirClienteEntidad(dto.clienteDto()));
+        s.setContenedor(convertirContenedorEntidad(dto.contenedorDto()));
+        s.setRuta(convertirRutaEntidad(dto.rutaDto()));
+
+        return s;
+    }
 }
