@@ -16,9 +16,9 @@ public class ResourceServerConfig {
         auth
 
         .requestMatchers(HttpMethod.GET,"/protected/solicitudes")
-            .hasRole("CLIENTE")
+            .hasAnyRole("CLIENTE", "ADMIN")
         .requestMatchers(HttpMethod.POST,"/protected/solicitudes")
-            .hasRole( "CLIENTE")
+            .hasAnyRole( "CLIENTE", "ADMIN")
 
         .requestMatchers(HttpMethod.PUT,"/protected/tramos")
             .hasRole( "TRANSPORTISTA")
