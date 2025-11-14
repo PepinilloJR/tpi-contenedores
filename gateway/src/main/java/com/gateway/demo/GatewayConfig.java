@@ -30,6 +30,19 @@ public class GatewayConfig {
                 .before(BeforeFilterFunctions.rewritePath("/protected/camiones", "/api/camiones"))
                 .before(BeforeFilterFunctions.uri("http://localhost:8002/api/camiones"))
             
+                .path("/protected/rutas", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/rutas", "/api/rutas"))
+                .before(BeforeFilterFunctions.uri("http://localhost:8001/api/rutas"))
+                            
+                .path("/protected/solicitudes", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/solicitudes", "/api/solicitudes"))
+                .before(BeforeFilterFunctions.uri("http://localhost:8001/api/solicitudes"))
+            
+                .path("/protected/ubicaciones", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/ubicaciones", "/api/ubicaciones"))
+                .before(BeforeFilterFunctions.uri("http://localhost:8001/api/ubicaciones"))
+            
+
             .build();
     }
 }
