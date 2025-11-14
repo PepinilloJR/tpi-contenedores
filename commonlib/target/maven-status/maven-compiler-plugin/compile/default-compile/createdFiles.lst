@@ -1,7 +1,7 @@
-com/commonlib/entidades/Solicitud.class
 com/commonlib/entidades/Ruta.class
-com/commonlib/entidades/Tramo$TramoBuilder.class
+com/commonlib/entidades/Solicitud.class
 com/commonlib/entidades/Contenedor.class
+com/commonlib/entidades/Tramo$TramoBuilder.class
 com/commonlib/entidades/Ruta$RutaBuilder.class
 com/commonlib/dto/SolicitudDto.class
 com/commonlib/entidades/Ubicacion$UbicacionBuilder.class
