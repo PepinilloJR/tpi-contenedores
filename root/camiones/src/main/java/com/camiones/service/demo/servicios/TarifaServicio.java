@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.camiones.service.demo.entidades.Tarifa;
 import com.camiones.service.demo.exepciones.ResourceNotFoundException;
 import com.camiones.service.demo.repositorios.TarifaRepositorio;
+import com.commonlib.entidades.Tarifa;
 
 import lombok.RequiredArgsConstructor;
 

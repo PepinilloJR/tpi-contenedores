@@ -36,6 +36,16 @@ services:
       - "8001"
     depends_on:
       - db
+  osrm:
+    image: osrm/osrm-backend:latest
+    platform: linux/amd64
+    container_name: osrm
+    ports:
+    - "5000:5000"
+    volumes:
+    - ./osrm-data:/data
+    command: >
+      osrm-routed /data/argentina-latest.osrm
 volumes:
   keycloak_data:
   postgres_data:

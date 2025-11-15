@@ -3,7 +3,6 @@ package com.commonlib.entidades;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
@@ -43,6 +42,13 @@ public class Tramo {
     nullable = false, referencedColumnName = "id",
     foreignKey = @ForeignKey(name = "fk_tramo_ruta"))
     private Ruta ruta;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_camion",
+    nullable = false, referencedColumnName = "id",
+    foreignKey = @ForeignKey(name = "fk_tramo_camion"))
+    private Camion camion;
+
     private String tipo;
     private String estado;
     private BigDecimal costoAproximado;

@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.camiones.service.demo.entidades.Tarifa;
 import com.camiones.service.demo.servicios.TarifaServicio;
 import com.commonlib.dto.TarifaDto;
+import com.commonlib.entidades.Tarifa;
 
 import jakarta.validation.Valid;
 
