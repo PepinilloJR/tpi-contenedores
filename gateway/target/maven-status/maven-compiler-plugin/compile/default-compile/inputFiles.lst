@@ -1,9 +1,0 @@
-/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/gateway/src/main/java/com/gateway/demo/GatewayConfig.java
-/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/gateway/src/main/java/com/gateway/demo/JwtConverter.java
-/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/gateway/src/main/java/com/gateway/demo/ResourceServerConfig.java
-/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/gateway/src/main/java/com/gateway/demo/RestClientsConfig.java
-/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/gateway/src/main/java/com/gateway/demo/controllers/TestController.java
-/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/gateway/src/main/java/com/gateway/demo/controllers/camionesController.java
-/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/gateway/src/main/java/com/gateway/demo/controllers/depositosController.java
-/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/gateway/src/main/java/com/gateway/demo/controllers/pedidosController.java
-/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/gateway/src/main/java/com/gateway/demo/gatewayApplication.java

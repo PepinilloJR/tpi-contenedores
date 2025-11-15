@@ -1,8 +1,0 @@
-com/gateway/demo/controllers/depositosController.class
-com/gateway/demo/GatewayConfig.class
-com/gateway/demo/RestClientsConfig.class
-com/gateway/demo/controllers/camionesController.class
-com/gateway/demo/gatewayApplication.class
-com/gateway/demo/JwtConverter.class
-com/gateway/demo/controllers/TestController.class
-com/gateway/demo/ResourceServerConfig.class
