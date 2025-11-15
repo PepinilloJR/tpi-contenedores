@@ -21,6 +21,12 @@ public class ClienteServicio {
         return repositorio.save(cliente);
     }
 
+    @Transactional
+    public Cliente crearSiNoExiste(Cliente cliente) {
+        return repositorio.findById(cliente.getId())
+                .orElseGet(() -> repositorio.save(cliente));
+    }
+
     @Transactional(readOnly = true)
     public List<Cliente> listarTodos() {
         return repositorio.findAll();
@@ -29,7 +35,7 @@ public class ClienteServicio {
     @Transactional(readOnly = true)
     public Cliente obtenerPorId(Long id) {
         return repositorio.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id " + id));
     }
 
     // Maybe al pedo?

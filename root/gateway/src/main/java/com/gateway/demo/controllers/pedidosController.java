@@ -126,8 +126,9 @@ public class pedidosController {
 
             var solicitudCreada = pedidosClient.post()
                     .uri("")
-                    .body(solicitudPayload).retrieve
-                    .toEntity(solicitudDto.class);
+                    .body(solicitudPayload)
+                    .retrieve()
+                    .toEntity(SolicitudDto.class);
 
             if (!solicitudCreada.getStatusCode().is2xxSuccessful() || solicitudCreada.getBody() == null) {
                 return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
