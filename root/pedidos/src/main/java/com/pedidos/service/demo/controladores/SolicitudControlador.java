@@ -3,7 +3,6 @@ package com.pedidos.service.demo.controladores;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.commonlib.dto.ClienteDto;
 import com.commonlib.dto.DtoHandler;
 import com.commonlib.dto.SolicitudDto;
 import com.pedidos.service.demo.servicios.ClienteServicio;
@@ -16,12 +15,10 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.commonlib.entidades.*;
-import com.commonlib.dto.*;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -41,16 +38,27 @@ public class SolicitudControlador {
 
     @PostMapping
     public ResponseEntity<SolicitudDto> crear(@RequestBody SolicitudDto solicitudDto) {
+
         // Voy a tener q usar el validate y guarda si viene null la id
         Solicitud solicitudEntidad = DtoHandler.convertirSolicitudEntidad(solicitudDto);
 
+        if (solicitudEntidad.getCliente() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (solicitudEntidad.getContenedor() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
         // Crear el cliente si no esta registrado (viene en la solicitud)
-        servicioCliente.crearSiNoExiste(solicitudEntidad.getCliente());
+        var cliente = servicioCliente.crearSiNoExiste(solicitudEntidad.getCliente());
         // Crear el contenedor que viene en la solicitud
-        servicioContenedor.crear(solicitudEntidad.getContenedor());
+        var contenedor = servicioContenedor.crear(solicitudEntidad.getContenedor());
         // Crear la solicitud
         // Seteamos el estado en "borrador"
         solicitudEntidad.setEstado("borrador");
+        solicitudEntidad.setCliente(cliente);
+        solicitudEntidad.setContenedor(contenedor);
         Solicitud solicitudCreada = servicioSolicitud.crear(solicitudEntidad);
         return ResponseEntity.status(201).body(DtoHandler.convertirSolicitudDto(solicitudCreada));
     }

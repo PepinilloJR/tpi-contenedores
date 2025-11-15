@@ -1,0 +1,60 @@
+### Crear solicitud (POST) - crea cliente y contenedor si no existen
+POST http://localhost:8001/api/solicitudes
+Content-Type: application/json
+
+{
+  "tiempoEstimado": 48,
+  "costoEstimado": 12000.5,
+  "tiempoReal": null,
+  "costoFinal": null,
+  "estado": null,
+  "cliente": {
+    "nombre": "Juan",
+    "apellido": "Perez",
+    "dni": "12345678",
+    "telefono": "3415551234",
+    "direccion": "Córdoba 1234"
+  },
+  "contenedor": {
+    "tipo": "Dry",
+    "codigo": "CONT-0001",
+    "capacidad": "20ft"
+  }
+}
+
+###
+
+### Obtener todas las solicitudes (GET)
+GET http://localhost:8001/api/solicitudes
+Accept: application/json
+
+###
+
+### Obtener solicitud por id (GET)
+# Reemplazá 1 por el id real que devuelva el POST
+GET http://localhost:8001/api/solicitudes/1
+Accept: application/json
+
+###
+
+### Actualizar solicitud (PUT)
+# Actualizamos campos parciales (solo los no-nulos se aplican)
+# Reemplazá 1 por el id real
+PUT http://localhost:8001/api/solicitudes/1
+Content-Type: application/json
+
+{
+  "tiempoEstimado": 72,
+  "costoEstimado": 15000.75,
+  "tiempoReal": 70,
+  "costoFinal": 14800.00,
+  "estado": "en tránsito",
+  "cliente": null,
+  "contenedor": null
+}
+
+###
+
+### Eliminar solicitud (DELETE)
+# Reemplazá 1 por el id real
+DELETE http://localhost:8001/api/solicitudes/1
