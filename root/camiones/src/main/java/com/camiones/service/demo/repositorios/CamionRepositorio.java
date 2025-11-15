@@ -19,4 +19,8 @@ public interface CamionRepositorio extends JpaRepository<Camion, Long> {
 
     // Buscar por disponibilidad
     Optional<Camion> findByDisponibleTrueOrderByIdAsc();
+
+    // Buscar disponibles y con capacidad determinada
+    Optional<Camion> findFirstByDisponibleTrueAndCapacidadPesoKgGreaterThanEqualAndCapacidadVolumenM3GreaterThanEqual(
+            Double capacidadPesoKg, Double capacidadVolumenM3);
 }

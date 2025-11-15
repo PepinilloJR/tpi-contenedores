@@ -37,7 +37,6 @@ public interface DtoHandler {
         if (dto == null)
             return null;
         Ubicacion u = new Ubicacion();
-        u.setId(dto.id());
         u.setNombre(dto.nombre());
         u.setLatitud(dto.latitud());
         u.setLongitud(dto.longitud());
@@ -49,14 +48,14 @@ public interface DtoHandler {
     public static RutaDto convertirRutaDto(Ruta r) {
         if (r == null)
             return null;
-        return new RutaDto(r.getId(), r.getCantidadTramos(), r.getCantidadDepositos(), r.getCostoPorTramo());
+        return new RutaDto(r.getId(), convertirSolicitudDto(r.getSolicitud()), r.getCantidadTramos(), r.getCantidadDepositos(), r.getCostoPorTramo());
     }
 
     public static Ruta convertirRutaEntidad(RutaDto dto) {
         if (dto == null)
             return null;
         Ruta r = new Ruta();
-        r.setId(dto.id());
+        r.setSolicitud(convertirSolicitudEntidad(dto.solicitudDto()));
         r.setCantidadTramos(dto.cantidadTramos());
         r.setCantidadDepositos(dto.cantidadDepositos());
         r.setCostoPorTramo(dto.costoPorTramo());
@@ -86,7 +85,6 @@ public interface DtoHandler {
             return null;
 
         Tramo t = new Tramo();
-        t.setId(dto.id());
         t.setOrigen(convertirUbicacionEntidad(dto.origen()));
         t.setDestino(convertirUbicacionEntidad(dto.destino()));
         t.setRuta(convertirRutaEntidad(dto.ruta()));
@@ -126,13 +124,13 @@ public interface DtoHandler {
 
         return new SolicitudDto(
                 s.getId(),
+                s.getEstado(),
                 s.getCostoEstimado(),
                 s.getTiempoEstimado(),
                 s.getTiempoReal(),
                 s.getCostoFinal(),
                 convertirClienteDto(s.getCliente()),
-                convertirContenedorDto(s.getContenedor()),
-                convertirRutaDto(s.getRuta()));
+                convertirContenedorDto(s.getContenedor()));
     }
 
     public static Solicitud convertirSolicitudEntidad(SolicitudDto dto) {
@@ -140,14 +138,13 @@ public interface DtoHandler {
             return null;
 
         Solicitud s = new Solicitud();
-        s.setId(dto.id());
+        s.setEstado(dto.estado());
         s.setCostoEstimado(dto.costoEstimado());
         s.setTiempoEstimado(dto.tiempoEstimado());
         s.setTiempoReal(dto.tiempoReal());
         s.setCostoFinal(dto.costoFinal());
         s.setCliente(convertirClienteEntidad(dto.clienteDto()));
         s.setContenedor(convertirContenedorEntidad(dto.contenedorDto()));
-        s.setRuta(convertirRutaEntidad(dto.rutaDto()));
 
         return s;
     }

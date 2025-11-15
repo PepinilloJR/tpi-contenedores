@@ -1,5 +1,7 @@
 package com.gateway.demo.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,21 +30,6 @@ public class pedidosController {
     @Autowired
     RestClient contenedoresClient;
 
-    @Autowired
-    RestClient camionesClient;
-
-    /**
-     * Flujo:
-     * 1) Validar request (debe traer clienteDto)
-     * 2) Obtener o crear cliente en el servicio de clientes
-     * 3) Crear el contenedor en el servicio de contenedores (identificación única
-     * generada allí)
-     * 4) Obtener UN camión disponible (/camiones/disponible)
-     * 5) Crear la solicitud en el servicio pedidos incluyendo clienteId,
-     * contenedorId, camionId y estado
-     * 6) Intentar marcar el camión como no disponible / asignado (si tu servicio lo
-     * soporta) -> si falla, borrar la solicitud creada (compensación)
-     */
 
     @PostMapping
     public ResponseEntity<SolicitudDto> crear(@RequestBody SolicitudDto solicitudDto) {
@@ -54,8 +41,6 @@ public class pedidosController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
 
-            // ===================================
-            // ===================================
             // ===================================
             // Req funcional min 1.2)
 
@@ -85,23 +70,6 @@ public class pedidosController {
             }
 
             // ==========================================
-            // Obtener CAMION DISPONIBLES
-
-            var camionDisponible = camionesClient.get()
-                    .uri("/disponible")
-                    .retrieve()
-                    .toEntity(CamionDto.class);
-            if (!camionDisponible.getStatusCode().is2xxSuccessful() || camionDisponible.getBody() == null) {
-                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
-            }
-
-            CamionDto camion = camionDisponible.getBody();
-
-            // Marcar el camion como no disponible luego
-
-            // ==========================================
-            // ==========================================
-            // ==========================================
             // Req funcional min 1.1)
 
             // CREAR CONTENEDOR
@@ -109,19 +77,21 @@ public class pedidosController {
             ContenedorDto contenedorRequerido;
 
             // CUIDADO CON ESTO EL ESTADO!!!!??!?!?!
+            // Deberia llegar en la request los datos para el contenedor
 
             if (solicitudDto.contenedorDto() != null) {
                 contenedorRequerido = new ContenedorDto(
                         null,
                         solicitudDto.contenedorDto().peso(),
                         solicitudDto.contenedorDto().volumen(),
-                        solicitudDto.contenedorDto().estado(),
+                        solicitudDto.contenedorDto().estado(), // Deberia ser null siempre si no despues cambiarlo o
+                                                               // setearlo segun corresponda
                         solicitudDto.contenedorDto().costoVolumen());
             }
 
             // Necesario ???
             else {
-                contenedorRequerido = new ContenedorDto();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
 
             var contenedorCreado = contenedoresClient.post()
@@ -136,7 +106,34 @@ public class pedidosController {
 
             ContenedorDto contenedor = contenedorCreado.getBody();
 
-            // Setear la fecha/origen/destino ???
+            // Creacion de la solicitud vamos a setear en borrador siempre por las dudas
+            // checkear si hay regla de negocio
+
+            Map<String, Object> solicitudPayload = new HashMap<>();
+            solicitudPayload.put("estado", "BORRADOR");
+            solicitudPayload.put("costoEstimado", solicitudDto.costoEstimado()); // DEBERIAN SER NULOS ??
+            solicitudPayload.put("tiempoEstimado", solicitudDto.tiempoEstimado()); // DEBERIAN SER NULOS ??
+            solicitudPayload.put("tiempoReal", solicitudDto.tiempoReal()); // DEBERIAN SER NULOS ??
+            solicitudPayload.put("costoFinal", solicitudDto.costoFinal()); // DEBERIAN SER NULOS ??
+
+            Map<String, Object> clienteMap = new HashMap<>();
+            clienteMap.put("id", clienteRegistrado.id());
+            solicitudPayload.put("cliente", clienteMap);
+
+            Map<String, Object> contenedorMap = new HashMap<>();
+            contenedorMap.put("id", contenedor.id());
+            solicitudPayload.put("contenedor", contenedorMap);
+
+            var solicitudCreada = pedidosClient.post()
+                    .uri("")
+                    .body(solicitudPayload).retrieve
+                    .toEntity(solicitudDto.class);
+
+            if (!solicitudCreada.getStatusCode().is2xxSuccessful() || solicitudCreada.getBody() == null) {
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+            }
+
+            return ResponseEntity.ok(solicitudCreada.getBody());
 
         } catch (RestClientException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

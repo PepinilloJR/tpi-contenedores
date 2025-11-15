@@ -55,6 +55,16 @@ public class CamionServicio {
                 .orElseThrow(() -> new ResourceNotFoundException("No hay ningun camion disponible"));
     }
 
+    @Transactional(readOnly = true)
+    public Camion obtenerDisponiblePorCapacidad(Double peso, Double volumen) {
+        return repositorio
+                .findFirstByDisponibleTrueAndCapacidadPesoKgGreaterThanEqualAndCapacidadVolumenM3GreaterThanEqual(peso,
+                        volumen)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No hay ningun camion disponible o que cumpla con la capacidad de peso de " + peso
+                                + " y volumen de " + volumen));
+    }
+
     @Transactional
     public Camion actualizar(Long id, Camion datos) {
         Camion existente = repositorio.findById(id)

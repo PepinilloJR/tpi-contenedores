@@ -25,6 +25,7 @@ public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String estado;
     private Double costoEstimado;
     private Double tiempoEstimado;
     private Double tiempoReal;
@@ -41,9 +42,4 @@ public class Solicitud {
     foreignKey = @ForeignKey(name = "fk_solicitud_contenedor"))
     private Contenedor contenedor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ruta", 
-    nullable = false, referencedColumnName = "id",
-    foreignKey = @ForeignKey(name = "fk_solicitud_ruta"))
-    private Ruta ruta;
 }

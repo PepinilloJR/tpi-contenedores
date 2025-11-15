@@ -18,7 +18,7 @@ import com.camiones.service.demo.servicios.CamionServicio;
 import com.commonlib.dto.CamionDto;
 
 import jakarta.validation.Valid;
-
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/camiones")
@@ -110,6 +110,14 @@ public class CamionControlador {
     @GetMapping("/disponible")
     public ResponseEntity<CamionDto> obtenerDisponible() {
         Camion camionDisponible = servicio.obtenerDisponible();
+        return ResponseEntity.ok(convertirDto(camionDisponible));
+    }
+
+    @GetMapping("/disponible/por-capacidad")
+    public ResponseEntity<CamionDto> obtenerDisponiblePorCapacidad(@RequestParam(required = true) Double peso,
+            @RequestParam(required = true) Double volumen) {
+
+        Camion camionDisponible = servicio.obtenerDisponiblePorCapacidad(peso, volumen);
         return ResponseEntity.ok(convertirDto(camionDisponible));
     }
 
