@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.camiones.service.demo.entidades.Tarifa;
+import com.commonlib.entidades.Tarifa;
 
 public interface TarifaRepositorio extends JpaRepository<Tarifa, Long> {
 

@@ -1,5 +1,6 @@
 package com.commonlib.dto;
 
+import com.commonlib.entidades.Camion;
 import com.commonlib.entidades.Cliente;
 import com.commonlib.entidades.Contenedor;
 import com.commonlib.entidades.Ruta;
@@ -71,6 +72,7 @@ public interface DtoHandler {
                 t.getId(),
                 convertirUbicacionDto(t.getOrigen()),
                 convertirUbicacionDto(t.getDestino()),
+                convertirCamionDto(t.getCamion()),
                 convertirRutaDto(t.getRuta()),
                 t.getTipo(),
                 t.getEstado(),
@@ -78,6 +80,13 @@ public interface DtoHandler {
                 t.getCostoReal(),
                 t.getFechaHoraInicio(),
                 t.getFechaHoraFin());
+    }
+
+
+
+    public static CamionDto convertirCamionDto(Camion c) {
+        if (c == null) return null;
+        return new CamionDto(c.getId(), c.getPatente(), c.getNombreTransportista(), c.getTelefono(), c.getCapacidadPesoKg(), c.getCapacidadVolumenM3(), c.getCostoPorKm(), c.getConsumoCombustibleLx100km(), c.getDisponible());
     }
 
     public static Tramo convertirTramoEntidad(TramoDto dto) {
