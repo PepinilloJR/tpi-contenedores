@@ -33,7 +33,6 @@ public class ContenedorControlador {
         this.servicio = servicio;
     }
 
-
     @PostMapping
     public ResponseEntity<ContenedorDto> crear(@Valid @RequestBody ContenedorDto contenedorDto) {
         Contenedor contenedorEntidad = DtoHandler.convertirContenedorEntidad(contenedorDto);
@@ -44,25 +43,27 @@ public class ContenedorControlador {
     // En el servicio hay que controlar el costoVolumen
 
     @PutMapping("/{id}")
-    public ResponseEntity<ContenedorDto> putMethodName(@PathVariable Long id, @RequestBody ContenedorDto contenedorDto) {
+    public ResponseEntity<ContenedorDto> putMethodName(@PathVariable Long id,
+            @RequestBody ContenedorDto contenedorDto) {
         Contenedor contenedorActual = servicio.obtenerPorId(id);
 
         contenedorActual.setPeso(contenedorDto.peso() != null ? contenedorDto.peso() : contenedorActual.getPeso());
-        contenedorActual.setVolumen(contenedorDto.volumen() != null ? contenedorDto.volumen() : contenedorActual.getVolumen());
-        contenedorActual.setEstado(contenedorDto.estado() != null ? contenedorDto.estado() : contenedorActual.getEstado());
-        contenedorActual.setCostoVolumen(contenedorDto.costoVolumen() != null ? contenedorDto.costoVolumen() : contenedorActual.getCostoVolumen());
-        
+        contenedorActual
+                .setVolumen(contenedorDto.volumen() != null ? contenedorDto.volumen() : contenedorActual.getVolumen());
+        contenedorActual
+                .setEstado(contenedorDto.estado() != null ? contenedorDto.estado() : contenedorActual.getEstado());
+        contenedorActual.setCostoVolumen(contenedorDto.costoVolumen() != null ? contenedorDto.costoVolumen()
+                : contenedorActual.getCostoVolumen());
+
         Contenedor contenedorActualizado = servicio.actualizar(id, contenedorActual);
         return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedorActualizado));
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<ContenedorDto> obtener(@PathVariable Long id) {
         Contenedor contenedor = servicio.obtenerPorId(id);
         return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedor));
     }
-    
 
     @GetMapping
     public ResponseEntity<List<ContenedorDto>> obtenerTodos() {
@@ -71,13 +72,18 @@ public class ContenedorControlador {
         return ResponseEntity.ok(dtos);
     }
 
+    // Hay que controlar los estados
+
+    @GetMapping("/estado/{estado}")
+    public ResponseEntity<ContenedorDto> obtenerPorEstado(@PathVariable String estado) {
+        Contenedor contenedorSegunEstado = servicio.obtenerPorEstado(estado);
+        return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedorSegunEstado));
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);
         return ResponseEntity.noContent().build();
     }
-    
-    
 
 }
