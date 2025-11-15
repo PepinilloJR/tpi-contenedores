@@ -9,11 +9,11 @@ public class RestClientsConfig {
 
     @Bean
     RestClient pedidosClient() {
-        return RestClient.create("http://localhost:8001/api/solicitudes");
+        return RestClient.create("http://pedidos:8001/api/solicitudes");
     }
 
     @Bean
     RestClient camionesClient() {
-        return RestClient.create("http://localhost:8001/api/camiones");
+        return RestClient.create("http://pedidos:8001/api/camiones");
     }
 }

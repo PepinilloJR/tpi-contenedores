@@ -16,15 +16,15 @@ public class GatewayConfig {
     public RouterFunction<ServerResponse> getRoute() {
         return route("pedidos").path("/protected/clientes", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/clientes", "/api/clientes"))
-                .before(BeforeFilterFunctions.uri("http://localhost:8001/api/clientes"))
+                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/clientes"))
 
                 .path("/protected/contenedores", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/contenedores", "/api/contenedores"))
-                .before(BeforeFilterFunctions.uri("http://localhost:8001/api/contenedores"))
+                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/contenedores"))
 
                 .path("/protected/tramos", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/tramos", "/api/tramos"))
-                .before(BeforeFilterFunctions.uri("http://localhost:8001/api/tramos"))
+                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/tramos"))
                 
                 .path("/protected/camiones", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/camiones", "/api/camiones"))
@@ -32,15 +32,15 @@ public class GatewayConfig {
             
                 .path("/protected/rutas", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/rutas", "/api/rutas"))
-                .before(BeforeFilterFunctions.uri("http://localhost:8001/api/rutas"))
+                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/rutas"))
                             
                 .path("/protected/solicitudes", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/solicitudes", "/api/solicitudes"))
-                .before(BeforeFilterFunctions.uri("http://localhost:8001/api/solicitudes"))
+                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/solicitudes"))
             
                 .path("/protected/ubicaciones", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/ubicaciones", "/api/ubicaciones"))
-                .before(BeforeFilterFunctions.uri("http://localhost:8001/api/ubicaciones"))
+                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/ubicaciones"))
             
 
             .build();

@@ -25,13 +25,13 @@ services:
     volumes:
       - postgres_data:/opt/postgres/data
   gateway:
-    image: gateway
+    image: pepinillojr/tpi-backend:gateway
     depends_on:
       - keycloak
     ports:
       - "8082:8082"
   pedidos:
-    image: pedidos-service
+    image: pepinillojr/tpi-backend:pedidos-service
     expose:
       - "8001"
     depends_on:
