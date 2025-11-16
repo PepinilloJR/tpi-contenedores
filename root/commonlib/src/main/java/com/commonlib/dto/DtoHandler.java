@@ -72,7 +72,7 @@ public interface DtoHandler {
     public static UbicacionDto convertirUbicacionDto(Ubicacion u) {
         if (u == null)
             return null;
-        return new UbicacionDto(u.getId(), u.getNombre(), u.getTipo(), u.getLatitud(), u.getLongitud());
+        return new UbicacionDto(u.getId(), u.getNombre(), u.getTipo(), u.getLatitud(), u.getLongitud(), u.getCosto());
     }
 
     public static Ubicacion convertirUbicacionEntidad(UbicacionDto dto) {
@@ -83,6 +83,7 @@ public interface DtoHandler {
         u.setTipo(dto.tipo());
         u.setLatitud(dto.latitud());
         u.setLongitud(dto.longitud());
+        u.setCosto(dto.costo());
         return u;
     }
 

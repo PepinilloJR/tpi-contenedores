@@ -55,7 +55,7 @@ public class pedidosController {
                 return ResponseEntity.badRequest().body(null);
             }
 
-            var tramoActual = tramosClient.get()
+            TramoDto tramoActual = tramosClient.get()
                     .uri("/" + tramoDto.id())
                     .retrieve()
                     .toEntity(TramoDto.class)
@@ -67,11 +67,26 @@ public class pedidosController {
 
         // hay que comprobar que el camion sea apto
 
+        // Validar que el camión asignado sea apto para el tramo
         try {
-            var camionApto = camionesCliente.get()
-            .uri("/disponible/por-capacidad")
+            CamionDto camionApto = camionesCliente.get()
+                    .uri("/disponible/por-capacidad?peso=" + tramoDto.getPeso() + "&volumen=" + tramoDto.getVolumen())
+                    .retrieve()
+                    .toEntity(CamionDto.class)
+                    .getBody();
+
+            if (camionApto == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("No hay camión disponible para la capacidad requerida");
+            }
+
+            // Asignamos el camion apto al tramo
+            tramoDto.setCamion(camionApto);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al validar camión disponible: " + e.getMessage());
         }
-        
 
     }
 
