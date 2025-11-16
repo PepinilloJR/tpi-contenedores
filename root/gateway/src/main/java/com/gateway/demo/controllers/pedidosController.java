@@ -48,29 +48,46 @@ public class pedidosController {
      */
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody TramoDto tramoDto) {
+    public ResponseEntity<?> asignarCamion(@PathVariable Long id, @RequestBody TramoDto tramoDto) {
         // Obtener el tramo
+        TramoDto tramoActual;
+        CamionDto camionApto;
         try {
             if (tramoDto == null) {
                 return ResponseEntity.badRequest().body(null);
             }
 
-            TramoDto tramoActual = tramosClient.get()
+            tramoActual = tramosClient.get()
                     .uri("/" + tramoDto.id())
                     .retrieve()
                     .toEntity(TramoDto.class)
                     .getBody();
+
+            if (tramoActual.ruta() == null || tramoActual.ruta().solicitud() == null
+                    || tramoActual.ruta().solicitud().contenedor() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("El tramo no tiene ruta, solicitud o contenedor asignado");
+            }
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("el tramo ingresado no existe");
         }
 
         // hay que comprobar que el camion sea apto
+        // primero tratar de obtener la ruta del tramo
+
+        var volumen = tramoActual.ruta().solicitud().contenedor().volumen();
+        var peso = tramoActual.ruta().solicitud().contenedor().peso();
+
+        if (peso == null || volumen == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Peso o volumen del contenedor no definidos");
+        }
 
         // Validar que el camión asignado sea apto para el tramo
         try {
-            CamionDto camionApto = camionesCliente.get()
-                    .uri("/disponible/por-capacidad?peso=" + tramoDto.getPeso() + "&volumen=" + tramoDto.getVolumen())
+            camionApto = camionesCliente.get()
+                    .uri("/disponible/por-capacidad?peso=" + peso + "&volumen=" + volumen)
                     .retrieve()
                     .toEntity(CamionDto.class)
                     .getBody();
@@ -80,13 +97,24 @@ public class pedidosController {
                         .body("No hay camión disponible para la capacidad requerida");
             }
 
-            // Asignamos el camion apto al tramo
-            tramoDto.setCamion(camionApto);
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al validar camión disponible: " + e.getMessage());
         }
+
+        TramoDto tramoConCamion = new TramoDto(
+                tramoActual.id(),
+                tramoActual.origen(),
+                tramoActual.destino(),
+                camionApto,
+                tramoActual.ruta(),
+                tramoActual.tipo(),
+                tramoActual.estado(),
+                tramoActual.costoAproximado(),
+                tramoActual.costoReal(),
+                tramoActual.fechaHoraInicio(),
+                tramoActual.fechaHoraFin(),
+                tramoActual.distancia());
 
     }
 

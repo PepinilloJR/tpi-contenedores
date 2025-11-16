@@ -7,7 +7,7 @@ public record TramoDto(
         Long id,
         UbicacionDto origen,
         UbicacionDto destino,
-        CamionDto camionDto,
+        CamionDto camion,
         RutaDto ruta,
         String tipo,
         String estado,
