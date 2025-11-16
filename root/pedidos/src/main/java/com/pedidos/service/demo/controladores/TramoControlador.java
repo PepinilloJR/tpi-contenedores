@@ -1,25 +1,23 @@
 package com.pedidos.service.demo.controladores;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.commonlib.dto.TramoDto;
-import com.commonlib.entidades.Tramo;
-import com.pedidos.service.demo.servicios.TramoServicio;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.commonlib.dto.DtoHandler;
+import com.commonlib.dto.TramoDto;
+import com.commonlib.entidades.Tramo;
+import com.pedidos.service.demo.servicios.TramoServicio;
 
 /*
 !!!!!!!!!
@@ -41,7 +39,6 @@ public class TramoControlador {
         this.servicio = servicio;
     }
 
-
     // Maybe validate
     @PostMapping
     public ResponseEntity<TramoDto> crear(@RequestBody TramoDto tramoDto) {
@@ -55,7 +52,8 @@ public class TramoControlador {
         // Soporta la actualizacion parcial, y hay que ver reglas en el servicio
         Tramo tramoActual = servicio.obtenerPorId(id);
         tramoActual.setEstado(tramoDto.estado() != null ? tramoDto.estado() : tramoActual.getEstado());
-        tramoActual.setFechaHoraFin(tramoDto.fechaHoraFin() != null ? tramoDto.fechaHoraFin() : tramoActual.getFechaHoraFin());
+        tramoActual.setFechaHoraFin(
+                tramoDto.fechaHoraFin() != null ? tramoDto.fechaHoraFin() : tramoActual.getFechaHoraFin());
 
         Tramo tramoActualizado = servicio.actualizar(id, tramoActual);
 
@@ -66,6 +64,12 @@ public class TramoControlador {
     public ResponseEntity<TramoDto> obtener(@PathVariable Long id) {
         Tramo tramo = servicio.obtenerPorId(id);
         return ResponseEntity.ok(DtoHandler.convertirTramoDto(tramo));
+    }
+
+    @GetMapping("/{transportista}")
+    public ResponseEntity<List<TramoDto>> obtener(@PathVariable String transportista) {
+        List<Tramo> tramos = servicio.obtenerPorTransportista(transportista);
+        return ResponseEntity.ok(DtoHandler.convertirTramosDto(tramos));
     }
 
     // por ejemplo -> GET /api/tramos?idRuta=5

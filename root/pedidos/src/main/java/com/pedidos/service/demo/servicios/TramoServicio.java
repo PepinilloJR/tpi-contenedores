@@ -8,6 +8,8 @@ import com.commonlib.entidades.Tramo;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.repositorios.TramoRepositorio;
 
+import jakarta.transaction.TransactionScoped;
+
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +37,11 @@ public class TramoServicio {
     @Transactional(readOnly = true)
     public List<Tramo> obtenerPorIdRuta(Long idR) {
         return repositorio.findByRutaId(idR);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Tramo> obtenerPorTransportista(String transportista) {
+        return repositorio.findByCamionNombreTransportista(transportista);
     }
 
     // Recordar el transportista solo puede modificar el estado y maybe la fecha
