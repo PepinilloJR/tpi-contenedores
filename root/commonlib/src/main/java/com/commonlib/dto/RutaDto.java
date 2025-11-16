@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public record RutaDto(    
     Long id,
-    SolicitudDto solicitudDto,
+    SolicitudDto solicitud,
     Integer cantidadTramos,
     Integer cantidadDepositos,
     BigDecimal costoPorTramo,

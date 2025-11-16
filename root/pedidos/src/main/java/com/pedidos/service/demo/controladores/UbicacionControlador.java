@@ -55,7 +55,7 @@ public class UbicacionControlador {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UbicacionDto> obtener(@RequestParam Long id) {
+    public ResponseEntity<UbicacionDto> obtener(@PathVariable Long id) {
         Ubicacion ubicacion = servicio.obtenerPorId(id);
         return ResponseEntity.ok(DtoHandler.convertirUbicacionDto(ubicacion));
     }
