@@ -31,12 +31,18 @@ public class rutasController {
     @Autowired
     RestClient distanciaClient;
 
+    @Autowired
+    RestClient rutasClient;
+
+    @Autowired 
+    RestClient tramosClient;
+
     @PostMapping
     public ResponseEntity<?> agregarRutas(@RequestBody RutaDto rutaDto) {
         SolicitudDto pedidoActual;
         ArrayList<UbicacionDto> depositoActual = new ArrayList<UbicacionDto>();
         try {
-            pedidoActual = pedidosClient.get().uri("/" + rutaDto.solicitud().id()).retrieve()
+            pedidoActual = pedidosClient.get().uri("/" + rutaDto.solicitudDto().id()).retrieve()
                     .toEntity(SolicitudDto.class).getBody();
 
         } catch (Exception e) {
@@ -125,6 +131,12 @@ public class rutasController {
 
         RutaDto rutaFinal = new RutaDto(null, pedidoActual, tramos.size(), depositoActual.size(), null, null, distanciaTotal);
 
+
+        rutasClient.post().body(rutaFinal).exchange((req, res) -> {System.err.println(res); return null;});
+
+        for (TramoDto t : tramos) {
+            tramosClient.post().body(t).exchange((req, res) -> {System.err.println(res); return null;});
+        }
         // http de ejemplo
         // http://localhost:5000/route/v1/driving/-58.38,-34.60;-58.40,-34.61;-58.43,-34.62;-58.45,-34.63?steps=true&overview=simplified&geometries=geojson
         return ResponseEntity.status(201).body(rutaFinal);
