@@ -37,6 +37,11 @@ public class ContenedorServicio {
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontraron contenedores en estado " + estado));
     }
 
+    @Transactional(readOnly = true)
+    public List<Contenedor> listarPendientes() {
+        return repositorio.findByEstado("pendiente");
+    }
+
     @Transactional
     public Contenedor actualizar(Long id, Contenedor contenedorActualizado) {
         Contenedor existente = repositorio.findById(id)

@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.commonlib.dto.DtoHandler;
 
-
 @RestController
 @RequestMapping("/api/contenedores")
 public class ContenedorControlador {
@@ -78,6 +77,13 @@ public class ContenedorControlador {
     public ResponseEntity<ContenedorDto> obtenerPorEstado(@PathVariable String estado) {
         Contenedor contenedorSegunEstado = servicio.obtenerPorEstado(estado);
         return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedorSegunEstado));
+    }
+
+    @GetMapping("/pendientes")
+    public ResponseEntity<List<ContenedorDto>> obtenerPendientes() {
+        List <Contenedor> pendientes = servicio.listarPendientes();
+        List <ContenedorDto> dtos = pendientes.stream().map(DtoHandler::convertirContenedorDto).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     @DeleteMapping("/{id}")
