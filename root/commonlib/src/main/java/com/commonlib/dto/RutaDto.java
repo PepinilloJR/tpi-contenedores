@@ -8,6 +8,7 @@ public record RutaDto(
     Integer cantidadTramos,
     Integer cantidadDepositos,
     BigDecimal costoPorTramo,
-    Long[] depositosID 
+    Long[] depositosID,
+    Double distanciaTotal 
     ) {
 }

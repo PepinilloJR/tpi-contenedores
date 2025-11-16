@@ -6,6 +6,8 @@ com/commonlib/entidades/Camion$CamionBuilder.class
 com/commonlib/dto/TarifaDto.class
 com/commonlib/dto/ClienteDto.class
 com/commonlib/entidades/Contenedor$ContenedorBuilder.class
+com/commonlib/entidades/Estadia.class
+com/commonlib/dto/EstadiaDto.class
 com/commonlib/dto/DepositoDto.class
 com/commonlib/entidades/Tramo.class
 com/commonlib/dto/CamionDto.class

@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service; // Necesario
 
 import com.commonlib.entidades.Deposito;
-import com.tpi.depositosservice.entidades.Estadia;
+import com.commonlib.entidades.Estadia;
 import com.tpi.depositosservice.repositorios.DepositoRepository;
 import com.tpi.depositosservice.repositorios.EstadiaRepository;
 

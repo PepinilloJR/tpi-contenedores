@@ -3,6 +3,7 @@
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/ContenedorDto.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/DepositoDto.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/DtoHandler.java
+/home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/EstadiaDto.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/RutaDto.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/SolicitudDto.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/TarifaDto.java
@@ -12,6 +13,7 @@
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Cliente.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Contenedor.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Deposito.java
+/home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Estadia.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Ruta.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Solicitud.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Tarifa.java

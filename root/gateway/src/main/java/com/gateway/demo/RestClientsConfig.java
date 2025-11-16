@@ -19,22 +19,22 @@ public class RestClientsConfig {
 
     @Bean
     RestClient clientesClient() {
-        return RestClient.create("http://localhost:8001/api/clientes");
+        return RestClient.create("http://pedidos:8001/api/clientes");
     }
 
     @Bean
     RestClient contenedoresClient() {
-        return RestClient.create("http://localhost:8001/api/contenedores");
+        return RestClient.create("http://pedidos:8001/api/contenedores");
     }
 
     @Bean
     RestClient depositosClient() {
-        return RestClient.create("http://localhost:8001/api/depositos");
+        return RestClient.create("http://depositos:8003/api/depositos");
     }
 
     @Bean
     RestClient distanciaClient() {
-        return RestClient.create("http://localhost:5000/route/v1/");
+        return RestClient.create("http://osrm:5000/route/v1/");
     }
 
     // Es otro el puerto de camiones

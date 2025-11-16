@@ -53,17 +53,20 @@ public class rutasController {
         }
         ubicaciones += pedidoActual.destino().longitud() + "," + pedidoActual.destino().latitud();
         // /route/v1/driving/"+ubicaciones
-
+        Object ubiObject;
         try {
-            Object ubiObject = distanciaClient.get()
+            ubiObject = distanciaClient.get()
                     .uri("/driving/" + ubicaciones + "?steps=true&overview=simplified&geometries=geojson").retrieve().toEntity(Object.class).getBody();
             System.out.println(ubiObject.toString());
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La api fallo al intentar encontrar las distancias entre os depositos");
         }
+        
+        
+
         // http de ejemplo
         // http://localhost:5000/route/v1/driving/-58.38,-34.60;-58.40,-34.61;-58.43,-34.62;-58.45,-34.63?steps=true&overview=simplified&geometries=geojson
-        return null;
+        return ResponseEntity.status(201).body(ubiObject);
     }
 }

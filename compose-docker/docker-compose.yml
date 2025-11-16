@@ -36,6 +36,12 @@ services:
       - "8001"
     depends_on:
       - db
+  depositos:
+    image: pepinillojr/tpi-backend:depositos-service
+    expose:
+      - "8003"
+    depends_on:
+      - db
   osrm:
     image: osrm/osrm-backend:latest
     platform: linux/amd64

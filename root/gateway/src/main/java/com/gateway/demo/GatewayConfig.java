@@ -41,6 +41,10 @@ public class GatewayConfig {
                 .path("/protected/ubicaciones", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/ubicaciones", "/api/ubicaciones"))
                 .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/ubicaciones"))
+
+                .path("/protected/depositos", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/depositos", "/api/depositos"))
+                .before(BeforeFilterFunctions.uri("http://depositos:8003/api/depositos"))
             
 
             .build();
