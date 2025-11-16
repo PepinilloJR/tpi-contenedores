@@ -30,7 +30,7 @@ public class pedidosController {
     RestClient tramosClient;
 
     @Autowired
-    RestClient camionesCliente;
+    RestClient camionesClient;
 
     /*
      * @PostMapping
@@ -80,7 +80,7 @@ public class pedidosController {
 
         // Validar que el camión asignado sea apto para el tramo
         try {
-            camionApto = camionesCliente.get()
+            camionApto = camionesClient.get()
                     .uri("/disponible/por-capacidad?peso=" + peso + "&volumen=" + volumen)
                     .retrieve()
                     .toEntity(CamionDto.class)

@@ -91,11 +91,42 @@ public class rutasController {
                     tramos.add(tdto);
                 }
 
+            } else {
+                UbicacionDto origen;
+                try {
+                    origen = depositoActual.get(c - 1);
+                } catch (Exception e) {
+                    origen = null;
+                }
+
+                UbicacionDto destino;
+                try {
+                    destino = depositoActual.get(c);
+                } catch (Exception e) {
+                    destino = null;
+                }
+
+                if (destino != null) {
+                    TramoDto tdto = new TramoDto(null,origen, destino, null, rutaDto, "deposito-deposito", null, null, null, null, null, l.getDistance());
+                    tramos.add(tdto);
+                } else {
+                    TramoDto tdto = new TramoDto(null,origen, pedidoActual.destino(), null, rutaDto, "deposito-destino", null, null, null, null, null, l.getDistance());
+                    tramos.add(tdto);
+                }
             }
+
+            c += 1;
         }
+
+        Double distanciaTotal = (double)0;
+        for (TramoDto t : tramos) {
+            distanciaTotal += t.distancia();
+        }
+
+        RutaDto rutaFinal = new RutaDto(null, pedidoActual, tramos.size(), depositoActual.size(), null, null, distanciaTotal);
 
         // http de ejemplo
         // http://localhost:5000/route/v1/driving/-58.38,-34.60;-58.40,-34.61;-58.43,-34.62;-58.45,-34.63?steps=true&overview=simplified&geometries=geojson
-        return ResponseEntity.status(201).body(tramos);
+        return ResponseEntity.status(201).body(rutaFinal);
     }
 }
