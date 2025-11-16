@@ -1,5 +1,8 @@
 package com.gateway.demo.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,8 @@ import org.springframework.web.client.RestClient;
 import com.commonlib.dto.DepositoDto;
 import com.commonlib.dto.RutaDto;
 import com.commonlib.dto.SolicitudDto;
+import com.commonlib.dto.TramoDto;
+import com.commonlib.dto.UbicacionDto;
 
 @RestController
 @RequestMapping("/controlled/rutas")
@@ -30,7 +35,7 @@ public class rutasController {
     @PostMapping
     public ResponseEntity<?> agregarRutas(@RequestBody RutaDto rutaDto) {
         SolicitudDto pedidoActual;
-        DepositoDto depositoActual;
+        ArrayList<UbicacionDto> depositoActual = new ArrayList<UbicacionDto>();
         try {
             pedidoActual = pedidosClient.get().uri("/" + rutaDto.solicitudDto().id()).retrieve()
                     .toEntity(SolicitudDto.class).getBody();
@@ -42,16 +47,16 @@ public class rutasController {
         String ubicaciones = pedidoActual.origen().longitud() + "," + pedidoActual.origen().latitud() + ";";
         for (Long dId : rutaDto.depositosID()) {
             try {
-                depositoActual = depositosClient.get()
+                depositoActual.add(depositosClient.get()
                         .uri("/" + dId)
                         .retrieve()
-                        .toEntity(DepositoDto.class)
-                        .getBody();
+                        .toEntity(UbicacionDto.class)
+                        .getBody());
+                ubicaciones += depositoActual.get(depositoActual.size() - 1).longitud() + "," + depositoActual.get(depositoActual.size() - 1).latitud() + ";";
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El depósito " + dId + " no existe.");
             }
 
-            ubicaciones += depositoActual.longitud() + "," + depositoActual.latitud() + ";";
         }
         ubicaciones += pedidoActual.destino().longitud() + "," + pedidoActual.destino().latitud();
         // /route/v1/driving/"+ubicaciones
@@ -67,9 +72,22 @@ public class rutasController {
         }
         
         int c = 0;
-        for (Leg l : ubiObject.getRoutes().get(0).getLegs()) {
+        List<Leg> legs = ubiObject.getRoutes().get(0).getLegs();
+        for (Leg l : legs) {
             if (c == 0) {
+                // definir destino
+                UbicacionDto destino;
+                try {
+                    destino = depositoActual.get(c);
+                } catch (Exception e) {
+                    destino = null;
+                }
 
+                if (destino != null) {
+
+                }
+
+                TramoDto tdto = new TramoDto(null,pedidoActual.origen());
             }
         }
 

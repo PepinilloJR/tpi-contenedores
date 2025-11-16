@@ -34,7 +34,7 @@ public class RestClientsConfig {
 
     @Bean
     RestClient depositosClient() {
-        return RestClient.create("http://depositos:8003/api/depositos");
+        return RestClient.create("http://pedidos:8001/api/ubicaciones");
     }
 
     @Bean
