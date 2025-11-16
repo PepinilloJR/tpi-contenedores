@@ -42,4 +42,16 @@ public class Solicitud {
     foreignKey = @ForeignKey(name = "fk_solicitud_contenedor"))
     private Contenedor contenedor;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_origen", 
+    nullable = false, referencedColumnName = "id", 
+    foreignKey = @ForeignKey(name = "fk_solicitud_ubicacion_origen"))
+    private Ubicacion origen;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_destino", 
+    nullable = false, referencedColumnName = "id", 
+    foreignKey = @ForeignKey(name = "fk_solicitud_ubicacion_destino"))
+    private Ubicacion destino;
+
 }

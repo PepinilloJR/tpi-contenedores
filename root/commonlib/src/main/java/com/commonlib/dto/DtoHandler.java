@@ -31,7 +31,7 @@ public interface DtoHandler {
     public static UbicacionDto convertirUbicacionDto(Ubicacion u) {
         if (u == null)
             return null;
-        return new UbicacionDto(u.getId(), u.getNombre(), u.getLatitud(), u.getLongitud());
+        return new UbicacionDto(u.getId(), u.getNombre(), u.getTipo(), u.getLatitud(), u.getLongitud());
     }
 
     public static Ubicacion convertirUbicacionEntidad(UbicacionDto dto) {
@@ -39,6 +39,7 @@ public interface DtoHandler {
             return null;
         Ubicacion u = new Ubicacion();
         u.setNombre(dto.nombre());
+        u.setTipo(dto.tipo());
         u.setLatitud(dto.latitud());
         u.setLongitud(dto.longitud());
         return u;
@@ -49,7 +50,12 @@ public interface DtoHandler {
     public static RutaDto convertirRutaDto(Ruta r) {
         if (r == null)
             return null;
+<<<<<<< HEAD
         return new RutaDto(r.getId(), convertirSolicitudDto(r.getSolicitud()), r.getCantidadTramos(), r.getCantidadDepositos(), r.getCostoPorTramo(), null);
+=======
+        return new RutaDto(r.getId(), convertirSolicitudDto(r.getSolicitud()), r.getCantidadTramos(),
+                r.getCantidadDepositos(), r.getCostoPorTramo());
+>>>>>>> e66c7b78fe9293126e9785f6a03f63220380ba78
     }
 
     public static Ruta convertirRutaEntidad(RutaDto dto) {
@@ -82,11 +88,12 @@ public interface DtoHandler {
                 t.getFechaHoraFin());
     }
 
-
-
     public static CamionDto convertirCamionDto(Camion c) {
-        if (c == null) return null;
-        return new CamionDto(c.getId(), c.getPatente(), c.getNombreTransportista(), c.getTelefono(), c.getCapacidadPesoKg(), c.getCapacidadVolumenM3(), c.getCostoPorKm(), c.getConsumoCombustibleLx100km(), c.getDisponible());
+        if (c == null)
+            return null;
+        return new CamionDto(c.getId(), c.getPatente(), c.getNombreTransportista(), c.getTelefono(),
+                c.getCapacidadPesoKg(), c.getCapacidadVolumenM3(), c.getCostoPorKm(), c.getConsumoCombustibleLx100km(),
+                c.getDisponible());
     }
 
     public static Tramo convertirTramoEntidad(TramoDto dto) {
@@ -125,7 +132,6 @@ public interface DtoHandler {
         return c;
     }
 
-
     // Solicitud
     public static SolicitudDto convertirSolicitudDto(Solicitud s) {
         if (s == null)
@@ -139,7 +145,9 @@ public interface DtoHandler {
                 s.getTiempoReal(),
                 s.getCostoFinal(),
                 convertirClienteDto(s.getCliente()),
-                convertirContenedorDto(s.getContenedor()));
+                convertirContenedorDto(s.getContenedor()),
+                convertirUbicacionDto(s.getOrigen()),
+                convertirUbicacionDto(s.getDestino()));
     }
 
     public static Solicitud convertirSolicitudEntidad(SolicitudDto dto) {
@@ -154,6 +162,8 @@ public interface DtoHandler {
         s.setCostoFinal(dto.costoFinal());
         s.setCliente(convertirClienteEntidad(dto.cliente()));
         s.setContenedor(convertirContenedorEntidad(dto.contenedor()));
+        s.setOrigen(convertirUbicacionEntidad(dto.origen()));
+        s.setDestino(convertirUbicacionEntidad(dto.destino()));
 
         return s;
     }

@@ -21,6 +21,12 @@ public class UbicacionServicio {
         return repositorio.save(ubicacion);
     }
 
+    @Transactional
+    public Ubicacion crearSiNoExiste(Ubicacion ubicacion) {
+        return repositorio.findByLatitudEqualsAndLongitudEquals(ubicacion.getLatitud(), ubicacion.getLongitud())
+                .orElseGet(() -> repositorio.save(ubicacion));
+    }
+
     @Transactional(readOnly = true)
     public List<Ubicacion> listarTodos() {
         return repositorio.findAll();

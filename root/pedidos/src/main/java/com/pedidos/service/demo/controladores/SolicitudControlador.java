@@ -8,6 +8,7 @@ import com.commonlib.dto.SolicitudDto;
 import com.pedidos.service.demo.servicios.ClienteServicio;
 import com.pedidos.service.demo.servicios.ContenedorServicio;
 import com.pedidos.service.demo.servicios.SolicitudServicio;
+import com.pedidos.service.demo.servicios.UbicacionServicio;
 
 import java.util.stream.Collectors;
 import java.util.List;
@@ -28,53 +29,55 @@ public class SolicitudControlador {
     private final SolicitudServicio servicioSolicitud;
     private final ClienteServicio servicioCliente;
     private final ContenedorServicio servicioContenedor;
+    private final UbicacionServicio servicioUbicacion;
 
     public SolicitudControlador(SolicitudServicio servicioSolicitud, ClienteServicio servicioCliente,
-            ContenedorServicio servicioContenedor) {
+            ContenedorServicio servicioContenedor, UbicacionServicio servicioUbicacion) {
         this.servicioSolicitud = servicioSolicitud;
         this.servicioCliente = servicioCliente;
         this.servicioContenedor = servicioContenedor;
+        this.servicioUbicacion = servicioUbicacion;
     }
 
-@PostMapping
-public ResponseEntity<SolicitudDto> crear(@RequestBody SolicitudDto solicitudDto) {
+    @PostMapping
+    public ResponseEntity<SolicitudDto> crear(@RequestBody SolicitudDto solicitudDto) {
 
-    System.out.println(solicitudDto);
+        System.out.println(solicitudDto);
+
+        // 1) Validaciones previas antes de convertir
+        if (solicitudDto == null || solicitudDto.cliente() == null || solicitudDto.contenedor() == null
+                || solicitudDto.origen() == null || solicitudDto.destino() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // 2) Convertir seguro (ya sabemos que cliente y contenedor no son null)
+        Solicitud solicitudEntidad;
+        try {
+            solicitudEntidad = DtoHandler.convertirSolicitudEntidad(solicitudDto);
+        } catch (Exception e) {
+            // Si la conversión falla por otro motivo, devolvemos 400 con info mínima
+            return ResponseEntity.badRequest().build();
+        }
+
+        // 3) Persistir/obtener cliente y contenedor y reasignarlos
+        var cliente = servicioCliente.crearSiNoExiste(solicitudEntidad.getCliente());
+        var contenedor = servicioContenedor.crear(solicitudEntidad.getContenedor());
+        var origen = servicioUbicacion.crearSiNoExiste(solicitudEntidad.getOrigen());
+        var destino = servicioUbicacion.crearSiNoExiste(solicitudEntidad.getDestino());
 
 
-    // 1) Validaciones previas antes de convertir (evita NPE en DtoHandler)
-    if (solicitudDto == null) {
-        return ResponseEntity.badRequest().build();
+
+        // 4) Preparar y guardar la solicitud
+        solicitudEntidad.setEstado("borrador");
+        solicitudEntidad.setCliente(cliente);
+        solicitudEntidad.setContenedor(contenedor);
+        solicitudEntidad.setOrigen(origen);
+        solicitudEntidad.setDestino(destino);
+        Solicitud solicitudCreada = servicioSolicitud.crear(solicitudEntidad);
+
+        // 5) Responder 201 con el DTO resultante
+        return ResponseEntity.status(201).body(DtoHandler.convertirSolicitudDto(solicitudCreada));
     }
-    if (solicitudDto.cliente() == null) {
-        return ResponseEntity.badRequest().body(null);
-    }
-    if (solicitudDto.contenedor() == null) {
-        return ResponseEntity.badRequest().body(null);
-    }
-
-    // 2) Convertir seguro (ya sabemos que cliente y contenedor no son null)
-    Solicitud solicitudEntidad;
-    try {
-        solicitudEntidad = DtoHandler.convertirSolicitudEntidad(solicitudDto);
-    } catch (Exception e) {
-        // Si la conversión falla por otro motivo, devolvemos 400 con info mínima
-        return ResponseEntity.badRequest().build();
-    }
-
-    // 3) Persistir/obtener cliente y contenedor y reasignarlos
-    var cliente = servicioCliente.crearSiNoExiste(solicitudEntidad.getCliente());
-    var contenedor = servicioContenedor.crear(solicitudEntidad.getContenedor());
-
-    // 4) Preparar y guardar la solicitud
-    solicitudEntidad.setEstado("borrador");
-    solicitudEntidad.setCliente(cliente);
-    solicitudEntidad.setContenedor(contenedor);
-    Solicitud solicitudCreada = servicioSolicitud.crear(solicitudEntidad);
-
-    // 5) Responder 201 con el DTO resultante
-    return ResponseEntity.status(201).body(DtoHandler.convertirSolicitudDto(solicitudCreada));
-}
 
     @PutMapping("/{id}")
     public ResponseEntity<SolicitudDto> actualizar(@PathVariable Long id, @RequestBody SolicitudDto solicitudDto) {
