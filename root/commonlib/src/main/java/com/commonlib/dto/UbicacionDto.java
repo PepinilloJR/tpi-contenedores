@@ -5,6 +5,7 @@ public record UbicacionDto(
         String nombre,
         String tipo,
         Double latitud,
-        Double longitud
+        Double longitud,
+        Double costo
         ) {
 }
