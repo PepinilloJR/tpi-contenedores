@@ -37,7 +37,7 @@ Content-Type: application/json
 }
 
 ### Actualizar una solicitud (PUT)
-PUT http://localhost:8001/api/solicitudes/1
+PUT http://localhost:8001/api/solicitudes/2
 Content-Type: application/json
 
 {

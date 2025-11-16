@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.commonlib.dto.DtoHandler;
+import com.commonlib.dto.SeguimientoDto;
 import com.commonlib.dto.SolicitudDto;
 import com.pedidos.service.demo.servicios.ClienteServicio;
 import com.pedidos.service.demo.servicios.ContenedorServicio;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.commonlib.entidades.*;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/solicitudes")
@@ -138,6 +140,12 @@ public class SolicitudControlador {
     public ResponseEntity<SolicitudDto> obtener(@PathVariable Long id) {
         Solicitud solicitud = servicioSolicitud.obtenerPorId(id);
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDto(solicitud));
+    }
+
+    @GetMapping("/{id}/seguimiento")
+    public ResponseEntity<List<SeguimientoDto>> obtenerSegumiento(@PathVariable Long id) {
+        Solicitud solicitud = servicioSolicitud.obtenerPorId(id);
+        return ResponseEntity.ok(DtoHandler.convertirSeguimientosDto(solicitud.getSeguimiento()));
     }
 
     @GetMapping
