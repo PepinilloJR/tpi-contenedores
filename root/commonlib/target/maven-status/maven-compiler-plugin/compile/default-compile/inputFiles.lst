@@ -7,9 +7,11 @@
 /home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/TarifaDto.java
 /home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/TramoDto.java
 /home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/UbicacionDto.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Camion.java
 /home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Cliente.java
 /home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Contenedor.java
 /home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Ruta.java
 /home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Solicitud.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Tarifa.java
 /home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Tramo.java
 /home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Ubicacion.java

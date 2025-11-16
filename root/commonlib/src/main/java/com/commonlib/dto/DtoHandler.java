@@ -152,8 +152,8 @@ public interface DtoHandler {
         s.setTiempoEstimado(dto.tiempoEstimado());
         s.setTiempoReal(dto.tiempoReal());
         s.setCostoFinal(dto.costoFinal());
-        s.setCliente(convertirClienteEntidad(dto.clienteDto()));
-        s.setContenedor(convertirContenedorEntidad(dto.contenedorDto()));
+        s.setCliente(convertirClienteEntidad(dto.cliente()));
+        s.setContenedor(convertirContenedorEntidad(dto.contenedor()));
 
         return s;
     }

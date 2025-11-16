@@ -1,6 +1,8 @@
 package com.commonlib.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 
 public record ClienteDto(
         Long id,
@@ -8,5 +10,5 @@ public record ClienteDto(
         @NotBlank(message = "El apellido es obligatorio") String apellido,
         @NotBlank(message = "El telefono es obligatorio") String telefono,
         @NotBlank(message = "La direccion es obligatoria") String direccion,
-        @NotBlank(message = "El dni es obligatorio") Integer dni) {
+        @NotNull(message = "El dni es obligatorio") Integer dni) {
 }

@@ -23,7 +23,7 @@ public class ClienteServicio {
 
     @Transactional
     public Cliente crearSiNoExiste(Cliente cliente) {
-        return repositorio.findById(cliente.getId())
+        return repositorio.findByDni(cliente.getDni())
                 .orElseGet(() -> repositorio.save(cliente));
     }
 

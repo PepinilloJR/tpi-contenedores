@@ -7,6 +7,6 @@ public record SolicitudDto(
                 Double tiempoEstimado,
                 Double tiempoReal,
                 Double costoFinal,
-                ClienteDto clienteDto,
-                ContenedorDto contenedorDto) {
+                ClienteDto cliente,
+                ContenedorDto contenedor) {
 }
