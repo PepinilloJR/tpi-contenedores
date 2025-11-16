@@ -13,36 +13,70 @@ import org.springframework.web.servlet.function.ServerResponse;
 public class GatewayConfig {
 
     @Bean
-    public RouterFunction<ServerResponse> getRoute() {
+    public RouterFunction<ServerResponse> clientesRouterFunction() {
         return route("pedidos").path("/protected/clientes", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/clientes", "/api/clientes"))
                 .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/clientes"))
 
-                .path("/protected/contenedores", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+            .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> tramosRouterFunction() {
+        return route("tramos").path("/protected/tramos", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/tramos", "/api/tramos"))
+                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/tramos"))
+            .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> contenedoresRouterFunction() {
+        return route("contenedores").path("/protected/contenedores", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/contenedores", "/api/contenedores"))
                 .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/contenedores"))
 
-                .path("/protected/tramos", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
-                .before(BeforeFilterFunctions.rewritePath("/protected/tramos", "/api/tramos"))
-                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/tramos"))
-                
-                .path("/protected/camiones", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
-                .before(BeforeFilterFunctions.rewritePath("/protected/camiones", "/api/camiones"))
-                .before(BeforeFilterFunctions.uri("http://localhost:8002/api/camiones"))
-            
-                .path("/protected/rutas", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
-                .before(BeforeFilterFunctions.rewritePath("/protected/rutas", "/api/rutas"))
-                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/rutas"))
-                            
-                .path("/protected/solicitudes", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
-                .before(BeforeFilterFunctions.rewritePath("/protected/solicitudes", "/api/solicitudes"))
-                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/solicitudes"))
-            
-                .path("/protected/ubicaciones", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
-                .before(BeforeFilterFunctions.rewritePath("/protected/ubicaciones", "/api/ubicaciones"))
-                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/ubicaciones"))
-            
-
             .build();
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> camionesRouterFunction() {
+        return route("camiones").path("/protected/camiones", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/camiones", "/api/camiones"))
+                .before(BeforeFilterFunctions.uri("http://localhost:8002/api/camiones"))
+            .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> rutasRouterFunction() {
+        return route("rutas").path("/protected/rutas", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/rutas", "/api/rutas"))
+                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/rutas"))
+            .build();
+    }
+
+        @Bean
+    public RouterFunction<ServerResponse> solicitudesRouterFunction() {
+        return route("solicitudes").path("/protected/solicitudes", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/solicitudes", "/api/solicitudes"))
+                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/solicitudes"))
+            .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> ubicacionesRouterFunction() {
+        return route("ubicaciones").path("/protected/ubicaciones", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/ubicaciones", "/api/ubicaciones"))
+                .before(BeforeFilterFunctions.uri("http://pedidos:8001/api/ubicaciones")).build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> depositosRouterFunction() {
+        return route("depositos").path("/protected/depositos", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/depositos", "/api/depositos"))
+                .before(BeforeFilterFunctions.uri("http://depositos:8003/api/depositos")).build();
+    }
 }
+
+/* 
+ 
+ */

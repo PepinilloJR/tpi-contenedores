@@ -1,6 +1,4 @@
-package com.tpi.depositosservice.entidades;
-
-import com.commonlib.entidades.Deposito;
+package com.commonlib.entidades;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.tpi.depositosservice.dto;
+package com.commonlib.dto;
 
 import java.time.LocalDateTime;
 

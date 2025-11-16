@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tpi.depositosservice.dto.EstadiaDto;
-import com.tpi.depositosservice.entidades.Estadia;
+import com.commonlib.dto.EstadiaDto;
+import com.commonlib.entidades.Estadia;
 import com.tpi.depositosservice.servicios.EstadiaServicio;
 
 @RestController
