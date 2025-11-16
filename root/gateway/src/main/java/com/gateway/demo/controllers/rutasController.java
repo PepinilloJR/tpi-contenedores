@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 
-import com.commonlib.dto.DepositoDto;
 import com.commonlib.dto.RutaDto;
 import com.commonlib.dto.SolicitudDto;
 import com.commonlib.dto.TramoDto;
@@ -73,6 +72,7 @@ public class rutasController {
         
         int c = 0;
         List<Leg> legs = ubiObject.getRoutes().get(0).getLegs();
+        List<TramoDto> tramos = new ArrayList<TramoDto>();
         for (Leg l : legs) {
             if (c == 0) {
                 // definir destino
@@ -84,15 +84,18 @@ public class rutasController {
                 }
 
                 if (destino != null) {
-
+                    TramoDto tdto = new TramoDto(null,pedidoActual.origen(), destino, null, rutaDto, "origen-deposito", null, null, null, null, null, l.getDistance());
+                    tramos.add(tdto);
+                } else {
+                    TramoDto tdto = new TramoDto(null,pedidoActual.origen(), pedidoActual.destino(), null, rutaDto, "origen-deposito", null, null, null, null, null, l.getDistance());
+                    tramos.add(tdto);
                 }
 
-                TramoDto tdto = new TramoDto(null,pedidoActual.origen());
             }
         }
 
         // http de ejemplo
         // http://localhost:5000/route/v1/driving/-58.38,-34.60;-58.40,-34.61;-58.43,-34.62;-58.45,-34.63?steps=true&overview=simplified&geometries=geojson
-        return ResponseEntity.status(201).body(ubiObject.getRoutes());
+        return ResponseEntity.status(201).body(tramos);
     }
 }
