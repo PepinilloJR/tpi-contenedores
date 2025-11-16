@@ -2,8 +2,12 @@ HELP.md
 target/
 compose-docker/osrm-data
 .mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+
+# Ignorar todos los target y build generados en cualquier módulo
+**/target/
+**/build/
+target/
+build/
 
 ### STS ###
 .apt_generated
@@ -27,8 +31,6 @@ compose-docker/osrm-data
 /nbdist/
 /.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
