@@ -6,11 +6,12 @@ com/commonlib/entidades/Camion$CamionBuilder.class
 com/commonlib/dto/TarifaDto.class
 com/commonlib/dto/ClienteDto.class
 com/commonlib/entidades/Contenedor$ContenedorBuilder.class
+com/commonlib/dto/DepositoDto.class
 com/commonlib/entidades/Tramo.class
 com/commonlib/dto/CamionDto.class
 com/commonlib/entidades/Cliente$ClienteBuilder.class
-com/commonlib/entidades/Tarifa$TarifaBuilder.class
 com/commonlib/entidades/Solicitud.class
+com/commonlib/entidades/Tarifa$TarifaBuilder.class
 com/commonlib/entidades/Tramo$TramoBuilder.class
 com/commonlib/entidades/Ruta$RutaBuilder.class
 com/commonlib/dto/UbicacionDto.class
@@ -21,5 +22,6 @@ com/commonlib/dto/ContenedorDto.class
 com/commonlib/dto/RutaDto.class
 com/commonlib/dto/DtoHandler.class
 com/commonlib/entidades/Ubicacion.class
+com/commonlib/entidades/Deposito.class
 com/commonlib/entidades/Tarifa.class
 com/commonlib/dto/TramoDto.class

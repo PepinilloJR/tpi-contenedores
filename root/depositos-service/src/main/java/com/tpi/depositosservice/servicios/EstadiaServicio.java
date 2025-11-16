@@ -1,13 +1,14 @@
 package com.tpi.depositosservice.servicios;
 
-import com.tpi.depositosservice.entidades.Estadia;
-import com.tpi.depositosservice.entidades.Deposito;
-import com.tpi.depositosservice.repositorios.EstadiaRepository;
-import com.tpi.depositosservice.repositorios.DepositoRepository; // Necesario
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import org.springframework.stereotype.Service; // Necesario
+
+import com.commonlib.entidades.Deposito;
+import com.tpi.depositosservice.entidades.Estadia;
+import com.tpi.depositosservice.repositorios.DepositoRepository;
+import com.tpi.depositosservice.repositorios.EstadiaRepository;
 
 @Service
 public class EstadiaServicio {

@@ -1,4 +1,5 @@
-package com.tpi.depositosservice.dto;
+package com.commonlib.dto;
+
 
 public record DepositoDto(
     Long idDeposito,

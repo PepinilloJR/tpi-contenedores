@@ -27,6 +27,16 @@ public class RestClientsConfig {
         return RestClient.create("http://localhost:8001/api/contenedores");
     }
 
+    @Bean
+    RestClient depositosClient() {
+        return RestClient.create("http://localhost:8001/api/depositos");
+    }
+
+    @Bean
+    RestClient distanciaClient() {
+        return RestClient.create("http://localhost:5000/api/depositos");
+    }
+
     // Es otro el puerto de camiones
 
     @Bean

@@ -1,11 +1,12 @@
 package com.tpi.depositosservice.servicios;
 
-import com.tpi.depositosservice.entidades.Deposito;
-import com.tpi.depositosservice.repositorios.DepositoRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import org.springframework.stereotype.Service;
+
+import com.commonlib.entidades.Deposito;
+import com.tpi.depositosservice.repositorios.DepositoRepository;
 
 @Service
 public class DepositoServicio {

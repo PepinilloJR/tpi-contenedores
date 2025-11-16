@@ -9,34 +9,40 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 
+import com.commonlib.dto.DepositoDto;
 import com.commonlib.dto.RutaDto;
-import com.commonlib.dto.TramoDto;
+import com.commonlib.dto.SolicitudDto;
 
 @RestController
 @RequestMapping("/controlled/rutas")
 public class rutasController {
     @Autowired
-    RestClient rutasClient;
+    RestClient pedidosClient;
+
+    @Autowired
+    RestClient depositosClient;
 
     @PostMapping
-    public ResponseEntity<?> agregarTramos(@RequestBody TramoDto tramoDto)  {
-        RutaDto rutaActual;
+    public ResponseEntity<?> agregarRutas(@RequestBody RutaDto rutaDto)  {
+        SolicitudDto pedidoActual;
+
         try {
-            rutaActual = rutasClient.get().uri("/" + tramoDto.ruta().id()).retrieve().toEntity(RutaDto.class).getBody();
+            pedidoActual = pedidosClient.get().uri("/" + rutaDto.solicitudDto().id()).retrieve().toEntity(SolicitudDto.class).getBody();
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("la ruta ingresada no existe");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("el pedido ingresado no existe");
         }
         
-        // debo garantizar el orden en cada tramo
+        String ubicaciones = pedidoActual.origen().longitud() + "," + pedidoActual.origen().longitud() + ";";
+        for (Long dId : rutaDto.depositosID()) {
+            DepositoDto depositoActual = depositosClient.get().uri("/" + dId).retrieve().toEntity(DepositoDto.class).getBody();
 
-        // asegurarse que el primer tramo sea un destino
-        if (rutaActual.cantidadTramos() == 0) {
-
+            ubicaciones += depositoActual.longitud()+","+depositoActual.latitud() + ";";
         }
-        
-
-
+        ubicaciones += pedidoActual.destino().longitud() + "," + pedidoActual.destino().longitud();
+        RestClient dRestClient = RestClient.create("http://localhost:5000/route/v1/driving/"+ubicaciones);
+        // http de ejemplo
+        // http://localhost:5000/route/v1/driving/-58.38,-34.60;-58.40,-34.61;-58.43,-34.62;-58.45,-34.63?steps=true&overview=simplified&geometries=geojson
         return null;
     }
 }
