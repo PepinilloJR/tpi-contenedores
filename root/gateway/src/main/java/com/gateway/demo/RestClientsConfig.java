@@ -46,6 +46,6 @@ public class RestClientsConfig {
 
     @Bean
     RestClient camionesClient() {
-        return RestClient.create("http://pedidos:8001/api/camiones");
+        return RestClient.create("http://camiones:8002/api/camiones");
     }
 }
