@@ -1,5 +1,8 @@
 package com.commonlib.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.commonlib.entidades.Camion;
 import com.commonlib.entidades.Cliente;
 import com.commonlib.entidades.Contenedor;
@@ -8,9 +11,6 @@ import com.commonlib.entidades.Seguimiento;
 import com.commonlib.entidades.Solicitud;
 import com.commonlib.entidades.Tramo;
 import com.commonlib.entidades.Ubicacion;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public interface DtoHandler {
 
@@ -122,7 +122,8 @@ public interface DtoHandler {
                 t.getCostoAproximado(),
                 t.getCostoReal(),
                 t.getFechaHoraInicio(),
-                t.getFechaHoraFin());
+                t.getFechaHoraFin(),
+                t.getDistancia());
     }
 
     public static CamionDto convertirCamionDto(Camion c) {

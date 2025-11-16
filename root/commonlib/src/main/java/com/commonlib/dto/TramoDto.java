@@ -14,5 +14,6 @@ public record TramoDto(
         BigDecimal costoAproximado,
         BigDecimal costoReal,
         LocalDateTime fechaHoraInicio,
-        LocalDateTime fechaHoraFin) {
+        LocalDateTime fechaHoraFin,
+        Double distancia) {
 }

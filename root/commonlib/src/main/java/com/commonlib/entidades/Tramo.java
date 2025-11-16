@@ -55,4 +55,5 @@ public class Tramo {
     private BigDecimal costoReal;
     private LocalDateTime fechaHoraInicio;
     private LocalDateTime fechaHoraFin;
+    private Double distancia;
 }
