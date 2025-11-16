@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.commonlib.dto.*;
 import com.commonlib.entidades.*;
-
+/* 
 @RestController
 @RequestMapping("/protected/pedidos")
 public class pedidosController {
@@ -142,3 +142,4 @@ public class pedidosController {
     }
 
 }
+*/

@@ -27,7 +27,8 @@ public class ResourceServerConfig {
 
         .requestMatchers("/protected/**")
             .hasRole("ADMIN")
-
+        .requestMatchers("/controlled/**")
+            .hasRole("ADMIN")
 
         .anyRequest()
         .authenticated()
