@@ -13,8 +13,8 @@ com/commonlib/dto/DepositoDto.class
 com/commonlib/entidades/Tramo.class
 com/commonlib/dto/CamionDto.class
 com/commonlib/entidades/Cliente$ClienteBuilder.class
-com/commonlib/entidades/Tarifa$TarifaBuilder.class
 com/commonlib/entidades/Solicitud.class
+com/commonlib/entidades/Tarifa$TarifaBuilder.class
 com/commonlib/entidades/Tramo$TramoBuilder.class
 com/commonlib/entidades/Ruta$RutaBuilder.class
 com/commonlib/dto/UbicacionDto.class

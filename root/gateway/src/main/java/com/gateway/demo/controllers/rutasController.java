@@ -46,7 +46,7 @@ public class rutasController {
                     .toEntity(SolicitudDto.class).getBody();
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("el pedido ingresado no existe");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e);
         }
 
         String ubicaciones = pedidoActual.origen().longitud() + "," + pedidoActual.origen().latitud() + ";";
@@ -113,10 +113,10 @@ public class rutasController {
                 }
 
                 if (destino != null) {
-                    TramoDto tdto = new TramoDto(null,origen, destino, null, rutaDto, "deposito-deposito", null, null, null, null, null, l.getDistance());
+                    TramoDto tdto = new TramoDto(null,origen, destino, null, null, "deposito-deposito", null, null, null, null, null, l.getDistance());
                     tramos.add(tdto);
                 } else {
-                    TramoDto tdto = new TramoDto(null,origen, pedidoActual.destino(), null, rutaDto, "deposito-destino", null, null, null, null, null, l.getDistance());
+                    TramoDto tdto = new TramoDto(null,origen, pedidoActual.destino(), null, null, "deposito-destino", null, null, null, null, null, l.getDistance());
                     tramos.add(tdto);
                 }
             }
@@ -127,15 +127,17 @@ public class rutasController {
         Double distanciaTotal = (double)0;
         for (TramoDto t : tramos) {
             distanciaTotal += t.distancia();
+            
         }
 
         RutaDto rutaFinal = new RutaDto(null, pedidoActual, tramos.size(), depositoActual.size(), null, null, distanciaTotal);
 
 
-        rutasClient.post().body(rutaFinal).exchange((req, res) -> {System.err.println(res); return null;});
+        rutaFinal = rutasClient.post().body(rutaFinal).retrieve().toEntity(RutaDto.class).getBody();
 
         for (TramoDto t : tramos) {
-            tramosClient.post().body(t).exchange((req, res) -> {System.err.println(res); return null;});
+            TramoDto tdto = new TramoDto(null,t.origen(), t.destino(), null, rutaFinal, t.tipo(), null, null, null, null, null, t.distancia());
+            tramosClient.post().body(tdto).exchange((req, res) -> {System.err.println(req);System.err.println(res); return null;});
         }
         // http de ejemplo
         // http://localhost:5000/route/v1/driving/-58.38,-34.60;-58.40,-34.61;-58.43,-34.62;-58.45,-34.63?steps=true&overview=simplified&geometries=geojson
