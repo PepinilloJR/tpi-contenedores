@@ -92,7 +92,8 @@ public interface DtoHandler {
     public static RutaDto convertirRutaDto(Ruta r) {
         if (r == null)
             return null;
-        return new RutaDto(r.getId(), convertirSolicitudDto(r.getSolicitud()), r.getCantidadTramos(), r.getCantidadDepositos(), r.getCostoPorTramo(), null, r.getDistanciaTotal());
+        return new RutaDto(r.getId(), convertirSolicitudDto(r.getSolicitud()), r.getCantidadTramos(),
+                r.getCantidadDepositos(), r.getCostoPorTramo(), null, r.getDistanciaTotal());
     }
 
     public static Ruta convertirRutaEntidad(RutaDto dto) {
@@ -150,6 +151,22 @@ public interface DtoHandler {
         t.setFechaHoraFin(dto.fechaHoraFin());
 
         return t;
+    }
+
+    public static List<TramoDto> convertirTramosDto(List<Tramo> t) {
+        if (t == null)
+            return List.of();
+        return t.stream()
+                .map(DtoHandler::convertirTramoDto)
+                .collect(Collectors.toList());
+    }
+
+    public static List<Tramo> convertirTramosEntidad(List<TramoDto> t) {
+        if (t == null)
+            return List.of();
+        return t.stream()
+                .map(DtoHandler::convertirTramoEntidad)
+                .collect(Collectors.toList());
     }
 
     // Cliente
