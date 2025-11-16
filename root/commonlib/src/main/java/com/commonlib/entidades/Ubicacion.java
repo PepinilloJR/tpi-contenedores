@@ -22,6 +22,7 @@ public class Ubicacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
+    private String tipo; // Puede ser un deposito
     private Double latitud;
     private Double longitud;
 }
