@@ -4,11 +4,52 @@ import com.commonlib.entidades.Camion;
 import com.commonlib.entidades.Cliente;
 import com.commonlib.entidades.Contenedor;
 import com.commonlib.entidades.Ruta;
+import com.commonlib.entidades.Seguimiento;
 import com.commonlib.entidades.Solicitud;
 import com.commonlib.entidades.Tramo;
 import com.commonlib.entidades.Ubicacion;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public interface DtoHandler {
+
+    // Seguimiento
+
+    // Para un solo seguimiento
+    public static SeguimientoDto convertirSeguimientoDto(Seguimiento s) {
+        if (s == null)
+            return null;
+        return new SeguimientoDto(s.getId(), s.getEstado(), s.getFecha());
+    }
+
+    // Para un solo seguimientoDto
+    public static Seguimiento convertirSeguimientoEntidad(SeguimientoDto dto) {
+        Seguimiento s = new Seguimiento();
+        s.setEstado(dto.estado());
+        s.setFecha(dto.fecha());
+        return s;
+    }
+
+    // Para las listas
+    // Lista de seguimientos
+    public static List<SeguimientoDto> convertirSeguimientosDto(List<Seguimiento> s) {
+        if (s == null)
+            return List.of(); // ojo
+        return s.stream()
+                .map(DtoHandler::convertirSeguimientoDto)
+                .collect(Collectors.toList());
+    }
+
+    // Lista de seguimientosDto
+
+    public static List<Seguimiento> convertirSeguimientosEntidad(List<SeguimientoDto> s) {
+        if (s == null)
+            return List.of();
+        return s.stream()
+                .map(DtoHandler::convertirSeguimientoEntidad)
+                .collect(Collectors.toList());
+    }
 
     // Contenedor
     public static ContenedorDto convertirContenedorDto(Contenedor c) {
@@ -50,7 +91,8 @@ public interface DtoHandler {
     public static RutaDto convertirRutaDto(Ruta r) {
         if (r == null)
             return null;
-        return new RutaDto(r.getId(), convertirSolicitudDto(r.getSolicitud()), r.getCantidadTramos(), r.getCantidadDepositos(), r.getCostoPorTramo(), null);
+        return new RutaDto(r.getId(), convertirSolicitudDto(r.getSolicitud()), r.getCantidadTramos(),
+                r.getCantidadDepositos(), r.getCostoPorTramo(), null);
     }
 
     public static Ruta convertirRutaEntidad(RutaDto dto) {
@@ -142,7 +184,8 @@ public interface DtoHandler {
                 convertirClienteDto(s.getCliente()),
                 convertirContenedorDto(s.getContenedor()),
                 convertirUbicacionDto(s.getOrigen()),
-                convertirUbicacionDto(s.getDestino()));
+                convertirUbicacionDto(s.getDestino()),
+                convertirSeguimientosDto(s.getSeguimiento()));
     }
 
     public static Solicitud convertirSolicitudEntidad(SolicitudDto dto) {
@@ -159,6 +202,7 @@ public interface DtoHandler {
         s.setContenedor(convertirContenedorEntidad(dto.contenedor()));
         s.setOrigen(convertirUbicacionEntidad(dto.origen()));
         s.setDestino(convertirUbicacionEntidad(dto.destino()));
+        s.setSeguimiento(convertirSeguimientosEntidad(dto.seguimiento()));
 
         return s;
     }
