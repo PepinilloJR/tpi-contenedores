@@ -18,6 +18,11 @@ public class RestClientsConfig {
     }
 
     @Bean
+    RestClient tramosClient() {
+        return RestClient.create("http://pedidos:8001/api/tramos");
+    }
+
+    @Bean
     RestClient clientesClient() {
         return RestClient.create("http://pedidos:8001/api/clientes");
     }

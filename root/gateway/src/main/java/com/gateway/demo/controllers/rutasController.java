@@ -16,6 +16,8 @@ import com.commonlib.dto.SolicitudDto;
 @RestController
 @RequestMapping("/controlled/rutas")
 public class rutasController {
+
+
     @Autowired
     RestClient pedidosClient;
 
@@ -53,20 +55,20 @@ public class rutasController {
         }
         ubicaciones += pedidoActual.destino().longitud() + "," + pedidoActual.destino().latitud();
         // /route/v1/driving/"+ubicaciones
-        Object ubiObject;
+        RutaResponse ubiObject;
         try {
             ubiObject = distanciaClient.get()
-                    .uri("/driving/" + ubicaciones + "?steps=true&overview=simplified&geometries=geojson").retrieve().toEntity(Object.class).getBody();
+                    .uri("/driving/" + ubicaciones + "?steps=true&overview=simplified&geometries=geojson").retrieve().body(RutaResponse.class);
             System.out.println(ubiObject.toString());
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La api fallo al intentar encontrar las distancias entre os depositos");
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getCause());
         }
-        
-        
+                
 
         // http de ejemplo
         // http://localhost:5000/route/v1/driving/-58.38,-34.60;-58.40,-34.61;-58.43,-34.62;-58.45,-34.63?steps=true&overview=simplified&geometries=geojson
-        return ResponseEntity.status(201).body(ubiObject);
+        return ResponseEntity.status(201).body(ubiObject.getRoutes());
     }
 }
