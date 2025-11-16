@@ -99,7 +99,7 @@ public interface DtoHandler {
         if (dto == null)
             return null;
         Ruta r = new Ruta();
-        r.setSolicitud(convertirSolicitudEntidad(dto.solicitudDto()));
+        r.setSolicitud(convertirSolicitudEntidad(dto.solicitud()));
         r.setCantidadTramos(dto.cantidadTramos());
         r.setCantidadDepositos(dto.depositosID().length);
         r.setCostoPorTramo(dto.costoPorTramo());
