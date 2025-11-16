@@ -11,6 +11,8 @@ import com.pedidos.service.demo.servicios.SolicitudServicio;
 import com.pedidos.service.demo.servicios.UbicacionServicio;
 
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -65,15 +67,26 @@ public class SolicitudControlador {
         var origen = servicioUbicacion.crearSiNoExiste(solicitudEntidad.getOrigen());
         var destino = servicioUbicacion.crearSiNoExiste(solicitudEntidad.getDestino());
 
-
-
         // 4) Preparar y guardar la solicitud
         solicitudEntidad.setEstado("borrador");
         solicitudEntidad.setCliente(cliente);
         solicitudEntidad.setContenedor(contenedor);
         solicitudEntidad.setOrigen(origen);
         solicitudEntidad.setDestino(destino);
+
         Solicitud solicitudCreada = servicioSolicitud.crear(solicitudEntidad);
+
+        Seguimiento primerSeguimiento = new Seguimiento();
+        primerSeguimiento.setEstado("borrador");
+        primerSeguimiento.setFecha(LocalDateTime.now());
+
+        if (solicitudCreada.getSeguimiento() == null) {
+            solicitudCreada.setSeguimiento(new ArrayList<>());
+        }
+
+        solicitudCreada.getSeguimiento().add(primerSeguimiento);
+
+        servicioSolicitud.actualizar(solicitudCreada.getId(), solicitudCreada);
 
         // 5) Responder 201 con el DTO resultante
         return ResponseEntity.status(201).body(DtoHandler.convertirSolicitudDto(solicitudCreada));
@@ -86,6 +99,8 @@ public class SolicitudControlador {
         // Estado
 
         Solicitud solicitudActual = servicioSolicitud.obtenerPorId(id);
+
+        String estadoAnterior = solicitudActual.getEstado();
 
         solicitudActual.setTiempoEstimado(solicitudDto.tiempoEstimado() != null ? solicitudDto.tiempoEstimado()
                 : solicitudActual.getTiempoEstimado());
@@ -102,10 +117,21 @@ public class SolicitudControlador {
         solicitudActual.setEstado(solicitudDto.estado() != null ? solicitudDto.estado()
                 : solicitudActual.getEstado());
 
+        if (!solicitudActual.getEstado().equals(estadoAnterior)) {
+            Seguimiento nuevoSeguimiento = new Seguimiento();
+            nuevoSeguimiento.setEstado(solicitudActual.getEstado());
+            nuevoSeguimiento.setFecha(LocalDateTime.now());
+
+            if (solicitudActual.getSeguimiento() == null) {
+                solicitudActual.setSeguimiento(new ArrayList<>());
+            }
+
+            solicitudActual.getSeguimiento().add(nuevoSeguimiento);
+
+        }
         Solicitud SolicitudActualizada = servicioSolicitud.actualizar(id, solicitudActual);
 
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDto(SolicitudActualizada));
-
     }
 
     @GetMapping("/{id}")

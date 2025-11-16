@@ -1,65 +1,56 @@
-### Crear solicitud nueva con cliente y ubicaciones nuevas
+### Crear una solicitud (POST)
 POST http://localhost:8001/api/solicitudes
 Content-Type: application/json
 
 {
+  "estado": null,
+  "costoEstimado": 5000,
   "tiempoEstimado": 48,
-  "costoEstimado": 12000.5,
   "tiempoReal": null,
   "costoFinal": null,
-  "estado": null,
-
   "cliente": {
-    "id": null,
-    "nombre": "Carlos",
-    "apellido": "Gomez",
-    "telefono": "3515554444",
-    "direccion": "Barrio Alberdi 450",
-    "dni": 45456789
+    "nombre": "Juan",
+    "apellido": "Perez",
+    "telefono": "123456789",
+    "direccion": "Calle Falsa 123",
+    "dni": "12345678"
   },
-
   "contenedor": {
-    "id": null,
-    "peso": 1000.0,
-    "volumen": 20.0,
-    "estado": "borrador",
-    "costoVolumen": 150.0
+    "peso": 1000,
+    "volumen": 10,
+    "estado": "vacío",
+    "costoVolumen": 200
   },
-
   "origen": {
-    "id": null,
     "nombre": "Deposito A",
     "tipo": "Deposito",
-    "latitud": -31.4135,
-    "longitud": -64.18105
+    "latitud": -31.4201,
+    "longitud": -64.1888
   },
-
   "destino": {
-    "id": null,
     "nombre": "Deposito B",
     "tipo": "Deposito",
-    "latitud": -32.9471,
-    "longitud": -60.6985
-  }
+    "latitud": -31.4300,
+    "longitud": -64.2000
+  },
+  "seguimiento": []
 }
 
-### Obtener todas las solicitudes
-GET http://localhost:8001/api/solicitudes
-Accept: application/json
-
-### Obtener solicitud por id
-GET http://localhost:8001/api/solicitudes/1
-Accept: application/json
-
-### Actualizar solicitud
+### Actualizar una solicitud (PUT)
 PUT http://localhost:8001/api/solicitudes/1
 Content-Type: application/json
 
 {
-  "tiempoEstimado": 50,
-  "costoEstimado": 12500.0,
-  "estado": "programada"
+  "estado": "programada",
+  "costoEstimado": 5500,
+  "tiempoEstimado": 50
 }
 
-### Eliminar solicitud
+### Obtener una solicitud por ID (GET)
+GET http://localhost:8001/api/solicitudes/1
+
+### Obtener todas las solicitudes (GET)
+GET http://localhost:8001/api/solicitudes
+
+### Eliminar una solicitud (DELETE)
 DELETE http://localhost:8001/api/solicitudes/1

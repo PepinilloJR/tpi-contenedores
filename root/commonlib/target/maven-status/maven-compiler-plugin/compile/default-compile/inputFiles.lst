@@ -1,3 +1,26 @@
+<<<<<<< HEAD
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/CamionDto.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/ClienteDto.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/ContenedorDto.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/DepositoDto.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/DtoHandler.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/RutaDto.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/SeguimientoDto.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/SolicitudDto.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/TarifaDto.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/TramoDto.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/UbicacionDto.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Camion.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Cliente.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Contenedor.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Deposito.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Ruta.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Seguimiento.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Solicitud.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Tarifa.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Tramo.java
+/home/tomilomi/PROJECTS/TPIBACK/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Ubicacion.java
+=======
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/CamionDto.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/ClienteDto.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/dto/ContenedorDto.java
@@ -19,3 +42,4 @@
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Tarifa.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Tramo.java
 /home/pepinillojr/proyectos/tpi-contenedores/root/commonlib/src/main/java/com/commonlib/entidades/Ubicacion.java
+>>>>>>> e208dace3901932be67923415d35743c3e827258
