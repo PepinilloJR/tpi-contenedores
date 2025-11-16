@@ -42,6 +42,12 @@ services:
       - "8003"
     depends_on:
       - db
+  camiones:
+    image: pepinillojr/tpi-backend:camiones-service
+    expose:
+      - "8002"
+    depends_on:
+      - db
   osrm:
     image: osrm/osrm-backend:latest
     platform: linux/amd64

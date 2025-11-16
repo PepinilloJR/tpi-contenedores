@@ -65,7 +65,13 @@ public class rutasController {
             System.out.println(e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getCause());
         }
-                
+        
+        int c = 0;
+        for (Leg l : ubiObject.getRoutes().get(0).getLegs()) {
+            if (c == 0) {
+
+            }
+        }
 
         // http de ejemplo
         // http://localhost:5000/route/v1/driving/-58.38,-34.60;-58.40,-34.61;-58.43,-34.62;-58.45,-34.63?steps=true&overview=simplified&geometries=geojson
