@@ -42,7 +42,7 @@ public class rutasController {
         SolicitudDto pedidoActual;
         ArrayList<UbicacionDto> depositoActual = new ArrayList<UbicacionDto>();
         try {
-            pedidoActual = pedidosClient.get().uri("/" + rutaDto.solicitudDto().id()).retrieve()
+            pedidoActual = pedidosClient.get().uri("/" + rutaDto.solicitud().id()).retrieve()
                     .toEntity(SolicitudDto.class).getBody();
 
         } catch (Exception e) {
