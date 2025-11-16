@@ -102,7 +102,7 @@ public interface DtoHandler {
         Ruta r = new Ruta();
         r.setSolicitud(convertirSolicitudEntidad(dto.solicitud()));
         r.setCantidadTramos(dto.cantidadTramos());
-        r.setCantidadDepositos(dto.depositosID().length);
+        r.setCantidadDepositos(dto.cantidadDepositos());
         r.setCostoPorTramo(dto.costoPorTramo());
         return r;
     }
