@@ -43,9 +43,6 @@ Content-Type: application/json
   "seguimiento": []
 }
 
-
-
-
 ### Crear una ruta (usa la solicitud recién creada)
 POST http://localhost:8001/api/rutas
 Content-Type: application/json
@@ -97,4 +94,84 @@ Content-Type: application/json
   "costoPorTramo": null,
   "depositosID": null,
   "distanciaTotal": 5623.5
+}
+
+### Crear el tramo
+POST http://localhost:8001/api/tramos
+Content-Type: application/json
+
+{
+  "id": null,
+  "origen": {
+    "id": 1,
+    "nombre": "Depósito Barracas",
+    "tipo": "DEPOSITO",
+    "latitud": -34.63343,
+    "longitud": -58.36499
+  },
+  "destino": {
+    "id": 2,
+    "nombre": "Puerto de Buenos Aires",
+    "tipo": "PUERTO",
+    "latitud": -34.59085,
+    "longitud": -58.37165
+  },
+  "ruta": {
+    "id": 1,
+    "solicitud": {
+      "id": 1,
+      "estado": "borrador",
+      "costoEstimado": 5000.0,
+      "tiempoEstimado": 120.0,
+      "tiempoReal": null,
+      "costoFinal": null,
+      "cliente": {
+        "id": 1,
+        "nombre": "Juan",
+        "apellido": "Pérez",
+        "telefono": "1122334455",
+        "direccion": "Av. Independencia 1234, Buenos Aires",
+        "dni": 40123123
+      },
+      "contenedor": {
+        "id": 1,
+        "peso": 1200.0,
+        "volumen": 30.5,
+        "estado": "EN_DEPÓSITO",
+        "costoVolumen": 2500.0
+      },
+      "origen": {
+        "id": 1,
+        "nombre": "Depósito Barracas",
+        "tipo": "DEPOSITO",
+        "latitud": -34.63343,
+        "longitud": -58.36499,
+        "costo": null
+      },
+      "destino": {
+        "id": 2,
+        "nombre": "Puerto de Buenos Aires",
+        "tipo": "PUERTO",
+        "latitud": -34.59085,
+        "longitud": -58.37165,
+        "costo": null
+      },
+      "seguimiento": []
+    },
+    "cantidadTramos": 2,
+    "cantidadDepositos": 1,
+    "costoPorTramo": null,
+    "depositosID": null,
+    "distanciaTotal": 5623.5
+  },
+  "camion": {
+    "id": null
+  },
+  "tipo": "ENTREGA",
+  "estado": "pendiente",
+  "costoAproximado": null,
+  "costoReal": null,
+  "fechaHoraInicio": null,
+  "fechaHoraFin": null,
+  "distancia": 2811.75
 }

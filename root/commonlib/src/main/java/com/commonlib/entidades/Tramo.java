@@ -31,23 +31,23 @@ public class Tramo {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_origen", 
-    nullable = false, referencedColumnName = "id", 
+    nullable = true, referencedColumnName = "id", 
     foreignKey = @ForeignKey(name = "fk_tramo_ubicacion_origen"))
     private Ubicacion origen;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_destino", 
-    nullable = false, referencedColumnName = "id", 
+    nullable = true, referencedColumnName = "id", 
     foreignKey = @ForeignKey(name = "fk_tramo_ubicacion_destino"))
     private Ubicacion destino;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_ruta",
-    nullable = false, referencedColumnName = "id",
+    nullable = true, referencedColumnName = "id",
     foreignKey = @ForeignKey(name = "fk_tramo_ruta"))
     private Ruta ruta;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_camion",
-    nullable = false, referencedColumnName = "id",
+    nullable = true, referencedColumnName = "id",
     foreignKey = @ForeignKey(name = "fk_tramo_camion"))
     private Camion camion;
 

@@ -8,7 +8,6 @@ import com.commonlib.entidades.Tramo;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.repositorios.TramoRepositorio;
 
-import jakarta.transaction.TransactionScoped;
 
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;

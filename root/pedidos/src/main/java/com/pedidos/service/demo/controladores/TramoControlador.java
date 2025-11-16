@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.commonlib.dto.DtoHandler;
 import com.commonlib.dto.TramoDto;
 import com.commonlib.entidades.Tramo;
+import com.pedidos.service.demo.servicios.RutaServicio;
 import com.pedidos.service.demo.servicios.TramoServicio;
 
 /*
@@ -33,17 +34,26 @@ import com.pedidos.service.demo.servicios.TramoServicio;
 @RestController
 @RequestMapping("/api/tramos")
 public class TramoControlador {
+
+    private final RutaServicio rutaServicio;
     private final TramoServicio servicio;
 
-    public TramoControlador(TramoServicio servicio) {
+    public TramoControlador(TramoServicio servicio, RutaServicio rutaServicio) {
         this.servicio = servicio;
+        this.rutaServicio = rutaServicio;
     }
 
     // Maybe validate
     @PostMapping
     public ResponseEntity<TramoDto> crear(@RequestBody TramoDto tramoDto) {
+        System.out.println();
+
         Tramo tramoEntidad = DtoHandler.convertirTramoEntidad(tramoDto);
+        var rutaId = tramoDto.ruta().id();
+        var rutaBd = rutaServicio.obtenerPorId(rutaId);
+        tramoEntidad.setRuta(rutaBd);
         Tramo tramoCreado = servicio.crear(tramoEntidad);
+
         return ResponseEntity.status(201).body(DtoHandler.convertirTramoDto(tramoCreado));
     }
 
