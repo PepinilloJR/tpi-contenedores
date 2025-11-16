@@ -17,6 +17,7 @@ import com.commonlib.dto.ClienteDto;
 import com.commonlib.entidades.Cliente;
 import com.pedidos.service.demo.servicios.ClienteServicio;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 import com.commonlib.dto.DtoHandler;
@@ -30,15 +31,15 @@ public class ClienteControlador {
         this.servicio = servicio;
     }
 
-
+    @Operation(summary = "Crear una cliente", description = "Crea un nuevo Cliente")
     @PostMapping
     public ResponseEntity<ClienteDto> crear(@Valid @RequestBody ClienteDto clienteDto) {
         Cliente clienteEntidad = DtoHandler.convertirClienteEntidad(clienteDto);
         Cliente clienteCreado = servicio.crear(clienteEntidad);
         return ResponseEntity.status(201).body(DtoHandler.convertirClienteDto(clienteCreado));
     }
-    
 
+    @Operation(summary = "Actualizar un cliente", description = "Actualiza un Cliente dado segun id")
     @PutMapping("/{id}")
     public ResponseEntity<ClienteDto> actualizar(@PathVariable Long id, @RequestBody ClienteDto clienteDto) {
         // soporta la actualizacion parcial, aplicando campos no nulos del dto y guardo
@@ -57,14 +58,14 @@ public class ClienteControlador {
         return ResponseEntity.ok(DtoHandler.convertirClienteDto(clienteActualizado));
     }
 
-
+    @Operation(summary = "Obtener un Cliente", description = "Obtiene un Cliente dado segun id")
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDto> obtener(@PathVariable Long id) {
         Cliente cliente = servicio.obtenerPorId(id);
         return ResponseEntity.ok(DtoHandler.convertirClienteDto(cliente));
     }
 
-
+    @Operation(summary = "Obtener todos los Clientes", description = "Obtiene todos los Clientes registrados")
     @GetMapping
     public ResponseEntity<List<ClienteDto>> obtenerTodos() {
         List<Cliente> lista = servicio.listarTodos();
@@ -72,7 +73,7 @@ public class ClienteControlador {
         return ResponseEntity.ok(dtos);
     }
 
-
+    @Operation(summary = "Borrar un Clientes", description = "Borra un Cliente dado segun id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);

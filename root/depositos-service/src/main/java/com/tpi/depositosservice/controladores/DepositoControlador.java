@@ -17,6 +17,8 @@ import com.commonlib.dto.DepositoDto;
 import com.commonlib.entidades.Deposito;
 import com.tpi.depositosservice.servicios.DepositoServicio;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api/depositos")
 public class DepositoControlador {
@@ -30,15 +32,15 @@ public class DepositoControlador {
     // --- Helpers de conversión (igual que tu compañero) ---
 
     private DepositoDto convertirDto(Deposito d) {
-        if (d == null) return null;
+        if (d == null)
+            return null;
         return new DepositoDto(
-            d.getIdDeposito(),
-            d.getNombre(),
-            d.getDireccion(),
-            d.getLatitud(),
-            d.getLongitud(),
-            d.getCostoEstadia()
-        );
+                d.getIdDeposito(),
+                d.getNombre(),
+                d.getDireccion(),
+                d.getLatitud(),
+                d.getLongitud(),
+                d.getCostoEstadia());
     }
 
     private Deposito convertirEntidad(DepositoDto dto) {
@@ -54,6 +56,7 @@ public class DepositoControlador {
 
     // --- Endpoints CRUD ---
 
+    @Operation(summary = "Crear un Deposito", description = "Crea un nuevo deposito.")
     @PostMapping
     public ResponseEntity<DepositoDto> crear(@RequestBody DepositoDto depositoDto) {
         Deposito depositoEntidad = convertirEntidad(depositoDto);
@@ -61,28 +64,34 @@ public class DepositoControlador {
         return ResponseEntity.status(201).body(convertirDto(depositoCreado));
     }
 
+    @Operation(summary = "Actualizar un Deposito", description = "Actualiza un deposito dado segun id.")
     @PutMapping("/{id}")
     public ResponseEntity<DepositoDto> actualizar(@PathVariable Long id, @RequestBody DepositoDto depositoDto) {
-        // Obtenemos el depósito existente
+        // Obtenemos el deposito existente
         Deposito depositoActual = servicio.obtenerPorId(id);
 
-        // Actualizamos los campos (lógica de tu compañero)
+        // Actualizamos los campos
         depositoActual.setNombre(depositoDto.nombre() != null ? depositoDto.nombre() : depositoActual.getNombre());
-        depositoActual.setDireccion(depositoDto.direccion() != null ? depositoDto.direccion() : depositoActual.getDireccion());
+        depositoActual.setDireccion(
+                depositoDto.direccion() != null ? depositoDto.direccion() : depositoActual.getDireccion());
         depositoActual.setLatitud(depositoDto.latitud() != null ? depositoDto.latitud() : depositoActual.getLatitud());
-        depositoActual.setLongitud(depositoDto.longitud() != null ? depositoDto.longitud() : depositoActual.getLongitud());
-        depositoActual.setCostoEstadia(depositoDto.costoEstadia() != null ? depositoDto.costoEstadia() : depositoActual.getCostoEstadia());
+        depositoActual
+                .setLongitud(depositoDto.longitud() != null ? depositoDto.longitud() : depositoActual.getLongitud());
+        depositoActual.setCostoEstadia(
+                depositoDto.costoEstadia() != null ? depositoDto.costoEstadia() : depositoActual.getCostoEstadia());
 
         Deposito depositoActualizado = servicio.actualizar(id, depositoActual);
         return ResponseEntity.ok(convertirDto(depositoActualizado));
     }
 
+    @Operation(summary = "Obtener un Deposito", description = "Obtiene un deposito dado segun id.")
     @GetMapping("/{id}")
     public ResponseEntity<DepositoDto> obtener(@PathVariable Long id) {
         Deposito deposito = servicio.obtenerPorId(id);
         return ResponseEntity.ok(convertirDto(deposito));
     }
 
+    @Operation(summary = "Obtiene todos los Depositos", description = "Obtiene todos los Depositos")
     @GetMapping
     public ResponseEntity<List<DepositoDto>> obtenerTodos() {
         List<Deposito> lista = servicio.listarTodos();
@@ -90,6 +99,7 @@ public class DepositoControlador {
         return ResponseEntity.ok(dtos);
     }
 
+    @Operation(summary = "Eliminar un Deposito", description = "Elimina un deposito dado segun id.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);

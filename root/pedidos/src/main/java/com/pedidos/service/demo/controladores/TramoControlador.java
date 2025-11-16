@@ -20,6 +20,8 @@ import com.commonlib.entidades.Tramo;
 import com.pedidos.service.demo.servicios.RutaServicio;
 import com.pedidos.service.demo.servicios.TramoServicio;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 /*
 !!!!!!!!!
 !!!!!!!!!
@@ -44,6 +46,7 @@ public class TramoControlador {
     }
 
     // Maybe validate
+    @Operation(summary = "Crear un Tramo", description = "Crea un Tramo")
     @PostMapping
     public ResponseEntity<TramoDto> crear(@RequestBody TramoDto tramoDto) {
         System.out.println();
@@ -57,6 +60,7 @@ public class TramoControlador {
         return ResponseEntity.status(201).body(DtoHandler.convertirTramoDto(tramoCreado));
     }
 
+    @Operation(summary = "Actualiza un Tramo", description = "Actualiza un Tramo dado segun id")
     @PutMapping("/{id}")
     public ResponseEntity<TramoDto> actualizar(@PathVariable Long id, @RequestBody TramoDto tramoDto) {
         // Soporta la actualizacion parcial, y hay que ver reglas en el servicio
@@ -70,12 +74,14 @@ public class TramoControlador {
         return ResponseEntity.ok(DtoHandler.convertirTramoDto(tramoActualizado));
     }
 
+    @Operation(summary = "Obtener un Tramo", description = "Obtiene un Tramo dado segun id")
     @GetMapping("/{id}")
     public ResponseEntity<TramoDto> obtener(@PathVariable Long id) {
         Tramo tramo = servicio.obtenerPorId(id);
         return ResponseEntity.ok(DtoHandler.convertirTramoDto(tramo));
     }
 
+    @Operation(summary = "Obtener los Tramos de un transportista", description = "Obtiene los Tramos de un transportista dado")
     @GetMapping("/{transportista}")
     public ResponseEntity<List<TramoDto>> obtener(@PathVariable String transportista) {
         List<Tramo> tramos = servicio.obtenerPorTransportista(transportista);
@@ -83,7 +89,7 @@ public class TramoControlador {
     }
 
     // por ejemplo -> GET /api/tramos?idRuta=5
-
+    @Operation(summary = "Obtener todos los Tramos de una Ruta", description = "Obtiene todos los Tramos de una ruta dada")
     @GetMapping
     public ResponseEntity<List<TramoDto>> obtenerTodos(@RequestParam(required = false) Long rutaId) {
         List<Tramo> lista;
@@ -96,6 +102,7 @@ public class TramoControlador {
         return ResponseEntity.ok(dtos);
     }
 
+    @Operation(summary = "Eliminar un Tramo", description = "Elimina un Tramo dado segun id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);
