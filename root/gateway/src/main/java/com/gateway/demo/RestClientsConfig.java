@@ -34,7 +34,7 @@ public class RestClientsConfig {
 
     @Bean
     RestClient distanciaClient() {
-        return RestClient.create("http://localhost:5000/api/depositos");
+        return RestClient.create("http://localhost:5000/route/v1/");
     }
 
     // Es otro el puerto de camiones

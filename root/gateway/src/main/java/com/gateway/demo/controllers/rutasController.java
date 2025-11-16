@@ -22,25 +22,46 @@ public class rutasController {
     @Autowired
     RestClient depositosClient;
 
-    @PostMapping
-    public ResponseEntity<?> agregarRutas(@RequestBody RutaDto rutaDto)  {
-        SolicitudDto pedidoActual;
+    @Autowired
+    RestClient distanciaClient;
 
+    @PostMapping
+    public ResponseEntity<?> agregarRutas(@RequestBody RutaDto rutaDto) {
+        SolicitudDto pedidoActual;
+        DepositoDto depositoActual;
         try {
-            pedidoActual = pedidosClient.get().uri("/" + rutaDto.solicitudDto().id()).retrieve().toEntity(SolicitudDto.class).getBody();
+            pedidoActual = pedidosClient.get().uri("/" + rutaDto.solicitudDto().id()).retrieve()
+                    .toEntity(SolicitudDto.class).getBody();
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("el pedido ingresado no existe");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("el pedido ingresado no existe");
         }
-        
-        String ubicaciones = pedidoActual.origen().longitud() + "," + pedidoActual.origen().longitud() + ";";
-        for (Long dId : rutaDto.depositosID()) {
-            DepositoDto depositoActual = depositosClient.get().uri("/" + dId).retrieve().toEntity(DepositoDto.class).getBody();
 
-            ubicaciones += depositoActual.longitud()+","+depositoActual.latitud() + ";";
+        String ubicaciones = pedidoActual.origen().longitud() + "," + pedidoActual.origen().latitud() + ";";
+        for (Long dId : rutaDto.depositosID()) {
+            try {
+                depositoActual = depositosClient.get()
+                        .uri("/" + dId)
+                        .retrieve()
+                        .toEntity(DepositoDto.class)
+                        .getBody();
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El depósito " + dId + " no existe.");
+            }
+
+            ubicaciones += depositoActual.longitud() + "," + depositoActual.latitud() + ";";
         }
-        ubicaciones += pedidoActual.destino().longitud() + "," + pedidoActual.destino().longitud();
-        RestClient dRestClient = RestClient.create("http://localhost:5000/route/v1/driving/"+ubicaciones);
+        ubicaciones += pedidoActual.destino().longitud() + "," + pedidoActual.destino().latitud();
+        // /route/v1/driving/"+ubicaciones
+
+        try {
+            Object ubiObject = distanciaClient.get()
+                    .uri("/driving/" + ubicaciones + "?steps=true&overview=simplified&geometries=geojson").retrieve().toEntity(Object.class).getBody();
+            System.out.println(ubiObject.toString());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La api fallo al intentar encontrar las distancias entre os depositos");
+        }
         // http de ejemplo
         // http://localhost:5000/route/v1/driving/-58.38,-34.60;-58.40,-34.61;-58.43,-34.62;-58.45,-34.63?steps=true&overview=simplified&geometries=geojson
         return null;
