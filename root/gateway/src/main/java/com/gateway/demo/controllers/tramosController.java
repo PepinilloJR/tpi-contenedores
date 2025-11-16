@@ -15,7 +15,7 @@ import com.commonlib.dto.TramoDto;
 
 @RestController
 @RequestMapping("/protected/tramos")
-public class pedidosController {
+public class tramosController {
     @Autowired
     RestClient pedidosClient;
 
