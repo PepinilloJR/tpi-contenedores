@@ -3,7 +3,6 @@ package com.gateway.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,8 +47,8 @@ public class pedidosController {
                     .toEntity(TramoDto.class)
                     .getBody();
 
-            if (tramoActual.ruta() == null || tramoActual.ruta().solicitudDto() == null
-                    || tramoActual.ruta().solicitudDto().contenedor() == null) {
+            if (tramoActual.ruta() == null || tramoActual.ruta().solicitud() == null
+                    || tramoActual.ruta().solicitud().contenedor() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("El tramo no tiene ruta, solicitud o contenedor asignado");
             }
@@ -61,8 +60,8 @@ public class pedidosController {
         // hay que comprobar que el camion sea apto
         // primero tratar de obtener la ruta del tramo
 
-        var volumen = tramoActual.ruta().solicitudDto().contenedor().volumen();
-        var peso = tramoActual.ruta().solicitudDto().contenedor().peso();
+        var volumen = tramoActual.ruta().solicitud().contenedor().volumen();
+        var peso = tramoActual.ruta().solicitud().contenedor().peso();
 
         if (peso == null || volumen == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
