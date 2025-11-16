@@ -1,7 +1,4 @@
-### ===============================
-### CREAR SOLICITUD (CLIENTE NUEVO)
-### ===============================
-
+### Crear solicitud nueva con cliente y ubicaciones nuevas
 POST http://localhost:8001/api/solicitudes
 Content-Type: application/json
 
@@ -27,52 +24,42 @@ Content-Type: application/json
     "volumen": 20.0,
     "estado": "borrador",
     "costoVolumen": 150.0
+  },
+
+  "origen": {
+    "id": null,
+    "nombre": "Deposito A",
+    "tipo": "Deposito",
+    "latitud": -31.4135,
+    "longitud": -64.18105
+  },
+
+  "destino": {
+    "id": null,
+    "nombre": "Deposito B",
+    "tipo": "Deposito",
+    "latitud": -32.9471,
+    "longitud": -60.6985
   }
 }
 
-###
-
-### ===============================
-### LISTAR TODAS LAS SOLICITUDES
-### ===============================
-
+### Obtener todas las solicitudes
 GET http://localhost:8001/api/solicitudes
 Accept: application/json
 
-###
-
-### ===============================
-### OBTENER SOLICITUD POR ID
-### (CAMBIAR el 1 por el ID devuelto)
-### ===============================
-
+### Obtener solicitud por id
 GET http://localhost:8001/api/solicitudes/1
 Accept: application/json
 
-###
-
-### ===============================
-### ACTUALIZAR SOLICITUD
-### (NO cambia cliente porque ya quedó creado)
-### ===============================
-
+### Actualizar solicitud
 PUT http://localhost:8001/api/solicitudes/1
 Content-Type: application/json
 
 {
-  "tiempoEstimado": 72,
-  "costoEstimado": 15000.0,
-  "tiempoReal": 70,
-  "costoFinal": 14800.0,
-  "estado": "programada",
-  "cliente": null,
-  "contenedor": null
+  "tiempoEstimado": 50,
+  "costoEstimado": 12500.0,
+  "estado": "programada"
 }
 
-###
-
-### ===============================
-### ELIMINAR SOLICITUD
-### ===============================
-
+### Eliminar solicitud
 DELETE http://localhost:8001/api/solicitudes/1

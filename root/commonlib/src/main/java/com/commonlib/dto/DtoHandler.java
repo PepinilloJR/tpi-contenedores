@@ -159,7 +159,7 @@ public interface DtoHandler {
         s.setCliente(convertirClienteEntidad(dto.cliente()));
         s.setContenedor(convertirContenedorEntidad(dto.contenedor()));
         s.setOrigen(convertirUbicacionEntidad(dto.origen()));
-        s.setOrigen(convertirUbicacionEntidad(dto.destino()));
+        s.setDestino(convertirUbicacionEntidad(dto.destino()));
 
         return s;
     }
