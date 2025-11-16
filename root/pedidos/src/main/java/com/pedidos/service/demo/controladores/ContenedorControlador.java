@@ -43,7 +43,7 @@ public class ContenedorControlador {
     // En el servicio hay que controlar el costoVolumen
 
     @PutMapping("/{id}")
-    public ResponseEntity<ContenedorDto> putMethodName(@PathVariable Long id,
+    public ResponseEntity<ContenedorDto> actualizar(@PathVariable Long id,
             @RequestBody ContenedorDto contenedorDto) {
         Contenedor contenedorActual = servicio.obtenerPorId(id);
 

@@ -1,6 +1,5 @@
 package com.gateway.demo.controllers;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +12,6 @@ import org.springframework.web.client.RestClient;
 
 import com.commonlib.dto.CamionDto;
 import com.commonlib.dto.TramoDto;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequestMapping("/protected/tramos")
@@ -34,7 +30,6 @@ public class pedidosController {
 
     @Autowired
     RestClient camionesClient;
-
 
     @PutMapping("/{id}")
     public ResponseEntity<?> asignarCamion(@PathVariable Long id, @RequestBody TramoDto tramoDto) {
@@ -91,6 +86,30 @@ public class pedidosController {
                     .body("Error al validar camión disponible: " + e.getMessage());
         }
 
+        try {
+            CamionDto camionActualizado = new CamionDto(
+                    camionApto.id(),
+                    camionApto.patente(),
+                    camionApto.nombreTransportista(),
+                    camionApto.telefono(),
+                    camionApto.capacidadPesoKg(),
+                    camionApto.capacidadVolumenM3(),
+                    camionApto.costoPorKm(),
+                    camionApto.consumoCombustibleLx100km(),
+                    false // lo marcamos como no disponible
+            );
+
+            camionesClient.put()
+                    .uri("/" + camionApto.id())
+                    .body(camionActualizado)
+                    .retrieve()
+                    .toBodilessEntity();
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar el estado del camión: " + e.getMessage());
+        }
+
         TramoDto tramoConCamion = new TramoDto(
                 tramoActual.id(),
                 tramoActual.origen(),
@@ -98,22 +117,17 @@ public class pedidosController {
                 camionApto,
                 tramoActual.ruta(),
                 tramoActual.tipo(),
-                tramoActual.estado(),
+                "pendiente",
                 tramoActual.costoAproximado(),
                 tramoActual.costoReal(),
                 tramoActual.fechaHoraInicio(),
                 tramoActual.fechaHoraFin(),
                 tramoActual.distancia());
 
+        // Actualizar el estado del camion
+
         return ResponseEntity.ok(tramoConCamion);
 
     }
-
-// Maybe no
-    @GetMapping("/{transportista}")
-    public String obtenerTramosSegunTransportista(@PathVariable String transportista) {
-        return new String();
-    }
-    
 
 }
