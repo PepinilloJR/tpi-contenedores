@@ -68,7 +68,8 @@ public class pedidosController {
         // hay que comprobar que el camion sea apto
 
         try {
-            var camionApto = camionesCliente
+            var camionApto = camionesCliente.get()
+            .uri("/disponible/por-capacidad")
         }
         
 
