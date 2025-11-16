@@ -50,12 +50,7 @@ public interface DtoHandler {
     public static RutaDto convertirRutaDto(Ruta r) {
         if (r == null)
             return null;
-<<<<<<< HEAD
         return new RutaDto(r.getId(), convertirSolicitudDto(r.getSolicitud()), r.getCantidadTramos(), r.getCantidadDepositos(), r.getCostoPorTramo(), null);
-=======
-        return new RutaDto(r.getId(), convertirSolicitudDto(r.getSolicitud()), r.getCantidadTramos(),
-                r.getCantidadDepositos(), r.getCostoPorTramo());
->>>>>>> e66c7b78fe9293126e9785f6a03f63220380ba78
     }
 
     public static Ruta convertirRutaEntidad(RutaDto dto) {
