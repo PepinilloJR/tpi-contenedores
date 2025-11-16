@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.commonlib.entidades.*;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/solicitudes")
@@ -65,6 +65,7 @@ public class SolicitudControlador {
 
         // 3) Persistir/obtener cliente y contenedor y reasignarlos
         var cliente = servicioCliente.crearSiNoExiste(solicitudEntidad.getCliente());
+        System.out.println(cliente);
         var contenedor = servicioContenedor.crear(solicitudEntidad.getContenedor());
         var origen = servicioUbicacion.crearSiNoExiste(solicitudEntidad.getOrigen());
         var destino = servicioUbicacion.crearSiNoExiste(solicitudEntidad.getDestino());

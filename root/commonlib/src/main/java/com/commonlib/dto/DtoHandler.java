@@ -60,6 +60,9 @@ public interface DtoHandler {
 
     public static Contenedor convertirContenedorEntidad(ContenedorDto dto) {
         Contenedor c = new Contenedor();
+        if (dto.id() != null) {
+            c.setId(dto.id());
+        }
         c.setPeso(dto.peso());
         c.setVolumen(dto.volumen());
         c.setEstado(dto.estado());
@@ -79,6 +82,9 @@ public interface DtoHandler {
         if (dto == null)
             return null;
         Ubicacion u = new Ubicacion();
+        if (dto.id() != null) {
+            u.setId(dto.id());
+        }
         u.setNombre(dto.nombre());
         u.setTipo(dto.tipo());
         u.setLatitud(dto.latitud());
@@ -104,6 +110,7 @@ public interface DtoHandler {
         r.setCantidadTramos(dto.cantidadTramos());
         r.setCantidadDepositos(dto.cantidadDepositos());
         r.setCostoPorTramo(dto.costoPorTramo());
+        r.setDistanciaTotal(dto.distanciaTotal());
         return r;
     }
 
@@ -179,6 +186,9 @@ public interface DtoHandler {
 
     public static Cliente convertirClienteEntidad(ClienteDto dto) {
         Cliente c = new Cliente();
+        if (dto.id() != null) {
+            c.setId(dto.id());
+        }
         c.setNombre(dto.nombre());
         c.setApellido(dto.apellido());
         c.setTelefono(dto.telefono());
@@ -211,6 +221,9 @@ public interface DtoHandler {
             return null;
 
         Solicitud s = new Solicitud();
+        if (dto.id() != null) {
+            s.setId(dto.id());
+        }
         s.setEstado(dto.estado());
         s.setCostoEstimado(dto.costoEstimado());
         s.setTiempoEstimado(dto.tiempoEstimado());

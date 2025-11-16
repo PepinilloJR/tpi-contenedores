@@ -35,7 +35,12 @@ public class RutaControlador {
 
     @PostMapping
     public ResponseEntity<RutaDto> crear(@RequestBody RutaDto rutaDto) {
+        System.out.println("===========================");
+        System.out.println(rutaDto);
         Ruta rutaEntidad = DtoHandler.convertirRutaEntidad(rutaDto);
+        System.out.println("===========================");
+        System.out.println("===========================");
+        System.out.println(rutaEntidad.toString());
         Ruta rutaCreada = servicio.crear(rutaEntidad);
         return ResponseEntity.status(201).body(DtoHandler.convertirRutaDto(rutaCreada));
     }
