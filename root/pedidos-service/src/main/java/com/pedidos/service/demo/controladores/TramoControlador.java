@@ -66,10 +66,8 @@ public class TramoControlador {
         // Soporta la actualizacion parcial, y hay que ver reglas en el servicio
         Tramo tramoActual = servicio.obtenerPorId(id);
         tramoActual.setEstado(tramoDto.estado() != null ? tramoDto.estado() : tramoActual.getEstado());
-        tramoActual.setFechaHoraInicio(
-                tramoDto.fechaHoraInicio() != null ? tramoDto.fechaHoraInicio() : tramoActual.getFechaHoraInicio());
-        tramoActual.setFechaHoraFin(
-                tramoDto.fechaHoraFin() != null ? tramoDto.fechaHoraFin() : tramoActual.getFechaHoraFin());
+        tramoActual.setFechaHoraInicio(tramoDto.fechaHoraInicio() != null ? tramoDto.fechaHoraInicio() : tramoActual.getFechaHoraInicio());
+        tramoActual.setFechaHoraFin(tramoDto.fechaHoraFin() != null ? tramoDto.fechaHoraFin() : tramoActual.getFechaHoraFin());
         tramoActual.setCombustibleConsumido(tramoDto.combustibleConsumido() != null ? tramoDto.combustibleConsumido() : tramoActual.getCombustibleConsumido());
         if (tramoDto.camion() != null) {
             tramoActual.setCamion(DtoHandler.convertirCamionEntidad(tramoDto.camion()));
