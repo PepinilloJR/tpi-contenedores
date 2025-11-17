@@ -75,9 +75,15 @@ public class tramosController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Debe indicarse una fecha de finalizacion");
 
         }
+
+        tramoDto = DtoHandler.convertirTramoDto(tramoActual);
         EstadiaDto estadiaDto = null;
         if (fechaHoraEntrada != null && fechaHoraSalida != null) {
-             estadiaDto = new EstadiaDto(null, tramoDto, fechaHoraEntrada, fechaHoraSalida);
+            estadiaDto = new EstadiaDto(null, tramoDto, fechaHoraEntrada, fechaHoraSalida);
+            if (tramoDto.origen().costo() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("el origen del tramo no tiene un costo de estadia");
+
+            }
             try {
                 estadiaDto = estadiasClient.post().body(estadiaDto).retrieve().toEntity(EstadiaDto.class).getBody();
             } catch (Exception e) {
