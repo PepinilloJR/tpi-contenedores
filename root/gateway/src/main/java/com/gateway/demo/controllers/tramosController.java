@@ -17,6 +17,7 @@ import com.commonlib.dto.CamionDto;
 import com.commonlib.dto.DtoHandler;
 import com.commonlib.dto.EstadiaDto;
 import com.commonlib.dto.TramoDto;
+import com.commonlib.entidades.Estadia;
 import com.commonlib.entidades.Tramo;
 
 @RestController
@@ -74,9 +75,9 @@ public class tramosController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Debe indicarse una fecha de finalizacion");
 
         }
-
+        EstadiaDto estadiaDto = null;
         if (fechaHoraEntrada != null && fechaHoraSalida != null) {
-            EstadiaDto estadiaDto = new EstadiaDto(null, tramoDto, fechaHoraEntrada, fechaHoraSalida);
+             estadiaDto = new EstadiaDto(null, tramoDto, fechaHoraEntrada, fechaHoraSalida);
             try {
                 estadiaDto = estadiasClient.post().body(estadiaDto).retrieve().toEntity(EstadiaDto.class).getBody();
             } catch (Exception e) {
@@ -86,6 +87,16 @@ public class tramosController {
             }
         }
         tramoActual.setEstado("finalizado");
+
+        if (estadiaDto != null) {
+            Estadia estadia = DtoHandler.convertirEstadiaEntidad(estadiaDto);
+            tramoActual.calcularCostoReal(estadia.calcularCostoEstadia());
+        } else {
+            tramoActual.calcularCostoReal(null);
+        }
+        // calculo del costo real del tramo
+
+
         TramoDto tramoActualDto = DtoHandler.convertirTramoDto(tramoActual);
         try {
             tramoActualDto = tramosClient.put().uri("/" + id).body(tramoActualDto).retrieve().toEntity(TramoDto.class)
@@ -95,6 +106,10 @@ public class tramosController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error modificando el tramo: " + e.getMessage());
         }
+
+
+
+
 
         return ResponseEntity.ok(tramoActualDto);
     }

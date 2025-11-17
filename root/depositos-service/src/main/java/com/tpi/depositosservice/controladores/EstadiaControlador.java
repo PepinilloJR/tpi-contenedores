@@ -31,23 +31,7 @@ public class EstadiaControlador {
 
     // --- Helpers de conversión (Entity <-> DTO) ---
 
-    private EstadiaDto convertirDto(Estadia e) {
-        if (e == null) return null;
-    
-        
-        return new EstadiaDto(e.getIdEstadia(), DtoHandler.convertirTramoDto(e.getTramo()), e.getFechaHoraEntrada(), e.getFechaHoraSalida())
-        ;
-    }
 
-    private Estadia convertirEntidad(EstadiaDto dto) {
-        Estadia e = new Estadia();
-        // No seteamos el ID del depósito ni el ID de la estadía aquí, 
-        // ya que el servicio se encarga de buscar el Deposito.
-        e.setTramo(DtoHandler.convertirTramoEntidad(dto.tramo()));
-        e.setFechaHoraEntrada(dto.fechaHoraEntrada());
-        e.setFechaHoraSalida(dto.fechaHoraSalida());
-        return e;
-    }
 
     // --- Endpoints CRUD ---
 
@@ -55,7 +39,7 @@ public class EstadiaControlador {
     public ResponseEntity<?> crear(@RequestBody EstadiaDto estadiaDto) {
 
     
-        Estadia estadiaEntidad = convertirEntidad(estadiaDto);
+        Estadia estadiaEntidad = DtoHandler.convertirEstadiaEntidad(estadiaDto);
         estadiaEntidad.setTramo(servicio.obtener(estadiaDto.tramo().id()));
         // Llamamos al servicio pasando la entidad y el ID del depósito
         if (!estadiaEntidad.getTramo().getOrigen().getTipo().toLowerCase().equals("deposito"))
@@ -66,7 +50,7 @@ public class EstadiaControlador {
         }
         Estadia estadiaCreada = servicio.crear(estadiaEntidad); 
         
-        return ResponseEntity.status(201).body(convertirDto(estadiaCreada));
+        return ResponseEntity.status(201).body(DtoHandler.convertirEstadiaDto(estadiaCreada));
     }
 
     @PutMapping("/{id}")
@@ -82,19 +66,19 @@ public class EstadiaControlador {
         estadiaActualizar.setFechaHoraSalida(estadiaDto.fechaHoraSalida());
 
         Estadia estadiaActualizada = servicio.actualizar(estadiaActualizar);
-        return ResponseEntity.ok(convertirDto(estadiaActualizada));
+        return ResponseEntity.ok(DtoHandler.convertirEstadiaDto(estadiaActualizada));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EstadiaDto> obtener(@PathVariable Long id) {
         Estadia estadia = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(convertirDto(estadia));
+        return ResponseEntity.ok(DtoHandler.convertirEstadiaDto(estadia));
     }
 
     @GetMapping
     public ResponseEntity<List<EstadiaDto>> obtenerTodos() {
         List<Estadia> lista = servicio.listarTodos();
-        List<EstadiaDto> dtos = lista.stream().map(this::convertirDto).collect(Collectors.toList());
+        List<EstadiaDto> dtos = lista.stream().map(DtoHandler::convertirEstadiaDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.commonlib.entidades.Camion;
 import com.commonlib.entidades.Cliente;
 import com.commonlib.entidades.Contenedor;
+import com.commonlib.entidades.Estadia;
 import com.commonlib.entidades.Ruta;
 import com.commonlib.entidades.Seguimiento;
 import com.commonlib.entidades.Solicitud;
@@ -281,5 +282,24 @@ public interface DtoHandler {
         s.setSeguimiento(convertirSeguimientosEntidad(dto.seguimiento()));
 
         return s;
+    }
+
+
+    public static EstadiaDto convertirEstadiaDto(Estadia e) {
+        if (e == null) return null;
+    
+        
+        return new EstadiaDto(e.getIdEstadia(), DtoHandler.convertirTramoDto(e.getTramo()), e.getFechaHoraEntrada(), e.getFechaHoraSalida())
+        ;
+    }
+
+    public static Estadia convertirEstadiaEntidad(EstadiaDto dto) {
+        Estadia e = new Estadia();
+        // No seteamos el ID del depósito ni el ID de la estadía aquí, 
+        // ya que el servicio se encarga de buscar el Deposito.
+        e.setTramo(DtoHandler.convertirTramoEntidad(dto.tramo()));
+        e.setFechaHoraEntrada(dto.fechaHoraEntrada());
+        e.setFechaHoraSalida(dto.fechaHoraSalida());
+        return e;
     }
 }
