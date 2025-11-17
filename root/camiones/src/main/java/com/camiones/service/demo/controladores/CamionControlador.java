@@ -18,6 +18,7 @@ import com.camiones.service.demo.servicios.CamionServicio;
 import com.commonlib.dto.CamionDto;
 import com.commonlib.entidades.Camion;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 @RestController
@@ -61,6 +62,7 @@ public class CamionControlador {
         return c;
     }
 
+    @Operation(summary = "Crear un Camion", description = "Crea un Camion")
     @PostMapping
     public ResponseEntity<CamionDto> crear(@Valid @RequestBody CamionDto dto) {
         Camion entity = convertirEntidad(dto);
@@ -68,6 +70,7 @@ public class CamionControlador {
         return ResponseEntity.status(201).body(convertirDto(creado));
     }
 
+    @Operation(summary = "Actualizar un Camion", description = "Actualiza un Camion dado segun id")
     @PutMapping("/{id}")
     public ResponseEntity<CamionDto> actualizar(@PathVariable Long id, @RequestBody CamionDto dto) {
         // actualización parcial: aplica solo campos no nulos
@@ -94,12 +97,14 @@ public class CamionControlador {
         return ResponseEntity.ok(convertirDto(actualizado));
     }
 
+    @Operation(summary = "Obtener un Camion", description = "Obtener un Camion dado segun id")
     @GetMapping("/{id}")
     public ResponseEntity<CamionDto> obtener(@PathVariable Long id) {
         Camion camion = servicio.obtenerPorId(id);
         return ResponseEntity.ok(convertirDto(camion));
     }
 
+    @Operation(summary = "Obtener todos los Camiones", description = "Obtiene todos los Camiones")
     @GetMapping
     public ResponseEntity<List<CamionDto>> obtenerTodos() {
         List<Camion> lista = servicio.listarTodos();
@@ -107,12 +112,14 @@ public class CamionControlador {
         return ResponseEntity.ok(dtos);
     }
 
+    @Operation(summary = "Obtiene un Camion disponible", description = "Obtener un Camion disponible")
     @GetMapping("/disponible")
     public ResponseEntity<CamionDto> obtenerDisponible() {
         Camion camionDisponible = servicio.obtenerDisponible();
         return ResponseEntity.ok(convertirDto(camionDisponible));
     }
 
+    @Operation(summary = "Obtiene un Camion segun si esta disponible y capacidad", description = "Obtiene un Camion dado segun segun disponibildiad y capacidad")
     @GetMapping("/disponible/por-capacidad")
     public ResponseEntity<CamionDto> obtenerDisponiblePorCapacidad(@RequestParam(required = true) Double peso,
             @RequestParam(required = true) Double volumen) {
@@ -121,6 +128,7 @@ public class CamionControlador {
         return ResponseEntity.ok(convertirDto(camionDisponible));
     }
 
+    @Operation(summary = "Eliminar un Camion", description = "Elimina un Camion dado segun id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);
