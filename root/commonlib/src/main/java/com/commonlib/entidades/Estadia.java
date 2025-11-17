@@ -30,7 +30,7 @@ public class Estadia {
     private Long idEstadia;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idTramo", nullable = false)
+    @JoinColumn(name = "id_tramo", nullable = false)
     private Tramo tramo; // FK a TRAMOS del servicio de solicitudes/tramos/rutas
 
     private java.time.LocalDateTime fechaHoraEntrada;
