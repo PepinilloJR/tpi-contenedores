@@ -225,10 +225,9 @@ public class rutasController {
     }
 
 
-    @GetMapping("/tentativas/{solicitudId}")
+    @GetMapping("/{solicitudId}")
     public ResponseEntity<?> rutasTentativas(@PathVariable Long solicitudId, @RequestBody RutaDto rutaDto) {
 
-    // 1. Obtener la solicitud (igual que tu método)
     SolicitudDto pedidoActual;
     try {
         pedidoActual = pedidosClient.get()
@@ -237,10 +236,9 @@ public class rutasController {
                 .toEntity(SolicitudDto.class)
                 .getBody();
     } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
-    // 2. Obtener depósitos/ubicaciones intermedias del mismo modo
     ArrayList<UbicacionDto> depositoActual = new ArrayList<>();
     for (Long dId : rutaDto.depositosID()) {
         try {
@@ -257,30 +255,28 @@ public class rutasController {
         }
     }
 
-    // 3. Armar cadena de coordenadas EXACTAMENTE como en tu método
     String ubicaciones = pedidoActual.origen().longitud() + "," + pedidoActual.origen().latitud() + ";";
     for (UbicacionDto u : depositoActual) {
         ubicaciones += u.longitud() + "," + u.latitud() + ";";
     }
     ubicaciones += pedidoActual.destino().longitud() + "," + pedidoActual.destino().latitud();
 
-    // 4. Llamar OSRM con alternatives=5
     RutaResponse response;
     try {
         response = distanciaClient.get()
-                .uri("/driving/" + ubicaciones +
-                     "?steps=true&overview=simplified&geometries=geojson&alternatives=5")
+                .uri("driving/" + ubicaciones +
+                     "?steps=true&overview=simplified&geometries=geojson&alternatives=3")
                 .retrieve()
                 .body(RutaResponse.class);
     } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getCause());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no hay alternativas? " + "/driving/" + ubicaciones +
+                     "?steps=true&overview=simplified&geometries=geojson&alternatives=3");
     }
 
     if (response == null || response.getRoutes() == null) {
         return ResponseEntity.status(500).body("OSRM no devolvió rutas.");
     }
 
-    // 5. Transformar cada alternativa en lista de tramos como hace tu método
     List<Object> alternativas = new ArrayList<>();
 
     int alternativaNum = 1;
@@ -332,11 +328,9 @@ public class rutasController {
             c++;
         }
 
-        // calcular distancia total como en tu método
         double distanciaTotal = 0;
         for (TramoDto t : tramos) distanciaTotal += t.distancia();
 
-        // agregar alternativa
         Map<String, Object> alt = new HashMap<>();
         alt.put("rutaNumero", alternativaNum++);
         alt.put("distanciaTotal", distanciaTotal);
