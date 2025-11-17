@@ -42,7 +42,7 @@ public class GatewayConfig {
     public RouterFunction<ServerResponse> camionesRouterFunction() {
         return route("camiones").path("/protected/camiones", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/camiones", "/api/camiones"))
-                .before(BeforeFilterFunctions.uri("http://localhost:8002/api/camiones"))
+                .before(BeforeFilterFunctions.uri("http://camiones:8002/api/camiones"))
             .build();
     }
 

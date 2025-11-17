@@ -68,7 +68,9 @@ public class TramoControlador {
         tramoActual.setEstado(tramoDto.estado() != null ? tramoDto.estado() : tramoActual.getEstado());
         tramoActual.setFechaHoraFin(
                 tramoDto.fechaHoraFin() != null ? tramoDto.fechaHoraFin() : tramoActual.getFechaHoraFin());
-
+        if (tramoDto.camion() != null) {
+            tramoActual.setCamion(DtoHandler.convertirCamionEntidad(tramoDto.camion()));
+        }
         Tramo tramoActualizado = servicio.actualizar(id, tramoActual);
 
         return ResponseEntity.ok(DtoHandler.convertirTramoDto(tramoActualizado));
