@@ -25,6 +25,11 @@ public class ResourceServerConfig {
         .requestMatchers(HttpMethod.GET,"/protected/tramos")
             .hasAnyRole( "TRANSPORTISTA", "ADMIN")
 
+        .requestMatchers(HttpMethod.PUT, "/controlled/tramos/finalizar")
+            .hasAnyRole( "TRANSPORTISTA", "ADMIN")
+        .requestMatchers(HttpMethod.PUT, "/controlled/rutas")
+            .hasAnyRole( "TRANSPORTISTA", "ADMIN")
+            
         .requestMatchers("/protected/**")
             .hasRole("ADMIN")
         .requestMatchers("/controlled/**")

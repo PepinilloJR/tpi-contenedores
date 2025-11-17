@@ -104,7 +104,8 @@ public class tramosController {
         }
         // calculo del costo real del tramo
 
-
+        Camion camion = tramoActual.getCamion();
+        tramoActual.setCamion(null);
         TramoDto tramoActualDto = DtoHandler.convertirTramoDto(tramoActual);
         try {
             tramoActualDto = tramosClient.put().uri("/" + id).body(tramoActualDto).retrieve().toEntity(TramoDto.class)
@@ -115,7 +116,7 @@ public class tramosController {
                     .body("Error modificando el tramo: " + e.getMessage());
         }
 
-        Camion camion = tramoActual.getCamion();
+
         camion.setDisponible(true);
         CamionDto camionDto = DtoHandler.convertirCamionDto(camion);
         try {

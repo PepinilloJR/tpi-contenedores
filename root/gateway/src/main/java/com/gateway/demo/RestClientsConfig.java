@@ -41,9 +41,7 @@ public class RestClientsConfig {
     RestClient distanciaClient() {
         return RestClient.create("http://osrm:5000/route/v1/");
     }
-
-    // Es otro el puerto de camiones
-
+    
     @Bean
     RestClient camionesClient() {
         return RestClient.create("http://camiones:8002/api/camiones");
