@@ -33,6 +33,11 @@ public class SolicitudServicio {
     }
 
     @Transactional(readOnly = true)
+    public List<Solicitud> listarTodosPorCliente(Long id) {
+        return repositorio.findByClienteId(id);
+    }
+
+    @Transactional(readOnly = true)
     public Solicitud obtenerPorId(Long id) {
         return repositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada con id " + id));
