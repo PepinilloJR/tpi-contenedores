@@ -7,7 +7,7 @@ public record SolicitudDto(
         String estado,
         Double costoEstimado,
         Double tiempoEstimado,
-        Double tiempoReal,
+        Long tiempoReal,
         Double costoFinal,
         ClienteDto cliente,
         ContenedorDto contenedor,

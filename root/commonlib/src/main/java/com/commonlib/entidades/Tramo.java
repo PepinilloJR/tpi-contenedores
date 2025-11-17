@@ -72,12 +72,13 @@ public class Tramo {
         Double costoKm = tarifa.getCostoKilometro() != null ? tarifa.getCostoKilometro() : 0.0;
         Double costoLitro = tarifa.getCostoLitro() != null ? tarifa.getCostoLitro() : 0.0;
         Double costoVolumen = tarifa.getCostoVolumen() != null ? tarifa.getCostoVolumen() : 0.0;
-
-        Double capacidadVol = this.camion.getCapacidadVolumen() != null ? this.camion.getCapacidadVolumen() : 1.0;
-        Double capacidadPeso = this.camion.getCapacidadPeso() != null ? this.camion.getCapacidadPeso() : 1.0;
-
-        double parteCombustible = consumoPromedio * distanciaVal * costoKm * 0.09;
-        double parteVolumenPeso = costoLitro * costoVolumen * capacidadVol * capacidadPeso * 0.10;
+        //Double costoPeso = tarifa.getcoso() != null ? tarifa.getCostoVolumen() : 0.0;
+        //Double capacidadVol = this.camion.getCapacidadVolumen() != null ? this.camion.getCapacidadVolumen() : 1.0;
+        //Double capacidadPeso = this.camion.getCapacidadPeso() != null ? this.camion.getCapacidadPeso() : 1.0;
+        Double volumenContenedor = this.ruta.getSolicitud().getContenedor().getVolumen();       
+        //Double pesoContenedor = this.ruta.getSolicitud().getContenedor().getPeso();
+        double parteCombustible = consumoPromedio * costoLitro + distanciaVal * costoKm;
+        double parteVolumenPeso = costoVolumen * volumenContenedor;
 
         // Llama esta funcion al asignar un camion
         this.costoAproximado = parteCombustible + parteVolumenPeso;
@@ -97,7 +98,7 @@ public class Tramo {
             return;
         }
 
-        if (costoEstadia == 0.0 || costoEstadia == null) {
+        if (costoEstadia == null || costoEstadia == 0.0) {
             costoEstadia = 0.0;
         }
 
@@ -111,11 +112,12 @@ public class Tramo {
         Double costoLitro = tarifa.getCostoLitro() != null ? tarifa.getCostoLitro() : 0.0;
         Double costoVolumen = tarifa.getCostoVolumen() != null ? tarifa.getCostoVolumen() : 0.0;
 
-        Double capacidadVol = this.camion.getCapacidadVolumen() != null ? this.camion.getCapacidadVolumen() : 1.0;
-        Double capacidadPeso = this.camion.getCapacidadPeso() != null ? this.camion.getCapacidadPeso() : 1.0;
+        //Double capacidadVol = this.camion.getCapacidadVolumen() != null ? this.camion.getCapacidadVolumen() : 1.0;
+        //Double capacidadPeso = this.camion.getCapacidadPeso() != null ? this.camion.getCapacidadPeso() : 1.0;
+        Double volumenContenedor = this.ruta.getSolicitud().getContenedor().getVolumen();       
 
-        double parteCombustible = consumoPromedio * distanciaVal * costoKm * 0.09;
-        double parteVolumenPeso = costoLitro * costoVolumen * capacidadVol * capacidadPeso * 0.10;
+        double parteCombustible = consumoPromedio * costoLitro + distanciaVal * costoKm;
+        double parteVolumenPeso = costoVolumen * volumenContenedor;
 
         this.costoReal = parteCombustible + parteVolumenPeso + costoEstadia;
 
