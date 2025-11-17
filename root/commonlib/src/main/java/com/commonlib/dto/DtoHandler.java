@@ -201,6 +201,7 @@ public interface DtoHandler {
         t.setFechaHoraFin(dto.fechaHoraFin());
         t.setCombustibleConsumido(dto.combustibleConsumido());
         t.setCamion(convertirCamionEntidad(dto.camion()));
+        t.setDistancia(dto.distancia());
         return t;
     }
 

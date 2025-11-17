@@ -129,6 +129,9 @@ public class rutasController {
 
         Double distanciaTotal = (double)0;
         for (TramoDto t : tramos) {
+            if (t.distancia() == null) {
+                return ResponseEntity.status(500).body("La distancia llega vacia en el calculo total");
+            }
             distanciaTotal += t.distancia();
             
         }
@@ -139,7 +142,13 @@ public class rutasController {
         rutaFinal = rutasClient.post().body(rutaFinal).retrieve().toEntity(RutaDto.class).getBody();
 
         for (TramoDto t : tramos) {
+            if (t.distancia() == null) {
+                return ResponseEntity.status(500).body("La distancia llega antes de crear el dto");
+            }
             TramoDto tdto = new TramoDto(null,t.origen(), t.destino(), null, rutaFinal, t.tipo(), null, null, null, null, null, t.distancia(), null);
+            if (tdto.distancia() == null) {
+                return ResponseEntity.status(500).body("La distancia llega vacia al crear el dto");
+            }
             tramosClient.post().body(tdto).exchange((req, res) -> {System.err.println(req);System.err.println(res); return null;});
         }
         // http de ejemplo
