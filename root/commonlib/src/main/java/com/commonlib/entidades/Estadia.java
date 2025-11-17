@@ -1,7 +1,7 @@
 package com.commonlib.entidades;
 
 import java.time.Duration;
-
+import java.time.LocalDateTime;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -31,10 +31,11 @@ public class Estadia {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tramo", nullable = false)
-    private Tramo tramo; // FK a TRAMOS del servicio de solicitudes/tramos/rutas
+    private Tramo tramo; 
 
-    private java.time.LocalDateTime fechaHoraEntrada;
-    private java.time.LocalDateTime fechaHoraSalida;
+    private LocalDateTime fechaHoraEntrada;
+
+    private LocalDateTime fechaHoraSalida;
 
     public Long calcularEstadia() {
         if (fechaHoraEntrada == null || fechaHoraSalida == null) {
