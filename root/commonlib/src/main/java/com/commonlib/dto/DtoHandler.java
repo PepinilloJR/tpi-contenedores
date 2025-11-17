@@ -9,6 +9,7 @@ import com.commonlib.entidades.Contenedor;
 import com.commonlib.entidades.Ruta;
 import com.commonlib.entidades.Seguimiento;
 import com.commonlib.entidades.Solicitud;
+import com.commonlib.entidades.Tarifa;
 import com.commonlib.entidades.Tramo;
 import com.commonlib.entidades.Ubicacion;
 
@@ -131,15 +132,37 @@ public interface DtoHandler {
                 t.getCostoReal(),
                 t.getFechaHoraInicio(),
                 t.getFechaHoraFin(),
-                t.getDistancia());
+                t.getDistancia()
+        );
     }
 
     public static CamionDto convertirCamionDto(Camion c) {
         if (c == null)
             return null;
-        return new CamionDto(c.getId(), c.getPatente(), c.getNombreTransportista(), c.getTelefono(),
-                c.getCapacidadPesoKg(), c.getCapacidadVolumenM3(), c.getCostoPorKm(), c.getConsumoCombustibleLx100km(),
-                c.getDisponible());
+        return new CamionDto(c.getId(),convertirTarifaDto(c.getTarifa()), 
+        c.getPatente(), 
+        c.getNombreTransportista(), 
+        c.getTelefonoTransportista(),
+                c.getCapacidadPeso(), 
+                c.getCapacidadVolumen(), 
+                c.getConsumoCombustiblePromedio(), c.getDisponible());
+    }
+
+    public static TarifaDto convertirTarifaDto(Tarifa t) {
+        if (t == null)
+            return null;
+        return new TarifaDto(t.getId(), t.getCostoLitro(), t.getCostoVolumen(), t.getCostoKilometro());
+    }
+
+    public static Tarifa convertirTarifaEntidad(TarifaDto dto) {
+        if (dto == null)
+            return null;
+        Tarifa t = new Tarifa();
+        t.setId(dto.id());
+        t.setCostoLitro(dto.costoLitro());
+        t.setCostoKilometro(dto.costoKilometro());
+        t.setCostoVolumen(dto.costoVolumen());
+        return t;
     }
 
     public static Camion convertirCamionEntidad(CamionDto dto) {
@@ -148,13 +171,13 @@ public interface DtoHandler {
 
     Camion c = new Camion();
     c.setId(dto.id());
+    c.setTarifa(convertirTarifaEntidad(dto.tarifa()));
     c.setPatente(dto.patente());
     c.setNombreTransportista(dto.nombreTransportista());
-    c.setTelefono(dto.telefono());
-    c.setCapacidadPesoKg(dto.capacidadPesoKg());
-    c.setCapacidadVolumenM3(dto.capacidadVolumenM3());
-    c.setCostoPorKm(dto.costoPorKm());
-    c.setConsumoCombustibleLx100km(dto.consumoCombustibleLx100km());
+    c.setTelefonoTransportista(dto.telefonoTransportista());
+    c.setCapacidadPeso(dto.capacidadPeso());
+    c.setCapacidadVolumen(dto.capacidadVolumen());
+    c.setConsumoCombustiblePromedio(dto.consumoCombustiblePromedio());
     c.setDisponible(dto.disponible());
 
     return c;

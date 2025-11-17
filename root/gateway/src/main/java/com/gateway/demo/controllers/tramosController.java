@@ -89,17 +89,9 @@ public class tramosController {
         }
         CamionDto camionActualizado;
         try {
-            camionActualizado = new CamionDto(
-                    camionApto.id(),
-                    camionApto.patente(),
-                    camionApto.nombreTransportista(),
-                    camionApto.telefono(),
-                    camionApto.capacidadPesoKg(),
-                    camionApto.capacidadVolumenM3(),
-                    camionApto.costoPorKm(),
-                    camionApto.consumoCombustibleLx100km(),
-                    false // lo marcamos como no disponible
-            );
+            camionActualizado = new CamionDto(camionApto.id(), camionApto.tarifa(), camionApto.patente(), 
+            camionApto.nombreTransportista(), camionApto.telefonoTransportista(), camionApto.capacidadPeso(),
+             camionApto.capacidadVolumen(), camionApto.consumoCombustiblePromedio(), camionApto.disponible());
 
             camionesClient.put()
                     .uri("/" + camionApto.id())

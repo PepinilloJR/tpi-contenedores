@@ -1,7 +1,7 @@
 package com.commonlib.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 
 public record TramoDto(
         Long id,
@@ -11,9 +11,10 @@ public record TramoDto(
         RutaDto ruta,
         String tipo,
         String estado,
-        BigDecimal costoAproximado,
-        BigDecimal costoReal,
+        Double costoAproximado,
+        Double costoReal,
         LocalDateTime fechaHoraInicio,
         LocalDateTime fechaHoraFin,
         Double distancia) {
+
 }

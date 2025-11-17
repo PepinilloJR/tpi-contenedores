@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.camiones.service.demo.servicios.CamionServicio;
 import com.commonlib.dto.CamionDto;
+import com.commonlib.dto.DtoHandler;
 import com.commonlib.entidades.Camion;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,46 +34,15 @@ public class CamionControlador {
 
     // ======== Helpers ========
 
-    private CamionDto convertirDto(Camion c) {
-        if (c == null)
-            return null;
-
-        return new CamionDto(
-                c.getId(),
-                c.getTarifa(),
-                c.getPatente(),
-                c.getNombreTransportista(),
-                c.getTelefonoTransportista(),
-                c.getCapacidadPeso(),
-                c.getCapacidadVolumen(),
-                c.getConsumoCombustiblePromedio(),
-                c.getDisponible()
-        );
-    }
-
-    private Camion convertirEntidad(CamionDto dto) {
-        Camion c = new Camion();
-
-        c.setTarifa(dto.tarifa());
-        c.setPatente(dto.patente());
-        c.setNombreTransportista(dto.nombreTransportista());
-        c.setTelefonoTransportista(dto.telefonoTransportista());
-        c.setCapacidadPeso(dto.capacidadPeso());
-        c.setCapacidadVolumen(dto.capacidadVolumen());
-        c.setConsumoCombustiblePromedio(dto.consumoCombustiblePromedio());
-        c.setDisponible(dto.disponible() != null ? dto.disponible() : true);
-
-        return c;
-    }
 
     // ======== Endpoints ========
 
     @Operation(summary = "Crear un Camion", description = "Crea un Camion")
     @PostMapping
     public ResponseEntity<CamionDto> crear(@Valid @RequestBody CamionDto dto) {
-        Camion entity = convertirEntidad(dto);
+        Camion entity = DtoHandler.convertirCamionEntidad(dto);
         Camion creado = servicio.crear(entity);
-        return ResponseEntity.status(201).body(convertirDto(creado));
+        return ResponseEntity.status(201).body(DtoHandler.convertirCamionDto(creado));
     }
 
     @Operation(summary = "Actualizar un Camion", description = "Actualiza un Camion dado segun id")
@@ -82,7 +52,7 @@ public class CamionControlador {
         Camion actual = servicio.obtenerPorId(id);
 
         if (dto.tarifa() != null)
-            actual.setTarifa(dto.tarifa());
+            actual.setTarifa(DtoHandler.convertirTarifaEntidad(dto.tarifa()));
         if (dto.patente() != null)
             actual.setPatente(dto.patente());
         if (dto.nombreTransportista() != null)
@@ -99,21 +69,21 @@ public class CamionControlador {
             actual.setDisponible(dto.disponible());
 
         Camion actualizado = servicio.actualizar(id, actual);
-        return ResponseEntity.ok(convertirDto(actualizado));
+        return ResponseEntity.ok(DtoHandler.convertirCamionDto(actualizado));
     }
 
     @Operation(summary = "Obtener un Camion", description = "Obtener un Camion dado segun id")
     @GetMapping("/{id}")
     public ResponseEntity<CamionDto> obtener(@PathVariable Long id) {
         Camion camion = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(convertirDto(camion));
+        return ResponseEntity.ok(DtoHandler.convertirCamionDto(camion));
     }
 
     @Operation(summary = "Obtener todos los Camiones", description = "Obtiene todos los Camiones")
     @GetMapping
     public ResponseEntity<List<CamionDto>> obtenerTodos() {
         List<Camion> lista = servicio.listarTodos();
-        List<CamionDto> dtos = lista.stream().map(this::convertirDto).collect(Collectors.toList());
+        List<CamionDto> dtos = lista.stream().map(DtoHandler::convertirCamionDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
@@ -121,7 +91,7 @@ public class CamionControlador {
     @GetMapping("/disponible")
     public ResponseEntity<CamionDto> obtenerDisponible() {
         Camion camionDisponible = servicio.obtenerDisponible();
-        return ResponseEntity.ok(convertirDto(camionDisponible));
+        return ResponseEntity.ok(DtoHandler.convertirCamionDto(camionDisponible));
     }
 
     @Operation(summary = "Obtiene un Camion segun capacidad", description = "Obtiene un Camion disponible que soporte peso y volumen")
@@ -131,7 +101,7 @@ public class CamionControlador {
             @RequestParam Double volumen) {
 
         Camion camionDisponible = servicio.obtenerDisponiblePorCapacidad(peso, volumen);
-        return ResponseEntity.ok(convertirDto(camionDisponible));
+        return ResponseEntity.ok(DtoHandler.convertirCamionDto(camionDisponible));
     }
 
     @Operation(summary = "Eliminar un Camion", description = "Elimina un Camion dado segun id")

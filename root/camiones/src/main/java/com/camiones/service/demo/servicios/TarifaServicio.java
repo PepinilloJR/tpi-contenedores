@@ -22,10 +22,6 @@ public class TarifaServicio {
     public Tarifa crear(Tarifa tarifa) {
         validarDatos(tarifa);
 
-        // activo por defecto = true
-        if (tarifa.getActivo() == null) {
-            tarifa.setActivo(true);
-        }
 
         return repositorio.save(tarifa);
     }
@@ -63,13 +59,10 @@ public class TarifaServicio {
 
         validarDatos(datos);
 
-        existente.setNombre(datos.getNombre());
-        existente.setPrecioPorKm(datos.getPrecioPorKm());
-        existente.setPrecioFijo(datos.getPrecioFijo());
-        existente.setMoneda(datos.getMoneda());
-        existente.setVigenciaDesde(datos.getVigenciaDesde());
-        existente.setVigenciaHasta(datos.getVigenciaHasta());
-        existente.setActivo(datos.getActivo() != null ? datos.getActivo() : existente.getActivo());
+
+        existente.setCostoKilometro(datos.getCostoKilometro());
+        existente.setCostoVolumen(datos.getCostoVolumen());
+        existente.setCostoLitro(datos.getCostoLitro());
 
         return repositorio.save(existente);
     }
@@ -85,18 +78,11 @@ public class TarifaServicio {
 
     /* ----------------- reglas de negocio básicas ----------------- */
     private void validarDatos(Tarifa t) {
-        if (t.getNombre() == null || t.getNombre().isBlank()) {
-            throw new IllegalArgumentException("El nombre de la tarifa es obligatorio");
-        }
-        if (neg(t.getPrecioPorKm()) || neg(t.getPrecioFijo())) {
+
+        if (neg(t.getCostoKilometro()) || neg(t.getCostoVolumen()) || neg(t.getCostoLitro())) {
             throw new IllegalArgumentException("Los valores de precio no pueden ser negativos");
         }
-        if (t.getVigenciaDesde() == null) {
-            throw new IllegalArgumentException("La fecha de vigencia desde es obligatoria");
-        }
-        if (t.getVigenciaHasta() != null && t.getVigenciaHasta().isBefore(t.getVigenciaDesde())) {
-            throw new IllegalArgumentException("La fecha de vigencia hasta no puede ser anterior a vigencia desde");
-        }
+
     }
 
     private boolean neg(Double v) {

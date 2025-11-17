@@ -80,11 +80,11 @@ public class CamionServicio {
 
         existente.setPatente(datos.getPatente());
         existente.setNombreTransportista(datos.getNombreTransportista());
-        existente.setTelefono(datos.getTelefono());
-        existente.setCapacidadPesoKg(datos.getCapacidadPesoKg());
-        existente.setCapacidadVolumenM3(datos.getCapacidadVolumenM3());
-        existente.setCostoPorKm(datos.getCostoPorKm());
-        existente.setConsumoCombustibleLx100km(datos.getConsumoCombustibleLx100km());
+        existente.setTelefonoTransportista(datos.getTelefonoTransportista());
+        existente.setCapacidadPeso(datos.getCapacidadPeso());
+        existente.setCapacidadVolumen(datos.getCapacidadVolumen());
+        existente.setTarifa(existente.getTarifa());
+        existente.setConsumoCombustiblePromedio(datos.getConsumoCombustiblePromedio());
         existente.setDisponible(datos.getDisponible() != null ? datos.getDisponible() : existente.getDisponible());
 
         return repositorio.save(existente);
@@ -104,9 +104,9 @@ public class CamionServicio {
         if (c.getPatente() == null || c.getPatente().isBlank()) {
             throw new IllegalArgumentException("La patente es obligatoria");
         }
-        if (neg(c.getCapacidadPesoKg()) || neg(c.getCapacidadVolumenM3())
-                || neg(c.getCostoPorKm()) || neg(c.getConsumoCombustibleLx100km())) {
-            throw new IllegalArgumentException("Capacidades, costo y consumo no pueden ser negativos");
+        if (neg(c.getCapacidadPeso()) || neg(c.getCapacidadVolumen())
+                || neg(c.getConsumoCombustiblePromedio())) {
+            throw new IllegalArgumentException("Capacidades y consumo no pueden ser negativos");
         }
     }
 
