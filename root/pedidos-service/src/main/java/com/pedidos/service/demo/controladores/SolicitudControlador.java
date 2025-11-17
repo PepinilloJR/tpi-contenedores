@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.commonlib.entidades.*;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/solicitudes")
@@ -138,6 +139,24 @@ public class SolicitudControlador {
         Solicitud SolicitudActualizada = servicioSolicitud.actualizar(id, solicitudActual);
 
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDto(SolicitudActualizada));
+    }
+
+    @Operation(summary = "Obtener solicitudes por cliente", description = "Obtiene todas las solicitudes de un cliente dado por id")
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<?> obtenerPorCliente(@PathVariable Long clienteId) {
+
+        var cliente = servicioCliente.obtenerPorId(clienteId);
+
+        if (cliente == null) {
+            return ResponseEntity.badRequest()
+                    .body("El cliente ingresado no existe, no tiene solicitudes por lo tanto");
+        }
+
+        List<Solicitud> solicitudes = servicioSolicitud.obtenerPorClienteId(clienteId);
+        List<SolicitudDto> dtos = solicitudes.stream()
+                .map(DtoHandler::convertirSolicitudDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Obtener una Solicitud", description = "Obtiene una Solicitud dada segun id")
