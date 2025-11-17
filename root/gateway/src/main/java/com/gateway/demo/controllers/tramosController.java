@@ -36,10 +36,7 @@ public class tramosController {
         // Obtener el tramo
         TramoDto tramoActual;
         CamionDto camionApto;
-        System.out.println("++++++++++++++++++++++===============================");
-        System.out.println("++++++++++++++++++++++===============================");
-        System.out.println("++++++++++++++++++++++===============================");
-        System.out.println();
+
         try {
             if (tramoDto == null) {
                 return ResponseEntity.badRequest().body(null);
@@ -50,11 +47,6 @@ public class tramosController {
                     .retrieve()
                     .toEntity(TramoDto.class)
                     .getBody();
-            System.out.println("++++++++++++++++++++++===============================");
-            System.out.println("++++++++++++++++++++++===============================");
-            System.out.println("++++++++++++++++++++++===============================");
-
-            System.out.println(tramoActual);
 
             if (tramoActual.ruta() == null || tramoActual.ruta().solicitud() == null
                     || tramoActual.ruta().solicitud().contenedor() == null) {
@@ -78,12 +70,6 @@ public class tramosController {
         }
 
         // Validar que el camión asignado sea apto para el tramo
-        System.out.println("++++++++++++++++++++++===============================");
-        System.out.println("++++++++++++++++++++++===============================");
-        System.out.println("++++++++++++++++++++++===============================");
-
-        System.out.println(volumen);
-        System.out.println(peso);
 
         try {
             camionApto = camionesClient.get()
@@ -125,11 +111,7 @@ public class tramosController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al actualizar el estado del camión: " + e.getMessage());
         }
-                System.out.println("++++++++++++++++++++++===============================");
-        System.out.println("++++++++++++++++++++++===============================");
-        System.out.println("++++++++++++++++++++++===============================");
 
-        System.out.println(camionActualizado);
         TramoDto tramoConCamion = new TramoDto(
                 tramoActual.id(),
                 tramoActual.origen(),
