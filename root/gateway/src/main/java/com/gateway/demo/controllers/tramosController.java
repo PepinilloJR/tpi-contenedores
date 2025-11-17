@@ -105,6 +105,8 @@ public class tramosController {
         }
         // calculo del costo real del tramo
 
+        Camion camion = tramoActual.getCamion();
+        tramoActual.setCamion(null);
         TramoDto tramoActualDto = DtoHandler.convertirTramoDto(tramoActual);
         try {
             tramoActualDto = tramosClient.put().uri("/" + id).body(tramoActualDto).retrieve().toEntity(TramoDto.class)
@@ -113,6 +115,18 @@ public class tramosController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error modificando el tramo: " + e.getMessage());
+        }
+
+
+        camion.setDisponible(true);
+        CamionDto camionDto = DtoHandler.convertirCamionDto(camion);
+        try {
+            camionDto = camionesClient.put().uri("/" + camion.getId()).body(camionDto).retrieve().toEntity(CamionDto.class)
+                    .getBody();
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error modificando el camion: " + e.getMessage());
         }
 
         return ResponseEntity.ok(tramoActualDto);
