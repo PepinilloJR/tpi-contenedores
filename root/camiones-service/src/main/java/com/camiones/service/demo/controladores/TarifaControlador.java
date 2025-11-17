@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.camiones.service.demo.servicios.TarifaServicio;
+import com.commonlib.dto.DtoHandler;
 import com.commonlib.dto.TarifaDto;
 import com.commonlib.entidades.Tarifa;
 
@@ -30,33 +31,14 @@ public class TarifaControlador {
         this.servicio = servicio;
     }
 
-    // helper: entidad -> dto
-    private TarifaDto convertirDto(Tarifa t) {
-        if (t == null) {
-            return null;
-        }
-        return new TarifaDto(
-                t.getId(),
-                t.getCostoLitro(),
-                t.getCostoVolumen(),
-                t.getCostoKilometro());
-    }
 
-    // helper: dto -> entidad (para crear)
-    private Tarifa convertirEntidad(TarifaDto dto) {
-        Tarifa t = new Tarifa();
-        t.setCostoKilometro(dto.costoLitro());
-        t.setCostoVolumen(dto.costoVolumen());
-        t.setCostoKilometro(dto.costoKilometro());
-        return t;
-    }
 
     @Operation(summary = "Crear una Tarifa", description = "Crea una Tarifa")
     @PostMapping
     public ResponseEntity<TarifaDto> crear(@Valid @RequestBody TarifaDto dto) {
-        Tarifa entity = convertirEntidad(dto);
+        Tarifa entity = DtoHandler.convertirTarifaEntidad(dto);
         Tarifa creada = servicio.crear(entity);
-        return ResponseEntity.status(201).body(convertirDto(creada));
+        return ResponseEntity.status(201).body(DtoHandler.convertirTarifaDto(creada));
     }
 
     @Operation(summary = "Actualizar una Tarifa", description = "Actualiza una Tarifa dada segun id")
@@ -71,14 +53,14 @@ public class TarifaControlador {
 
 
         Tarifa actualizada = servicio.actualizar(id, actual);
-        return ResponseEntity.ok(convertirDto(actualizada));
+        return ResponseEntity.ok(DtoHandler.convertirTarifaDto(actualizada));
     }
 
     @Operation(summary = "Obtener una Tarifa", description = "Obtener una Tarifa dada segun id")
     @GetMapping("/{id}")
     public ResponseEntity<TarifaDto> obtener(@PathVariable Long id) {
         Tarifa tarifa = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(convertirDto(tarifa));
+        return ResponseEntity.ok(DtoHandler.convertirTarifaDto(tarifa));
     }
 
     @Operation(summary = "Obtener todas las Tarifas", description = "Obtiene todas las Tarifas")
@@ -86,7 +68,7 @@ public class TarifaControlador {
     public ResponseEntity<List<TarifaDto>> obtenerTodos() {
         List<Tarifa> lista = servicio.listarTodos();
         List<TarifaDto> dtos = lista.stream()
-                .map(this::convertirDto)
+                .map(DtoHandler::convertirTarifaDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }

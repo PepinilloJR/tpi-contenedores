@@ -74,6 +74,13 @@ public class TramoControlador {
         if (tramoDto.camion() != null) {
             tramoActual.setCamion(DtoHandler.convertirCamionEntidad(tramoDto.camion()));
         }
+
+        tramoActual.setCostoAproximado(tramoDto.costoAproximado() != null ? tramoDto.costoAproximado() : tramoActual.getCostoAproximado());
+
+        tramoActual.setCostoReal(tramoDto.costoReal() != null ? tramoDto.costoReal() : tramoActual.getCostoReal());
+
+        
+
         Tramo tramoActualizado = servicio.actualizar(id, tramoActual);
 
         return ResponseEntity.ok(DtoHandler.convertirTramoDto(tramoActualizado));
