@@ -1,0 +1,73 @@
+{
+  "realm" : "tpi-backend",
+  "users" : [ {
+    "id" : "eff2c505-9e79-404f-9c52-f15c7b9480b6",
+    "username" : "adminjuan",
+    "firstName" : "fran",
+    "lastName" : "juan",
+    "email" : "pepinillosverdes86@gmail.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1762213880863,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "6908dbb5-d738-4766-a726-e7953ae7a7ca",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1762313356606,
+      "secretData" : "{\"value\":\"XKF9AAvH/06BoPOyJb0+n4KTYglSdzsVOMOVgK+ijR6/ki3bkPlfovs87lgm7iBEeLn/3lkqlryTRV+SG1JWMg==\",\"salt\":\"RDk2CakOJnpfjIx6Vo/tzA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "admin" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "1d553ff4-d257-4055-bbf9-854f0610fa0d",
+    "username" : "camionero",
+    "firstName" : "juan",
+    "lastName" : "camion",
+    "email" : "nombredeusuario@gmail.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1762921647795,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "33de46f9-5ece-4193-9d2e-e6517ac8837b",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1762921670210,
+      "secretData" : "{\"value\":\"BNOpA2AMVnjOP24hk6kKaabbar8Q6E3we6ijZ/sOhyY+zjb2PEr2YjSr3ri9TegXUprHFLGvFyKqSIj2NCrauQ==\",\"salt\":\"YKnvA6ypdbfhxtBdjkZ0LA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "transportista" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "c79145f5-6cf3-4a4a-b027-986d5d39186e",
+    "username" : "cliente",
+    "firstName" : "juan",
+    "lastName" : "clientenoso",
+    "email" : "nombredeusuario2@gmail.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1762921686930,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "fa464dfe-ef43-46f9-b51f-03dbbe0a3b12",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1762921699211,
+      "secretData" : "{\"value\":\"K9VEHqbZLZEfgndtSUPip9u+p5crhG5GV4m1Y04KuxOxjwPnQbeNFrZ4ppPbBlMHJkQ84E4igUnldsf2RVrJ6g==\",\"salt\":\"qUBt5Dn7nJsh1t1NZ1FQGw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ "UPDATE_PASSWORD" ],
+    "realmRoles" : [ "cliente" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}

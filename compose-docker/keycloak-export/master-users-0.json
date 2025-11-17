@@ -1,0 +1,72 @@
+{
+  "realm" : "master",
+  "users" : [ {
+    "id" : "b3381c84-ab57-4c0d-8931-87f20dc67e39",
+    "username" : "admin",
+    "firstName" : "julian",
+    "lastName" : "alvarez",
+    "emailVerified" : false,
+    "createdTimestamp" : 1762212688786,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "1a7febf5-7c5f-46a8-8fa0-3387b6366af9",
+      "type" : "password",
+      "createdDate" : 1762212689120,
+      "secretData" : "{\"value\":\"u/J6IEwtI8HSUp9BhxTHGj2VPWdNLJAXSfDxqhFUj7gxu6KSbemxFr7018U9T543DP8atQFI26Q2XLn2NbHkew==\",\"salt\":\"laHe6LHel8rbyvtnXM8dlA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "admin", "default-roles-master" ],
+    "clientRoles" : {
+      "tpi-backend-realm" : [ "manage-realm", "view-identity-providers", "manage-identity-providers", "manage-users", "query-groups", "query-clients", "manage-authorization", "manage-events", "query-users", "view-users", "manage-clients", "view-clients", "view-authorization", "query-realms", "view-events", "create-client", "view-realm" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "4233091b-e996-49d0-bc61-0d3a5bca8c8b",
+    "username" : "camionero",
+    "firstName" : "juan",
+    "lastName" : "bautista",
+    "emailVerified" : false,
+    "createdTimestamp" : 1762919933251,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "5d6ae3db-e57f-4506-a3c5-ee7e248db68a",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1762920106811,
+      "secretData" : "{\"value\":\"joFCOMOtz7pjt0kgNjsghhItwmfabf3Me/RNbExyh9aIlW7GUGXS22KIfz4vmJxSiHcZ6Xnw46XgqAMm0YsOow==\",\"salt\":\"byIoC79zGyYyLiyyF/NYaw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-master", "transportista" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "ea2b23ee-4649-4a3e-9f6f-7465a4f58934",
+    "username" : "cliente",
+    "firstName" : "pedro",
+    "lastName" : "pascal",
+    "emailVerified" : false,
+    "createdTimestamp" : 1762920009037,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "6c6b05c9-bedd-4c58-9765-c456db9309ce",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1762920128453,
+      "secretData" : "{\"value\":\"AsO9Ufxj97TlpWURvugDWqtTP061nzYMS8/MT6cuiqQRgLUX/4U+G1OI1rgc6uHAIAROjr7A6wO2zYWO7r+JUA==\",\"salt\":\"DCUw/mlw/Aa4OYDoBk83FQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-master", "cliente" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}
