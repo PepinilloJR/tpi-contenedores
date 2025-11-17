@@ -23,7 +23,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=mydatabasename
     volumes:
-      - postgres_data:/opt/postgres/data
+      - postgres_data:/var/lib/postgresql/data
   gateway:
     image: pepinillojr/tpi-backend:gateway
     depends_on:
