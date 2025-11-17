@@ -37,25 +37,17 @@ public class TarifaControlador {
         }
         return new TarifaDto(
                 t.getId(),
-                t.getNombre(),
-                t.getPrecioPorKm(),
-                t.getPrecioFijo(),
-                t.getMoneda(),
-                t.getVigenciaDesde(),
-                t.getVigenciaHasta(),
-                t.getActivo());
+                t.getCostoLitro(),
+                t.getCostoVolumen(),
+                t.getCostoKilometro());
     }
 
     // helper: dto -> entidad (para crear)
     private Tarifa convertirEntidad(TarifaDto dto) {
         Tarifa t = new Tarifa();
-        t.setNombre(dto.nombre());
-        t.setPrecioPorKm(dto.precioPorKm());
-        t.setPrecioFijo(dto.precioFijo());
-        t.setMoneda(dto.moneda());
-        t.setVigenciaDesde(dto.vigenciaDesde());
-        t.setVigenciaHasta(dto.vigenciaHasta());
-        t.setActivo(dto.activo() != null ? dto.activo() : true);
+        t.setCostoKilometro(dto.costoLitro());
+        t.setCostoVolumen(dto.costoVolumen());
+        t.setCostoKilometro(dto.costoKilometro());
         return t;
     }
 
@@ -73,27 +65,10 @@ public class TarifaControlador {
         // actualización parcial: aplica solo campos no nulos
         Tarifa actual = servicio.obtenerPorId(id);
 
-        if (dto.nombre() != null) {
-            actual.setNombre(dto.nombre());
-        }
-        if (dto.precioPorKm() != null) {
-            actual.setPrecioPorKm(dto.precioPorKm());
-        }
-        if (dto.precioFijo() != null) {
-            actual.setPrecioFijo(dto.precioFijo());
-        }
-        if (dto.moneda() != null) {
-            actual.setMoneda(dto.moneda());
-        }
-        if (dto.vigenciaDesde() != null) {
-            actual.setVigenciaDesde(dto.vigenciaDesde());
-        }
-        if (dto.vigenciaHasta() != null) {
-            actual.setVigenciaHasta(dto.vigenciaHasta());
-        }
-        if (dto.activo() != null) {
-            actual.setActivo(dto.activo());
-        }
+        actual.setCostoKilometro(dto.costoKilometro() != null ? dto.costoKilometro() : actual.getCostoKilometro());
+        actual.setCostoLitro(dto.costoLitro() != null ? dto.costoLitro() : actual.getCostoLitro());
+        actual.setCostoVolumen(dto.costoVolumen() != null ? dto.costoVolumen() : actual.getCostoVolumen());
+
 
         Tarifa actualizada = servicio.actualizar(id, actual);
         return ResponseEntity.ok(convertirDto(actualizada));

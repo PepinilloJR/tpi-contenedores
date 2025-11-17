@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Positive;
 public record CamionDto(
         Long id,
 
+        @NotNull(message = "La tarifa es obligatoria")
+        TarifaDto tarifa,
+
         @NotBlank(message = "La patente es obligatoria")
         String patente,
 
@@ -14,23 +17,19 @@ public record CamionDto(
         String nombreTransportista,
 
         @NotBlank(message = "El teléfono es obligatorio")
-        String telefono,
+        String telefonoTransportista,
 
         @NotNull(message = "La capacidad de peso es obligatoria")
         @Positive(message = "La capacidad de peso debe ser mayor que cero")
-        Double capacidadPesoKg,
+        Double capacidadPeso,
 
         @NotNull(message = "La capacidad de volumen es obligatoria")
         @Positive(message = "La capacidad de volumen debe ser mayor que cero")
-        Double capacidadVolumenM3,
+        Double capacidadVolumen,
 
         @NotNull(message = "El costo por kilómetro es obligatorio")
         @Positive(message = "El costo por kilómetro debe ser mayor que cero")
-        Double costoPorKm,
-
-        @NotNull(message = "El consumo de combustible es obligatorio")
-        @Positive(message = "El consumo de combustible debe ser mayor que cero")
-        Double consumoCombustibleLx100km,
+        Double consumoCombustiblePromedio,
 
         Boolean disponible
 ) {}

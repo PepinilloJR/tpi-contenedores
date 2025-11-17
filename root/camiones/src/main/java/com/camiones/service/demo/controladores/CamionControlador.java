@@ -31,36 +31,41 @@ public class CamionControlador {
         this.servicio = servicio;
     }
 
-    // helper: entidad -> dto
+    // ======== Helpers ========
+
     private CamionDto convertirDto(Camion c) {
         if (c == null)
             return null;
+
         return new CamionDto(
                 c.getId(),
+                c.getTarifa(),
                 c.getPatente(),
                 c.getNombreTransportista(),
-                c.getTelefono(),
-                c.getCapacidadPesoKg(),
-                c.getCapacidadVolumenM3(),
-                c.getCostoPorKm(),
-                c.getConsumoCombustibleLx100km(),
-                c.getDisponible() // <-- fix aquí
+                c.getTelefonoTransportista(),
+                c.getCapacidadPeso(),
+                c.getCapacidadVolumen(),
+                c.getConsumoCombustiblePromedio(),
+                c.getDisponible()
         );
     }
 
-    // helper: dto -> entidad (para crear)
     private Camion convertirEntidad(CamionDto dto) {
         Camion c = new Camion();
+
+        c.setTarifa(dto.tarifa());
         c.setPatente(dto.patente());
         c.setNombreTransportista(dto.nombreTransportista());
-        c.setTelefono(dto.telefono());
-        c.setCapacidadPesoKg(dto.capacidadPesoKg());
-        c.setCapacidadVolumenM3(dto.capacidadVolumenM3());
-        c.setCostoPorKm(dto.costoPorKm());
-        c.setConsumoCombustibleLx100km(dto.consumoCombustibleLx100km());
+        c.setTelefonoTransportista(dto.telefonoTransportista());
+        c.setCapacidadPeso(dto.capacidadPeso());
+        c.setCapacidadVolumen(dto.capacidadVolumen());
+        c.setConsumoCombustiblePromedio(dto.consumoCombustiblePromedio());
         c.setDisponible(dto.disponible() != null ? dto.disponible() : true);
+
         return c;
     }
+
+    // ======== Endpoints ========
 
     @Operation(summary = "Crear un Camion", description = "Crea un Camion")
     @PostMapping
@@ -73,23 +78,23 @@ public class CamionControlador {
     @Operation(summary = "Actualizar un Camion", description = "Actualiza un Camion dado segun id")
     @PutMapping("/{id}")
     public ResponseEntity<CamionDto> actualizar(@PathVariable Long id, @RequestBody CamionDto dto) {
-        // actualización parcial: aplica solo campos no nulos
+
         Camion actual = servicio.obtenerPorId(id);
 
+        if (dto.tarifa() != null)
+            actual.setTarifa(dto.tarifa());
         if (dto.patente() != null)
             actual.setPatente(dto.patente());
         if (dto.nombreTransportista() != null)
             actual.setNombreTransportista(dto.nombreTransportista());
-        if (dto.telefono() != null)
-            actual.setTelefono(dto.telefono());
-        if (dto.capacidadPesoKg() != null)
-            actual.setCapacidadPesoKg(dto.capacidadPesoKg());
-        if (dto.capacidadVolumenM3() != null)
-            actual.setCapacidadVolumenM3(dto.capacidadVolumenM3());
-        if (dto.costoPorKm() != null)
-            actual.setCostoPorKm(dto.costoPorKm());
-        if (dto.consumoCombustibleLx100km() != null)
-            actual.setConsumoCombustibleLx100km(dto.consumoCombustibleLx100km());
+        if (dto.telefonoTransportista() != null)
+            actual.setTelefonoTransportista(dto.telefonoTransportista());
+        if (dto.capacidadPeso() != null)
+            actual.setCapacidadPeso(dto.capacidadPeso());
+        if (dto.capacidadVolumen() != null)
+            actual.setCapacidadVolumen(dto.capacidadVolumen());
+        if (dto.consumoCombustiblePromedio() != null)
+            actual.setConsumoCombustiblePromedio(dto.consumoCombustiblePromedio());
         if (dto.disponible() != null)
             actual.setDisponible(dto.disponible());
 
@@ -119,10 +124,11 @@ public class CamionControlador {
         return ResponseEntity.ok(convertirDto(camionDisponible));
     }
 
-    @Operation(summary = "Obtiene un Camion segun si esta disponible y capacidad", description = "Obtiene un Camion dado segun segun disponibildiad y capacidad")
+    @Operation(summary = "Obtiene un Camion segun capacidad", description = "Obtiene un Camion disponible que soporte peso y volumen")
     @GetMapping("/disponible/por-capacidad")
-    public ResponseEntity<CamionDto> obtenerDisponiblePorCapacidad(@RequestParam(required = true) Double peso,
-            @RequestParam(required = true) Double volumen) {
+    public ResponseEntity<CamionDto> obtenerDisponiblePorCapacidad(
+            @RequestParam Double peso,
+            @RequestParam Double volumen) {
 
         Camion camionDisponible = servicio.obtenerDisponiblePorCapacidad(peso, volumen);
         return ResponseEntity.ok(convertirDto(camionDisponible));
