@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
 import com.commonlib.dto.DtoHandler;
 
 @RestController
@@ -34,8 +33,11 @@ public class UbicacionControlador {
 
     @Operation(summary = "Crear una Ubicacion", description = "Crea una Ubicacion")
     @PostMapping
-    public ResponseEntity<UbicacionDto> crear(@RequestBody UbicacionDto ubicacionDto) {
+    public ResponseEntity<?> crear(@RequestBody UbicacionDto ubicacionDto) {
         Ubicacion ubicacionEntidad = DtoHandler.convertirUbicacionEntidad(ubicacionDto);
+        if (ubicacionDto.costo() == null && ubicacionDto.tipo() == "deposito") {
+            return ResponseEntity.badRequest().body("Error al crear, un deposito requiere un costo de estadia");
+        }
         Ubicacion ubicacionCreada = servicio.crear(ubicacionEntidad);
 
         return ResponseEntity.status(201).body(DtoHandler.convertirUbicacionDto(ubicacionCreada));
@@ -43,17 +45,19 @@ public class UbicacionControlador {
 
     @Operation(summary = "Actualizar una Ubicacion", description = "Actualiza una Ubicacion dada por id")
     @PutMapping("/{id}")
-    public ResponseEntity<UbicacionDto> actualizar(@PathVariable Long id, @RequestBody UbicacionDto ubicacionDto) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody UbicacionDto ubicacionDto) {
 
         Ubicacion ubicacionActual = servicio.obtenerPorId(id);
 
         ubicacionActual.setNombre(ubicacionDto.nombre() != null ? ubicacionDto.nombre() : ubicacionActual.getNombre());
-        ubicacionActual
-                .setLatitud(ubicacionDto.latitud() != null ? ubicacionDto.latitud() : ubicacionActual.getLatitud());
-        ubicacionActual
-                .setLongitud(ubicacionDto.longitud() != null ? ubicacionDto.longitud() : ubicacionActual.getLongitud());
-
+        // ubicacionActual.setLatitud(ubicacionDto.latitud() != null ? ubicacionDto.latitud() : ubicacionActual.getLatitud());
+        // ubicacionActual.setLongitud(ubicacionDto.longitud() != null ? ubicacionDto.longitud() : ubicacionActual.getLongitud());
+        ubicacionActual.setCosto(ubicacionDto.costo() != null ? ubicacionDto.costo() : ubicacionActual.getCosto());
         Ubicacion ubicacionActualizada = servicio.actualizar(id, ubicacionActual);
+
+        if (ubicacionDto.costo() == null && ubicacionDto.tipo() == "deposito") {
+            return ResponseEntity.badRequest().body("Error al actualizar, un deposito requiere un costo de estadia");
+        }
 
         return ResponseEntity.ok(DtoHandler.convertirUbicacionDto(ubicacionActualizada));
     }
