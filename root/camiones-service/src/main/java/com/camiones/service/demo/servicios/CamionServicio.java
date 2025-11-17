@@ -58,7 +58,7 @@ public class CamionServicio {
     @Transactional(readOnly = true)
     public Camion obtenerDisponiblePorCapacidad(Double peso, Double volumen) {
         return repositorio
-                .findFirstByDisponibleTrueAndCapacidadPesoKgGreaterThanEqualAndCapacidadVolumenM3GreaterThanEqual(peso,
+                .findFirstByDisponibleTrueAndCapacidadPesoGreaterThanEqualAndCapacidadVolumenGreaterThanEqual(peso,
                         volumen)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No hay ningun camion disponible o que cumpla con la capacidad de peso de " + peso

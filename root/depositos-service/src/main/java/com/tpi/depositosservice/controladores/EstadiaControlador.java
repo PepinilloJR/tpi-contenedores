@@ -13,13 +13,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.commonlib.dto.DtoHandler;
 import com.commonlib.dto.EstadiaDto;
 import com.commonlib.entidades.Estadia;
 import com.tpi.depositosservice.servicios.EstadiaServicio;
 
 @RestController
-@RequestMapping("/api/depositos/estadias")// Coincide con la documentación de endpoints
+@RequestMapping("/api/estadias")// Coincide con la documentación de endpoints
 public class EstadiaControlador {
+
 
     private final EstadiaServicio servicio;
 
@@ -31,20 +33,17 @@ public class EstadiaControlador {
 
     private EstadiaDto convertirDto(Estadia e) {
         if (e == null) return null;
-        return new EstadiaDto(
-            e.getIdEstadia(),
-            e.getDeposito().getIdDeposito(), // Obtenemos solo el ID del depósito
-            e.getIdTramo(),
-            e.getFechaHoraEntrada(),
-            e.getFechaHoraSalida()
-        );
+    
+        
+        return new EstadiaDto(e.getIdEstadia(), DtoHandler.convertirTramoDto(e.getTramo()), e.getFechaHoraEntrada(), e.getFechaHoraSalida())
+        ;
     }
 
     private Estadia convertirEntidad(EstadiaDto dto) {
         Estadia e = new Estadia();
         // No seteamos el ID del depósito ni el ID de la estadía aquí, 
         // ya que el servicio se encarga de buscar el Deposito.
-        e.setIdTramo(dto.idTramo());
+        e.setTramo(DtoHandler.convertirTramoEntidad(dto.tramo()));
         e.setFechaHoraEntrada(dto.fechaHoraEntrada());
         e.setFechaHoraSalida(dto.fechaHoraSalida());
         return e;
@@ -53,11 +52,16 @@ public class EstadiaControlador {
     // --- Endpoints CRUD ---
 
     @PostMapping
-    public ResponseEntity<EstadiaDto> crear(@RequestBody EstadiaDto estadiaDto) {
+    public ResponseEntity<?> crear(@RequestBody EstadiaDto estadiaDto) {
+
+        if (!estadiaDto.tramo().origen().tipo().toLowerCase().equals("deposito"))
+        {
+            return ResponseEntity.status(400).body("el origen del tramo no es un deposito (una estadia se define al origen de un tramo y solo cuenta si este es un deposito)");
+        }
         Estadia estadiaEntidad = convertirEntidad(estadiaDto);
-        
+        estadiaEntidad.setTramo(servicio.obtener(estadiaDto.tramo().id()));
         // Llamamos al servicio pasando la entidad y el ID del depósito
-        Estadia estadiaCreada = servicio.crear(estadiaEntidad, estadiaDto.idDeposito()); 
+        Estadia estadiaCreada = servicio.crear(estadiaEntidad); 
         
         return ResponseEntity.status(201).body(convertirDto(estadiaCreada));
     }
@@ -66,12 +70,15 @@ public class EstadiaControlador {
     public ResponseEntity<EstadiaDto> actualizar(@PathVariable Long id, @RequestBody EstadiaDto estadiaDto) {
         
         // Obtenemos el ID del depósito desde el DTO
-        Long idDeposito = estadiaDto.idDeposito();
+        //Long idDeposito = estadiaDto.idDeposito();
 
         // Creamos una entidad temporal para la actualización
-        Estadia estadiaActualizar = convertirEntidad(estadiaDto);
+        Estadia estadiaActualizar = servicio.obtenerPorId(id);
+        estadiaActualizar.setTramo(DtoHandler.convertirTramoEntidad(estadiaDto.tramo()));
+        estadiaActualizar.setFechaHoraEntrada(estadiaDto.fechaHoraEntrada());
+        estadiaActualizar.setFechaHoraSalida(estadiaDto.fechaHoraSalida());
 
-        Estadia estadiaActualizada = servicio.actualizar(id, estadiaActualizar, idDeposito);
+        Estadia estadiaActualizada = servicio.actualizar(estadiaActualizar);
         return ResponseEntity.ok(convertirDto(estadiaActualizada));
     }
 

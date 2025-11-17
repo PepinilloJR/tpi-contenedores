@@ -38,16 +38,6 @@ public class TarifaServicio {
                 .orElseThrow(() -> new ResourceNotFoundException("Tarifa no encontrada con id " + id));
     }
 
-    @Transactional(readOnly = true)
-    public List<Tarifa> obtenerPorNombre(String nombre) {
-        return repositorio.findByNombre(nombre);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Tarifa> listarActivas() {
-        return repositorio.findByActivoTrue();
-    }
-
     /* ----------------- UPDATE ----------------- */
     @Transactional
     public Tarifa actualizar(Long id, Tarifa datos) {

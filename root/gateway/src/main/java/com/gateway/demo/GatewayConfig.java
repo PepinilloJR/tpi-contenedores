@@ -71,9 +71,9 @@ public class GatewayConfig {
 
     @Bean
     public RouterFunction<ServerResponse> depositosRouterFunction() {
-        return route("depositos").path("/protected/depositos", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
-                .before(BeforeFilterFunctions.rewritePath("/protected/depositos", "/api/depositos"))
-                .before(BeforeFilterFunctions.uri("http://depositos:8003/api/depositos")).build();
+        return route("estadias").path("/protected/estadias", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/estadias", "/api/estadias"))
+                .before(BeforeFilterFunctions.uri("http://depositos:8003/api/estadias")).build();
     }
 }
 

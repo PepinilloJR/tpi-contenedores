@@ -1,8 +1,6 @@
 package com.commonlib.entidades;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.Duration;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -80,24 +78,11 @@ public class Tramo {
         return parteCombustible + parteVolumenPeso;
     }
 
-    public Long calcularEstadia() {
-        if (fechaHoraInicio == null || fechaHoraFin == null) {
-            return 0L;
-        }
-        return Duration.between(fechaHoraInicio, fechaHoraFin).toDays();
-    }
 
-    public Double calcularCostoEstadia() {
-        if (this.origen != null || this.origen.getTipo().equalsIgnoreCase("deposito")) {
-            return (Double) this.origen.getCosto() * calcularEstadia();
-        }
-        return 0.0;
-
-    }
 
     public Double calcularCostoReal() {
         if (this.costoAproximado != null){
-            return costoAproximado + calcularCostoEstadia();
+            return costoAproximado;
         }
         return 0.0;
     }

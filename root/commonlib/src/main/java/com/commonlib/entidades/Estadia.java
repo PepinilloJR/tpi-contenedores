@@ -1,6 +1,7 @@
 package com.commonlib.entidades;
 
-import jakarta.persistence.Column;
+import java.time.Duration;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -28,15 +29,25 @@ public class Estadia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idEstadia;
 
-    // Relación con Deposito (la entidad de tu microservicio)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idDeposito", nullable = false)
-    private Deposito deposito; 
-
-    
-    @Column(name = "idTramo", nullable = false)
-    private Long idTramo; // FK a TRAMOS del servicio de solicitudes/tramos/rutas
+    @JoinColumn(name = "idTramo", nullable = false)
+    private Tramo tramo; // FK a TRAMOS del servicio de solicitudes/tramos/rutas
 
     private java.time.LocalDateTime fechaHoraEntrada;
     private java.time.LocalDateTime fechaHoraSalida;
+
+    public Long calcularEstadia() {
+        if (fechaHoraEntrada == null || fechaHoraSalida == null) {
+            return 0L;
+        }
+        return Duration.between(fechaHoraEntrada, fechaHoraSalida).toDays();
+    }
+
+    public Double calcularCostoEstadia() {
+        if (this.tramo != null && this.tramo.getOrigen() != null) {
+            return this.tramo.getOrigen().getCosto() * calcularEstadia();
+        }
+        return 0.0;
+
+    }
 }
