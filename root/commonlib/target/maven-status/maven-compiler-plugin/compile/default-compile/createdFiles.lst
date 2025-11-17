@@ -26,7 +26,7 @@ com/commonlib/dto/ContenedorDto.class
 com/commonlib/dto/RutaDto.class
 com/commonlib/dto/DtoHandler.class
 com/commonlib/entidades/Ubicacion.class
-com/commonlib/entidades/Deposito.class
 com/commonlib/entidades/Tarifa.class
+com/commonlib/entidades/Deposito.class
 com/commonlib/dto/TramoDto.class
 com/commonlib/dto/SeguimientoDto.class
