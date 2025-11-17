@@ -26,24 +26,10 @@ public class Tarifa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 80)
-    private String nombre;
+    private Double costoLitro;
 
-    @Column(nullable = false)
-    private Double precioPorKm;
+    private Double costoVolumen;
 
-    @Column(nullable = true)
-    private Double precioFijo;
+    private Double costoKilometro;
 
-    @Column(nullable = true, length = 10)
-    private String moneda;
-
-    @Column(nullable = false)
-    private LocalDate vigenciaDesde;
-
-    @Column(nullable = true)
-    private LocalDate vigenciaHasta;
-
-    @Column(nullable = false)
-    private Boolean activo = true;
 }

@@ -2,9 +2,13 @@ package com.commonlib.entidades;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +29,10 @@ public class Camion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_tarifa", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_camion_tarifa"))
+    private Tarifa tarifa;
+
     @Column(nullable = false, unique = true, length = 12)
     private String patente;
 
@@ -32,20 +40,16 @@ public class Camion {
     private String nombreTransportista;
 
     @Column(nullable = false, length = 20)
-    private String telefono;
+    private String telefonoTransportista;
 
     @Column(nullable = false)
-    private Double capacidadPesoKg;
+    private Double capacidadPeso;
 
     @Column(nullable = false)
-    private Double capacidadVolumenM3;
+    private Double capacidadVolumen;
 
     @Column(nullable = false)
-    private Double costoPorKm;
+    private Double consumoCombustiblePromedio;
 
-    @Column(nullable = false)
-    private Double consumoCombustibleLx100km;
-
-    @Column(nullable = false)
     private Boolean disponible;
 }
