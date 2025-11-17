@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.camiones.service.demo.servicios.CamionServicio;
+import com.camiones.service.demo.servicios.TarifaServicio;
 import com.commonlib.dto.CamionDto;
 import com.commonlib.dto.DtoHandler;
 import com.commonlib.entidades.Camion;
+import com.commonlib.entidades.Tarifa;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -27,9 +29,11 @@ import jakarta.validation.Valid;
 public class CamionControlador {
 
     private final CamionServicio servicio;
+    private final TarifaServicio servicioTarifa;
 
-    public CamionControlador(CamionServicio servicio) {
+    public CamionControlador(CamionServicio servicio,TarifaServicio servicioTarifa) {
         this.servicio = servicio;
+        this.servicioTarifa = servicioTarifa;
     }
 
     // ======== Helpers ========
@@ -41,6 +45,8 @@ public class CamionControlador {
     @PostMapping
     public ResponseEntity<CamionDto> crear(@Valid @RequestBody CamionDto dto) {
         Camion entity = DtoHandler.convertirCamionEntidad(dto);
+        Tarifa tarifa = servicioTarifa.obtenerPorId(dto.tarifa().id());
+        entity.setTarifa(tarifa);
         Camion creado = servicio.crear(entity);
         return ResponseEntity.status(201).body(DtoHandler.convertirCamionDto(creado));
     }

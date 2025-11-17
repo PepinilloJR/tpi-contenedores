@@ -132,7 +132,8 @@ public interface DtoHandler {
                 t.getCostoReal(),
                 t.getFechaHoraInicio(),
                 t.getFechaHoraFin(),
-                t.getDistancia()
+                t.getDistancia(),
+                t.getCombustibleConsumido()
         );
     }
 
@@ -188,6 +189,7 @@ public interface DtoHandler {
             return null;
 
         Tramo t = new Tramo();
+        t.setId(dto.id());
         t.setOrigen(convertirUbicacionEntidad(dto.origen()));
         t.setDestino(convertirUbicacionEntidad(dto.destino()));
         t.setRuta(convertirRutaEntidad(dto.ruta()));
@@ -197,7 +199,8 @@ public interface DtoHandler {
         t.setCostoReal(dto.costoReal());
         t.setFechaHoraInicio(dto.fechaHoraInicio());
         t.setFechaHoraFin(dto.fechaHoraFin());
-
+        t.setCombustibleConsumido(dto.combustibleConsumido());
+        t.setCamion(convertirCamionEntidad(dto.camion()));
         return t;
     }
 

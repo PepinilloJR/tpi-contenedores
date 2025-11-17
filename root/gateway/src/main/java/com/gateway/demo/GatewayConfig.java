@@ -47,6 +47,14 @@ public class GatewayConfig {
     }
 
     @Bean
+    public RouterFunction<ServerResponse> tarifasRouterFunction() {
+        return route("tarifas").path("/protected/tarifas", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
+                .before(BeforeFilterFunctions.rewritePath("/protected/tarifas", "/api/tarifas"))
+                .before(BeforeFilterFunctions.uri("http://camiones:8002/api/tarifas"))
+            .build();
+    }
+
+    @Bean
     public RouterFunction<ServerResponse> rutasRouterFunction() {
         return route("rutas").path("/protected/rutas", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/rutas", "/api/rutas"))

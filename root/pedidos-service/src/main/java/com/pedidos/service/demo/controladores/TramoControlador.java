@@ -66,8 +66,11 @@ public class TramoControlador {
         // Soporta la actualizacion parcial, y hay que ver reglas en el servicio
         Tramo tramoActual = servicio.obtenerPorId(id);
         tramoActual.setEstado(tramoDto.estado() != null ? tramoDto.estado() : tramoActual.getEstado());
+        tramoActual.setFechaHoraInicio(
+                tramoDto.fechaHoraInicio() != null ? tramoDto.fechaHoraInicio() : tramoActual.getFechaHoraInicio());
         tramoActual.setFechaHoraFin(
                 tramoDto.fechaHoraFin() != null ? tramoDto.fechaHoraFin() : tramoActual.getFechaHoraFin());
+        tramoActual.setCombustibleConsumido(tramoDto.combustibleConsumido() != null ? tramoDto.combustibleConsumido() : tramoActual.getCombustibleConsumido());
         if (tramoDto.camion() != null) {
             tramoActual.setCamion(DtoHandler.convertirCamionEntidad(tramoDto.camion()));
         }
@@ -76,18 +79,18 @@ public class TramoControlador {
         return ResponseEntity.ok(DtoHandler.convertirTramoDto(tramoActualizado));
     }
 
+    @Operation(summary = "Obtener los Tramos de un transportista", description = "Obtiene los Tramos de un transportista dado")
+    @GetMapping("/transportista/{transportista}")
+    public ResponseEntity<List<TramoDto>> obtener(@PathVariable String transportista) {
+        List<Tramo> tramos = servicio.obtenerPorTransportista(transportista);
+        return ResponseEntity.ok(DtoHandler.convertirTramosDto(tramos));
+    }
+
     @Operation(summary = "Obtener un Tramo", description = "Obtiene un Tramo dado segun id")
     @GetMapping("/{id}")
     public ResponseEntity<TramoDto> obtener(@PathVariable Long id) {
         Tramo tramo = servicio.obtenerPorId(id);
         return ResponseEntity.ok(DtoHandler.convertirTramoDto(tramo));
-    }
-
-    @Operation(summary = "Obtener los Tramos de un transportista", description = "Obtiene los Tramos de un transportista dado")
-    @GetMapping("/{transportista}")
-    public ResponseEntity<List<TramoDto>> obtener(@PathVariable String transportista) {
-        List<Tramo> tramos = servicio.obtenerPorTransportista(transportista);
-        return ResponseEntity.ok(DtoHandler.convertirTramosDto(tramos));
     }
 
     // por ejemplo -> GET /api/tramos?idRuta=5

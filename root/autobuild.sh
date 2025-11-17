@@ -20,3 +20,5 @@ for service in "${SERVICES[@]}"; do
 
     cd ..
 done
+
+docker image prune -f

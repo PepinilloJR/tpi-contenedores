@@ -49,6 +49,7 @@ public class Tramo {
     private LocalDateTime fechaHoraInicio;
     private LocalDateTime fechaHoraFin;
     private Double distancia;
+    private Integer combustibleConsumido;
 
     public Double calcularCostoAproximado() {
         if (this.camion == null || this.distancia == null)

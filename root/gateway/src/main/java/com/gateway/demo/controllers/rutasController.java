@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,8 +19,6 @@ import com.commonlib.dto.RutaDto;
 import com.commonlib.dto.SolicitudDto;
 import com.commonlib.dto.TramoDto;
 import com.commonlib.dto.UbicacionDto;
-
-import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/controlled/rutas")
@@ -96,10 +93,10 @@ public class rutasController {
                 }
 
                 if (destino != null) {
-                    TramoDto tdto = new TramoDto(null,pedidoActual.origen(), destino, null, rutaDto, "origen-deposito", null, null, null, null, null, l.getDistance());
+                    TramoDto tdto = new TramoDto(null,pedidoActual.origen(), destino, null, rutaDto, "origen-deposito", null, null, null, null, null, l.getDistance(), null);
                     tramos.add(tdto);
                 } else {
-                    TramoDto tdto = new TramoDto(null,pedidoActual.origen(), pedidoActual.destino(), null, rutaDto, "origen-deposito", null, null, null, null, null, l.getDistance());
+                    TramoDto tdto = new TramoDto(null,pedidoActual.origen(), pedidoActual.destino(), null, rutaDto, "origen-deposito", null, null, null, null, null, l.getDistance(), null);
                     tramos.add(tdto);
                 }
 
@@ -119,10 +116,10 @@ public class rutasController {
                 }
 
                 if (destino != null) {
-                    TramoDto tdto = new TramoDto(null,origen, destino, null, null, "deposito-deposito", null, null, null, null, null, l.getDistance());
+                    TramoDto tdto = new TramoDto(null,origen, destino, null, null, "deposito-deposito", null, null, null, null, null, l.getDistance(), null);
                     tramos.add(tdto);
                 } else {
-                    TramoDto tdto = new TramoDto(null,origen, pedidoActual.destino(), null, null, "deposito-destino", null, null, null, null, null, l.getDistance());
+                    TramoDto tdto = new TramoDto(null,origen, pedidoActual.destino(), null, null, "deposito-destino", null, null, null, null, null, l.getDistance(), null);
                     tramos.add(tdto);
                 }
             }
@@ -142,7 +139,7 @@ public class rutasController {
         rutaFinal = rutasClient.post().body(rutaFinal).retrieve().toEntity(RutaDto.class).getBody();
 
         for (TramoDto t : tramos) {
-            TramoDto tdto = new TramoDto(null,t.origen(), t.destino(), null, rutaFinal, t.tipo(), null, null, null, null, null, t.distancia());
+            TramoDto tdto = new TramoDto(null,t.origen(), t.destino(), null, rutaFinal, t.tipo(), null, null, null, null, null, t.distancia(), null);
             tramosClient.post().body(tdto).exchange((req, res) -> {System.err.println(req);System.err.println(res); return null;});
         }
         // http de ejemplo

@@ -1,5 +1,7 @@
 package com.gateway.demo.controllers;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,11 +9,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 
 import com.commonlib.dto.CamionDto;
+import com.commonlib.dto.DtoHandler;
+import com.commonlib.dto.EstadiaDto;
 import com.commonlib.dto.TramoDto;
+import com.commonlib.entidades.Tramo;
 
 @RestController
 @RequestMapping("/controlled/tramos")
@@ -30,6 +36,66 @@ public class tramosController {
 
     @Autowired
     RestClient camionesClient;
+
+    @Autowired
+    RestClient estadiasClient;
+
+
+    @PutMapping("/finalizar/{id}")
+    public ResponseEntity<?> finalizarTramo(@PathVariable Long id, @RequestParam(required = false) LocalDateTime fechaHoraEntrada,
+            @RequestParam(required = false) LocalDateTime fechaHoraSalida, @RequestBody TramoDto tramoDto) {
+        Tramo tramoActual;
+        try {
+            TramoDto tramoActualDto = tramosClient.get().uri("/" + id).retrieve().toEntity(TramoDto.class).getBody();
+            tramoActual = DtoHandler.convertirTramoEntidad(tramoActualDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El tramo " + id + " no existe.");
+        }
+
+        if (tramoActual.getCamion() == null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("El tramo debe tener un camion asignado para ser finalizado" + tramoActual);
+        }
+
+        if (tramoActual.getFechaHoraInicio() == null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("El tramo debe haber sido iniciado, no exite fecha de inicio" + tramoActual);
+        }
+
+        if (tramoDto.fechaHoraInicio() != null) {
+            tramoActual.setFechaHoraFin(tramoDto.fechaHoraFin());
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Debe indicarse una fecha de finalizacion");
+        }
+
+        if (tramoDto.combustibleConsumido() != null) {
+            tramoActual.setCombustibleConsumido(tramoDto.combustibleConsumido());
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Debe indicarse una fecha de finalizacion");
+
+        }
+
+        if (fechaHoraEntrada != null && fechaHoraSalida != null) {
+            EstadiaDto estadiaDto = new EstadiaDto(null, tramoDto, fechaHoraEntrada, fechaHoraSalida);
+            try {
+                estadiaDto = estadiasClient.post().body(estadiaDto).retrieve().toEntity(EstadiaDto.class).getBody();
+            } catch (Exception e) {
+                return ResponseEntity.status(500)
+                .body("Error creando estadia: " + e.getMessage());
+
+            }
+        }
+        tramoActual.setEstado("finalizado");
+        TramoDto tramoActualDto = DtoHandler.convertirTramoDto(tramoActual);
+        try {
+            tramoActualDto = tramosClient.put().uri("/" + id).body(tramoActualDto).retrieve().toEntity(TramoDto.class).getBody();
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error modificando el tramo: "  + e.getMessage());
+        }
+
+        return ResponseEntity.ok(tramoActualDto);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> asignarCamion(@PathVariable Long id, @RequestBody TramoDto tramoDto) {
@@ -89,9 +155,9 @@ public class tramosController {
         }
         CamionDto camionActualizado;
         try {
-            camionActualizado = new CamionDto(camionApto.id(), camionApto.tarifa(), camionApto.patente(), 
-            camionApto.nombreTransportista(), camionApto.telefonoTransportista(), camionApto.capacidadPeso(),
-             camionApto.capacidadVolumen(), camionApto.consumoCombustiblePromedio(), camionApto.disponible());
+            camionActualizado = new CamionDto(camionApto.id(), camionApto.tarifa(), camionApto.patente(),
+                    camionApto.nombreTransportista(), camionApto.telefonoTransportista(), camionApto.capacidadPeso(),
+                    camionApto.capacidadVolumen(), camionApto.consumoCombustiblePromedio(), camionApto.disponible());
 
             camionesClient.put()
                     .uri("/" + camionApto.id())
@@ -116,13 +182,14 @@ public class tramosController {
                 tramoActual.costoReal(),
                 tramoActual.fechaHoraInicio(),
                 tramoActual.fechaHoraFin(),
-                tramoActual.distancia());
+                tramoActual.distancia(),
+                tramoActual.combustibleConsumido());
 
         // Actualizar el estado del camion
-        tramoConCamion = tramosClient.put().uri("/" + id).body(tramoConCamion).retrieve().toEntity(TramoDto.class).getBody();
+        tramoConCamion = tramosClient.put().uri("/" + id).body(tramoConCamion).retrieve().toEntity(TramoDto.class)
+                .getBody();
 
         return ResponseEntity.ok(tramoConCamion);
 
     }
-
 }

@@ -54,13 +54,16 @@ public class EstadiaControlador {
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody EstadiaDto estadiaDto) {
 
-        if (!estadiaDto.tramo().origen().tipo().toLowerCase().equals("deposito"))
-        {
-            return ResponseEntity.status(400).body("el origen del tramo no es un deposito (una estadia se define al origen de un tramo y solo cuenta si este es un deposito)");
-        }
+    
         Estadia estadiaEntidad = convertirEntidad(estadiaDto);
         estadiaEntidad.setTramo(servicio.obtener(estadiaDto.tramo().id()));
         // Llamamos al servicio pasando la entidad y el ID del depósito
+        if (!estadiaEntidad.getTramo().getOrigen().getTipo().toLowerCase().equals("deposito"))
+        {
+            return ResponseEntity.status(400).body(
+                "el origen del tramo no es un deposito (una estadia se define al origen de un tramo y solo cuenta si este es un deposito)" + estadiaEntidad.getTramo().getOrigen()
+                );
+        }
         Estadia estadiaCreada = servicio.crear(estadiaEntidad); 
         
         return ResponseEntity.status(201).body(convertirDto(estadiaCreada));

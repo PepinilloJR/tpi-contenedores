@@ -42,12 +42,17 @@ services:
       - "8003"
     depends_on:
       - db
+      - pedidos
+    command: sh -c "sleep 10 && java -jar $(ls *.jar)"
+
   camiones:
     image: pepinillojr/tpi-backend:camiones-service
     expose:
       - "8002"
     depends_on:
       - db
+      - pedidos
+    command: sh -c "sleep 10 && java -jar $(ls *.jar)"
   osrm:
     image: osrm/osrm-backend:latest
     platform: linux/amd64

@@ -15,6 +15,7 @@ public record TramoDto(
         Double costoReal,
         LocalDateTime fechaHoraInicio,
         LocalDateTime fechaHoraFin,
-        Double distancia) {
+        Double distancia,
+        Integer combustibleConsumido) {
 
 }

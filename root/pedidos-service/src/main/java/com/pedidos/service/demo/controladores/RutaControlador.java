@@ -1,26 +1,24 @@
 package com.pedidos.service.demo.controladores;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.commonlib.dto.DtoHandler;
 import com.commonlib.dto.RutaDto;
 import com.commonlib.entidades.Ruta;
 import com.pedidos.service.demo.servicios.RutaServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import com.commonlib.dto.DtoHandler;
 
 // Hacer una interfaz de uso comun para el manejo de los dto
 
@@ -36,12 +34,9 @@ public class RutaControlador {
     @Operation(summary = "Crear una Ruta", description = "Crea una Ruta")
     @PostMapping
     public ResponseEntity<RutaDto> crear(@RequestBody RutaDto rutaDto) {
-        System.out.println("===========================");
-        System.out.println(rutaDto);
+
+        
         Ruta rutaEntidad = DtoHandler.convertirRutaEntidad(rutaDto);
-        System.out.println("===========================");
-        System.out.println("===========================");
-        System.out.println(rutaEntidad.toString());
         Ruta rutaCreada = servicio.crear(rutaEntidad);
         return ResponseEntity.status(201).body(DtoHandler.convertirRutaDto(rutaCreada));
     }
