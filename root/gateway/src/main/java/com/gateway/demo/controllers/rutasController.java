@@ -2,12 +2,15 @@ package com.gateway.demo.controllers;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +25,6 @@ import com.commonlib.dto.SolicitudDto;
 import com.commonlib.dto.TramoDto;
 import com.commonlib.dto.UbicacionDto;
 import com.commonlib.entidades.Solicitud;
-import com.commonlib.entidades.Tramo;
 
 @RestController
 @RequestMapping("/controlled/rutas")
@@ -84,6 +86,7 @@ public class rutasController {
         }
         
         int c = 0;
+        Double distanciaEstimada = (((ubiObject.getRoutes().get(0).getDuration() / 60) / 60) / 24);
         List<Leg> legs = ubiObject.getRoutes().get(0).getLegs();
         List<TramoDto> tramos = new ArrayList<TramoDto>();
         for (Leg l : legs) {
@@ -140,9 +143,11 @@ public class rutasController {
             
         }
 
+
+
+        pedidoActual = pedidosClient.put().uri("/" + pedidoActual.id()).body(pedidoActual).retrieve().toEntity(SolicitudDto.class).getBody();
+        
         RutaDto rutaFinal = new RutaDto(null, pedidoActual, tramos.size(), depositoActual.size(), null, null, distanciaTotal);
-
-
         rutaFinal = rutasClient.post().body(rutaFinal).retrieve().toEntity(RutaDto.class).getBody();
 
         for (TramoDto t : tramos) {
@@ -218,4 +223,128 @@ public class rutasController {
         
         return ResponseEntity.ok(solicitud);
     }
+
+
+    @GetMapping("/tentativas/{solicitudId}")
+    public ResponseEntity<?> rutasTentativas(@PathVariable Long solicitudId, @RequestBody RutaDto rutaDto) {
+
+    // 1. Obtener la solicitud (igual que tu método)
+    SolicitudDto pedidoActual;
+    try {
+        pedidoActual = pedidosClient.get()
+                .uri("/" + solicitudId)
+                .retrieve()
+                .toEntity(SolicitudDto.class)
+                .getBody();
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e);
+    }
+
+    // 2. Obtener depósitos/ubicaciones intermedias del mismo modo
+    ArrayList<UbicacionDto> depositoActual = new ArrayList<>();
+    for (Long dId : rutaDto.depositosID()) {
+        try {
+            depositoActual.add(
+                depositosClient.get()
+                        .uri("/" + dId)
+                        .retrieve()
+                        .toEntity(UbicacionDto.class)
+                        .getBody()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("El depósito/ubicación " + dId + " no existe.");
+        }
+    }
+
+    // 3. Armar cadena de coordenadas EXACTAMENTE como en tu método
+    String ubicaciones = pedidoActual.origen().longitud() + "," + pedidoActual.origen().latitud() + ";";
+    for (UbicacionDto u : depositoActual) {
+        ubicaciones += u.longitud() + "," + u.latitud() + ";";
+    }
+    ubicaciones += pedidoActual.destino().longitud() + "," + pedidoActual.destino().latitud();
+
+    // 4. Llamar OSRM con alternatives=5
+    RutaResponse response;
+    try {
+        response = distanciaClient.get()
+                .uri("/driving/" + ubicaciones +
+                     "?steps=true&overview=simplified&geometries=geojson&alternatives=5")
+                .retrieve()
+                .body(RutaResponse.class);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getCause());
+    }
+
+    if (response == null || response.getRoutes() == null) {
+        return ResponseEntity.status(500).body("OSRM no devolvió rutas.");
+    }
+
+    // 5. Transformar cada alternativa en lista de tramos como hace tu método
+    List<Object> alternativas = new ArrayList<>();
+
+    int alternativaNum = 1;
+    for (Route r : response.getRoutes()) {
+
+        List<Leg> legs = r.getLegs();
+        List<TramoDto> tramos = new ArrayList<>();
+
+        int c = 0;
+        for (Leg l : legs) {
+
+            if (c == 0) {
+                UbicacionDto destino = null;
+                if (!depositoActual.isEmpty()) {
+                    try { destino = depositoActual.get(0); } catch (Exception ignore) {}
+                }
+
+                UbicacionDto dest = destino != null ? destino : pedidoActual.destino();
+
+                TramoDto td = new TramoDto(null,
+                        pedidoActual.origen(),
+                        dest,
+                        null, null, "origen-deposito",
+                        null, null, null, null, null,
+                        l.getDistance(), null);
+
+                tramos.add(td);
+
+            } else {
+                UbicacionDto origen = null;
+                UbicacionDto destino = null;
+
+                try { origen = depositoActual.get(c - 1); } catch (Exception ignore) {}
+                try { destino = depositoActual.get(c); } catch (Exception ignore) {}
+
+                UbicacionDto d = destino != null ? destino : pedidoActual.destino();
+
+                TramoDto td = new TramoDto(null,
+                        origen,
+                        d,
+                        null, null,
+                        destino != null ? "deposito-deposito" : "deposito-destino",
+                        null, null, null, null, null,
+                        l.getDistance(), null);
+
+                tramos.add(td);
+            }
+
+            c++;
+        }
+
+        // calcular distancia total como en tu método
+        double distanciaTotal = 0;
+        for (TramoDto t : tramos) distanciaTotal += t.distancia();
+
+        // agregar alternativa
+        Map<String, Object> alt = new HashMap<>();
+        alt.put("rutaNumero", alternativaNum++);
+        alt.put("distanciaTotal", distanciaTotal);
+        alt.put("tramos", tramos);
+
+        alternativas.add(alt);
+    }
+
+    return ResponseEntity.ok(alternativas);
+}
 }
