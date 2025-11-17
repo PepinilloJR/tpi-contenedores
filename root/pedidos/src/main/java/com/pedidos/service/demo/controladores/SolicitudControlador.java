@@ -11,6 +11,8 @@ import com.pedidos.service.demo.servicios.ContenedorServicio;
 import com.pedidos.service.demo.servicios.SolicitudServicio;
 import com.pedidos.service.demo.servicios.UbicacionServicio;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.commonlib.entidades.*;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
 
 @RestController
 @RequestMapping("/api/solicitudes")
@@ -43,6 +44,7 @@ public class SolicitudControlador {
         this.servicioUbicacion = servicioUbicacion;
     }
 
+    @Operation(summary = "Crear una Solicitud", description = "Crea una Solicitud")
     @PostMapping
     public ResponseEntity<SolicitudDto> crear(@RequestBody SolicitudDto solicitudDto) {
 
@@ -95,6 +97,7 @@ public class SolicitudControlador {
         return ResponseEntity.status(201).body(DtoHandler.convertirSolicitudDto(solicitudCreada));
     }
 
+    @Operation(summary = "Actualizar una Solicitud", description = "Actualiza una Solicitud dada segun id")
     @PutMapping("/{id}")
     public ResponseEntity<SolicitudDto> actualizar(@PathVariable Long id, @RequestBody SolicitudDto solicitudDto) {
         // costoFinal? costoEstima?
@@ -137,18 +140,21 @@ public class SolicitudControlador {
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDto(SolicitudActualizada));
     }
 
+    @Operation(summary = "Obtener una Solicitud", description = "Obtiene una Solicitud dada segun id")
     @GetMapping("/{id}")
     public ResponseEntity<SolicitudDto> obtener(@PathVariable Long id) {
         Solicitud solicitud = servicioSolicitud.obtenerPorId(id);
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDto(solicitud));
     }
 
+    @Operation(summary = "Obtener el Seguimiento de una Solicitud", description = "Obtiene el Seguimiento de una Solicitud dada segun id")
     @GetMapping("/{id}/seguimiento")
     public ResponseEntity<List<SeguimientoDto>> obtenerSegumiento(@PathVariable Long id) {
         Solicitud solicitud = servicioSolicitud.obtenerPorId(id);
         return ResponseEntity.ok(DtoHandler.convertirSeguimientosDto(solicitud.getSeguimiento()));
     }
 
+    @Operation(summary = "Obtener todos las Solicitudes", description = "Obtiene todas las Solicitudes")
     @GetMapping
     public ResponseEntity<List<SolicitudDto>> obtenerTodos() {
         List<Solicitud> lista = servicioSolicitud.listarTodos();
@@ -156,6 +162,7 @@ public class SolicitudControlador {
         return ResponseEntity.ok(dtos);
     }
 
+    @Operation(summary = "Eliminar una Solicitud", description = "Elimina una Solicitud dada segun id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicioSolicitud.eliminar(id);

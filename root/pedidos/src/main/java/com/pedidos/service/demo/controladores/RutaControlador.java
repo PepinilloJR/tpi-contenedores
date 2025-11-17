@@ -10,6 +10,8 @@ import com.commonlib.dto.RutaDto;
 import com.commonlib.entidades.Ruta;
 import com.pedidos.service.demo.servicios.RutaServicio;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.commonlib.dto.DtoHandler;
-
 
 // Hacer una interfaz de uso comun para el manejo de los dto
 
@@ -32,7 +33,7 @@ public class RutaControlador {
         this.servicio = servicio;
     }
 
-
+    @Operation(summary = "Crear una Ruta", description = "Crea una Ruta")
     @PostMapping
     public ResponseEntity<RutaDto> crear(@RequestBody RutaDto rutaDto) {
         System.out.println("===========================");
@@ -47,26 +48,32 @@ public class RutaControlador {
 
     // Recordar siempre lo de actualizacion parcial
 
+    @Operation(summary = "Actualizar una Ruta", description = "Actualiza una Ruta")
     @PutMapping("/{id}")
     public ResponseEntity<RutaDto> actualizar(@PathVariable Long id, @RequestBody RutaDto rutaDto) {
 
         Ruta rutaActual = servicio.obtenerPorId(id);
 
-        rutaActual.setCantidadDepositos(rutaDto.cantidadDepositos() != null ? rutaDto.cantidadDepositos() : rutaActual.getCantidadDepositos());
-        rutaActual.setCantidadTramos(rutaDto.cantidadTramos() != null ? rutaDto.cantidadTramos() : rutaActual.getCantidadTramos());
-        rutaActual.setCostoPorTramo(rutaDto.costoPorTramo() != null ? rutaDto.costoPorTramo() : rutaActual.getCostoPorTramo());
+        rutaActual.setCantidadDepositos(
+                rutaDto.cantidadDepositos() != null ? rutaDto.cantidadDepositos() : rutaActual.getCantidadDepositos());
+        rutaActual.setCantidadTramos(
+                rutaDto.cantidadTramos() != null ? rutaDto.cantidadTramos() : rutaActual.getCantidadTramos());
+        rutaActual.setCostoPorTramo(
+                rutaDto.costoPorTramo() != null ? rutaDto.costoPorTramo() : rutaActual.getCostoPorTramo());
 
         Ruta rutaActualizada = servicio.actualizar(id, rutaActual);
 
         return ResponseEntity.ok(DtoHandler.convertirRutaDto(rutaActualizada));
     }
 
+    @Operation(summary = "Obtener una Ruta", description = "Obtiene una Ruta dada segun id")
     @GetMapping("/{id}")
     public ResponseEntity<RutaDto> obtener(@PathVariable Long id) {
         Ruta ruta = servicio.obtenerPorId(id);
         return ResponseEntity.ok(DtoHandler.convertirRutaDto(ruta));
     }
 
+    @Operation(summary = "Obtener todas las Ruta", description = "Obtiene todas las Rutas")
     @GetMapping
     public ResponseEntity<List<RutaDto>> obtenerTodos() {
         List<Ruta> lista = servicio.listarTodos();
@@ -74,6 +81,7 @@ public class RutaControlador {
         return ResponseEntity.ok(dtos);
     }
 
+    @Operation(summary = "Elimina una Ruta", description = "Elimina una Ruta dada segun id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);

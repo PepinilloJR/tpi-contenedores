@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pedidos.service.demo.servicios.ContenedorServicio;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 import com.commonlib.dto.ContenedorDto;
@@ -32,6 +33,7 @@ public class ContenedorControlador {
         this.servicio = servicio;
     }
 
+    @Operation(summary = "Crear un Contenedor", description = "Crea un Contenedor")
     @PostMapping
     public ResponseEntity<ContenedorDto> crear(@Valid @RequestBody ContenedorDto contenedorDto) {
         Contenedor contenedorEntidad = DtoHandler.convertirContenedorEntidad(contenedorDto);
@@ -40,7 +42,7 @@ public class ContenedorControlador {
     }
 
     // En el servicio hay que controlar el costoVolumen
-
+    @Operation(summary = "Actualizar un Contenedor", description = "Actualiza un Contenedor dado segun id")
     @PutMapping("/{id}")
     public ResponseEntity<ContenedorDto> actualizar(@PathVariable Long id,
             @RequestBody ContenedorDto contenedorDto) {
@@ -58,12 +60,14 @@ public class ContenedorControlador {
         return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedorActualizado));
     }
 
+    @Operation(summary = "Obtener un Contenedor", description = "Obtener un Contenedor dado segun id")
     @GetMapping("/{id}")
     public ResponseEntity<ContenedorDto> obtener(@PathVariable Long id) {
         Contenedor contenedor = servicio.obtenerPorId(id);
         return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedor));
     }
 
+    @Operation(summary = "Obtener todos los Contenedores", description = "Obtiene todos los contenedores")
     @GetMapping
     public ResponseEntity<List<ContenedorDto>> obtenerTodos() {
         List<Contenedor> lista = servicio.listarTodos();
@@ -73,19 +77,23 @@ public class ContenedorControlador {
 
     // Hay que controlar los estados
 
+    @Operation(summary = "Obtener un Contenedor segun su estado", description = "Obtiene un Contenedor segun su estado")
     @GetMapping("/estado/{estado}")
     public ResponseEntity<ContenedorDto> obtenerPorEstado(@PathVariable String estado) {
         Contenedor contenedorSegunEstado = servicio.obtenerPorEstado(estado);
         return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedorSegunEstado));
     }
 
+    @Operation(summary = "Obtener todos los Contenedores pendientes", description = "Obtiene todos los Contenedores en estado pendiente")
     @GetMapping("/pendientes")
     public ResponseEntity<List<ContenedorDto>> obtenerPendientes() {
-        List <Contenedor> pendientes = servicio.listarPendientes();
-        List <ContenedorDto> dtos = pendientes.stream().map(DtoHandler::convertirContenedorDto).collect(Collectors.toList());
+        List<Contenedor> pendientes = servicio.listarPendientes();
+        List<ContenedorDto> dtos = pendientes.stream().map(DtoHandler::convertirContenedorDto)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
+    @Operation(summary = "Eliminar un Contenedor", description = "Elimina un Contenedor dado segun id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);

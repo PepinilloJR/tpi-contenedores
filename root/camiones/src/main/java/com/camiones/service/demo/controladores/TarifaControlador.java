@@ -17,6 +17,7 @@ import com.camiones.service.demo.servicios.TarifaServicio;
 import com.commonlib.dto.TarifaDto;
 import com.commonlib.entidades.Tarifa;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 @RestController
@@ -42,8 +43,7 @@ public class TarifaControlador {
                 t.getMoneda(),
                 t.getVigenciaDesde(),
                 t.getVigenciaHasta(),
-                t.getActivo()
-        );
+                t.getActivo());
     }
 
     // helper: dto -> entidad (para crear)
@@ -59,6 +59,7 @@ public class TarifaControlador {
         return t;
     }
 
+    @Operation(summary = "Crear una Tarifa", description = "Crea una Tarifa")
     @PostMapping
     public ResponseEntity<TarifaDto> crear(@Valid @RequestBody TarifaDto dto) {
         Tarifa entity = convertirEntidad(dto);
@@ -66,6 +67,7 @@ public class TarifaControlador {
         return ResponseEntity.status(201).body(convertirDto(creada));
     }
 
+    @Operation(summary = "Actualizar una Tarifa", description = "Actualiza una Tarifa dada segun id")
     @PutMapping("/{id}")
     public ResponseEntity<TarifaDto> actualizar(@PathVariable Long id, @RequestBody TarifaDto dto) {
         // actualización parcial: aplica solo campos no nulos
@@ -97,12 +99,14 @@ public class TarifaControlador {
         return ResponseEntity.ok(convertirDto(actualizada));
     }
 
+    @Operation(summary = "Obtener una Tarifa", description = "Obtener una Tarifa dada segun id")
     @GetMapping("/{id}")
     public ResponseEntity<TarifaDto> obtener(@PathVariable Long id) {
         Tarifa tarifa = servicio.obtenerPorId(id);
         return ResponseEntity.ok(convertirDto(tarifa));
     }
 
+    @Operation(summary = "Obtener todas las Tarifas", description = "Obtiene todas las Tarifas")
     @GetMapping
     public ResponseEntity<List<TarifaDto>> obtenerTodos() {
         List<Tarifa> lista = servicio.listarTodos();
@@ -112,6 +116,7 @@ public class TarifaControlador {
         return ResponseEntity.ok(dtos);
     }
 
+    @Operation(summary = "Eliminar una Tarifa", description = "Elimina una Tarifa dada segun id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);
