@@ -2,12 +2,12 @@ package com.commonlib.entidades;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -34,7 +34,7 @@ public class Solicitud {
     private String estado;
     private Double costoEstimado;
     private Double tiempoEstimado;
-    private Double tiempoReal;
+    private Long tiempoReal;
     private Double costoFinal;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente", 

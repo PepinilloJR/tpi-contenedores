@@ -1,5 +1,6 @@
 package com.gateway.demo.controllers;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.service.annotation.PutExchange;
 
+import com.commonlib.dto.DtoHandler;
 import com.commonlib.dto.RutaDto;
 import com.commonlib.dto.SolicitudDto;
 import com.commonlib.dto.TramoDto;
 import com.commonlib.dto.UbicacionDto;
+import com.commonlib.entidades.Solicitud;
+import com.commonlib.entidades.Tramo;
 
 @RestController
 @RequestMapping("/controlled/rutas")
@@ -157,7 +161,7 @@ public class rutasController {
     }
 
     @PutExchange("/{id}")
-    public ResponseEntity<?> costoTotal( @PathVariable Long id) {
+    public ResponseEntity<?> FinalizarRuta( @PathVariable Long id) {
         RutaDto ruta;
         SolicitudDto solicitud;
         List<TramoDto> tramos;
@@ -176,15 +180,42 @@ public class rutasController {
         }
 
         try {
-            tramos = tramosClient.get().uri("/?idRuta=" + ruta.id()).retrieve().toEntity(new ParameterizedTypeReference<List<TramoDto>>() {}).getBody();
+            tramos = tramosClient.get().uri("?idRuta=" + ruta.id()).retrieve().toEntity(new ParameterizedTypeReference<List<TramoDto>>() {}).getBody();
             if (tramos.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La ruta no tiene tramos.");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La ruta no tiene tramos.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La ruta no tiene tramos." + e.getMessage());
         }
 
+        Double costoTotal = 0.0;
+        for (TramoDto t : tramos) {
+            if (t.fechaHoraFin() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("los tramos del pedido deben estar todos finalizados.");
+            }
 
-        return null;
+            costoTotal += t.costoReal();
+        }
+
+        TramoDto tramoInicial = tramos.get(0);
+        TramoDto tramoFinal = tramos.get(tramos.size() - 1);
+
+        Duration duracion = Duration.between(tramoInicial.fechaHoraInicio(), tramoFinal.fechaHoraFin());
+        long dias = duracion.toDays();
+        Solicitud solicitudReal = DtoHandler.convertirSolicitudEntidad(solicitud);
+
+        solicitudReal.setCostoFinal(costoTotal);
+        solicitudReal.setTiempoReal(dias);
+        solicitudReal.setEstado("finalizado");
+        
+        try {
+            solicitud = DtoHandler.convertirSolicitudDto(solicitudReal);
+            solicitud = pedidosClient.put().uri("/" + solicitud.id()).body(solicitud).retrieve().toEntity(SolicitudDto.class).getBody();
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("La solicitud fallo al intentar modificarse." + e.getMessage());
+        }
+        
+        return ResponseEntity.ok(solicitud);
     }
 }
