@@ -81,7 +81,8 @@ public class tramosController {
         if (fechaHoraEntrada != null && fechaHoraSalida != null) {
             estadiaDto = new EstadiaDto(null, tramoDto, fechaHoraEntrada, fechaHoraSalida);
             if (tramoDto.origen().costo() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("el origen del tramo no tiene un costo de estadia");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("el origen del tramo no tiene un costo de estadia");
 
             }
             try {
@@ -102,7 +103,6 @@ public class tramosController {
         }
         // calculo del costo real del tramo
 
-
         TramoDto tramoActualDto = DtoHandler.convertirTramoDto(tramoActual);
         try {
             tramoActualDto = tramosClient.put().uri("/" + id).body(tramoActualDto).retrieve().toEntity(TramoDto.class)
@@ -112,10 +112,6 @@ public class tramosController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error modificando el tramo: " + e.getMessage());
         }
-
-
-
-
 
         return ResponseEntity.ok(tramoActualDto);
     }
@@ -144,7 +140,11 @@ public class tramosController {
             }
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("el tramo ingresado no existe");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El tramo ingresado no existe");
+        }
+
+        if (tramoActual.camion() != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El tramo ya tiene un camion asignado");
         }
 
         // hay que comprobar que el camion sea apto
@@ -194,8 +194,6 @@ public class tramosController {
                     .body("Error al actualizar el estado del camión: " + e.getMessage());
         }
 
-
-
         TramoDto tramoConCamion = new TramoDto(
                 tramoActual.id(),
                 tramoActual.origen(),
@@ -215,7 +213,6 @@ public class tramosController {
         tramo.calcularCostoAproximado();
 
         var tramoDtoFinal = DtoHandler.convertirTramoDto(tramo);
-        
 
         // Actualizar el estado del camion
         tramoConCamion = tramosClient.put().uri("/" + id).body(tramoDtoFinal).retrieve().toEntity(TramoDto.class)
