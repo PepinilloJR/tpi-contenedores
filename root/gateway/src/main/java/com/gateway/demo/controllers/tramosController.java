@@ -17,6 +17,7 @@ import com.commonlib.dto.CamionDto;
 import com.commonlib.dto.DtoHandler;
 import com.commonlib.dto.EstadiaDto;
 import com.commonlib.dto.TramoDto;
+import com.commonlib.entidades.Camion;
 import com.commonlib.entidades.Estadia;
 import com.commonlib.entidades.Tramo;
 
@@ -95,6 +96,7 @@ public class tramosController {
         }
         tramoActual.setEstado("finalizado");
 
+
         if (estadiaDto != null) {
             Estadia estadia = DtoHandler.convertirEstadiaEntidad(estadiaDto);
             tramoActual.calcularCostoReal(estadia.calcularCostoEstadia());
@@ -116,7 +118,7 @@ public class tramosController {
         return ResponseEntity.ok(tramoActualDto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/camion/{id}")
     public ResponseEntity<?> asignarCamion(@PathVariable Long id, @RequestBody TramoDto tramoDto) {
         // Obtener el tramo
         TramoDto tramoActual;

@@ -225,7 +225,7 @@ public class rutasController {
     }
 
 
-    @GetMapping("/{solicitudId}")
+    @GetMapping("/tentativas/{solicitudId}")
     public ResponseEntity<?> rutasTentativas(@PathVariable Long solicitudId, @RequestBody RutaDto rutaDto) {
 
     SolicitudDto pedidoActual;

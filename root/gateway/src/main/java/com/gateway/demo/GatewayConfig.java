@@ -62,7 +62,7 @@ public class GatewayConfig {
             .build();
     }
 
-        @Bean
+    @Bean
     public RouterFunction<ServerResponse> solicitudesRouterFunction() {
         return route("solicitudes").path("/protected/solicitudes", p -> p.route(RequestPredicates.all(), HandlerFunctions.http()))
                 .before(BeforeFilterFunctions.rewritePath("/protected/solicitudes", "/api/solicitudes"))
