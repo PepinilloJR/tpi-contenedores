@@ -181,7 +181,7 @@ public class tramosController {
         try {
             camionActualizado = new CamionDto(camionApto.id(), camionApto.tarifa(), camionApto.patente(),
                     camionApto.nombreTransportista(), camionApto.telefonoTransportista(), camionApto.capacidadPeso(),
-                    camionApto.capacidadVolumen(), camionApto.consumoCombustiblePromedio(), camionApto.disponible());
+                    camionApto.capacidadVolumen(), camionApto.consumoCombustiblePromedio(), false);
 
             camionesClient.put()
                     .uri("/" + camionApto.id())
