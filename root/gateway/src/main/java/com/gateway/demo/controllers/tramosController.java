@@ -40,9 +40,9 @@ public class tramosController {
     @Autowired
     RestClient estadiasClient;
 
-
     @PutMapping("/finalizar/{id}")
-    public ResponseEntity<?> finalizarTramo(@PathVariable Long id, @RequestParam(required = false) LocalDateTime fechaHoraEntrada,
+    public ResponseEntity<?> finalizarTramo(@PathVariable Long id,
+            @RequestParam(required = false) LocalDateTime fechaHoraEntrada,
             @RequestParam(required = false) LocalDateTime fechaHoraSalida, @RequestBody TramoDto tramoDto) {
         Tramo tramoActual;
         try {
@@ -81,17 +81,19 @@ public class tramosController {
                 estadiaDto = estadiasClient.post().body(estadiaDto).retrieve().toEntity(EstadiaDto.class).getBody();
             } catch (Exception e) {
                 return ResponseEntity.status(500)
-                .body("Error creando estadia: " + e.getMessage());
+                        .body("Error creando estadia: " + e.getMessage());
 
             }
         }
         tramoActual.setEstado("finalizado");
         TramoDto tramoActualDto = DtoHandler.convertirTramoDto(tramoActual);
         try {
-            tramoActualDto = tramosClient.put().uri("/" + id).body(tramoActualDto).retrieve().toEntity(TramoDto.class).getBody();
+            tramoActualDto = tramosClient.put().uri("/" + id).body(tramoActualDto).retrieve().toEntity(TramoDto.class)
+                    .getBody();
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error modificando el tramo: "  + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error modificando el tramo: " + e.getMessage());
         }
 
         return ResponseEntity.ok(tramoActualDto);
@@ -153,6 +155,7 @@ public class tramosController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al validar camión disponible: " + e.getMessage());
         }
+
         CamionDto camionActualizado;
         try {
             camionActualizado = new CamionDto(camionApto.id(), camionApto.tarifa(), camionApto.patente(),
@@ -170,6 +173,8 @@ public class tramosController {
                     .body("Error al actualizar el estado del camión: " + e.getMessage());
         }
 
+
+
         TramoDto tramoConCamion = new TramoDto(
                 tramoActual.id(),
                 tramoActual.origen(),
@@ -185,8 +190,14 @@ public class tramosController {
                 tramoActual.distancia(),
                 tramoActual.combustibleConsumido());
 
+        var tramo = DtoHandler.convertirTramoEntidad(tramoConCamion);
+        tramo.calcularCostoAproximado();
+
+        var tramoDtoFinal = DtoHandler.convertirTramoDto(tramo);
+        
+
         // Actualizar el estado del camion
-        tramoConCamion = tramosClient.put().uri("/" + id).body(tramoConCamion).retrieve().toEntity(TramoDto.class)
+        tramoConCamion = tramosClient.put().uri("/" + id).body(tramoDtoFinal).retrieve().toEntity(TramoDto.class)
                 .getBody();
 
         return ResponseEntity.ok(tramoConCamion);

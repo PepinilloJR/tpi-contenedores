@@ -51,13 +51,17 @@ public class Tramo {
     private Double distancia;
     private Integer combustibleConsumido;
 
-    public Double calcularCostoAproximado() {
-        if (this.camion == null || this.distancia == null)
-            return 0.0;
+    public void calcularCostoAproximado() {
+        if (this.camion == null || this.distancia == null) {
+            this.costoAproximado = null;
+            return;
+        }
 
         var tarifa = this.camion.getTarifa();
-        if (tarifa == null)
-            return 0.0;
+        if (tarifa == null) {
+            this.costoAproximado = null;
+            return;
+        }
 
         Double consumoPromedio = this.camion.getConsumoCombustiblePromedio() != null
                 ? this.camion.getConsumoCombustiblePromedio()
@@ -76,13 +80,13 @@ public class Tramo {
         double parteVolumenPeso = costoLitro * costoVolumen * capacidadVol * capacidadPeso;
 
         // Llama esta funcion al asignar un camion
-        return parteCombustible + parteVolumenPeso;
+        this.costoAproximado = parteCombustible + parteVolumenPeso;
     }
 
-
+    // Esto hay que cambiar
 
     public Double calcularCostoReal() {
-        if (this.costoAproximado != null){
+        if (this.costoAproximado != null) {
             return costoAproximado;
         }
         return 0.0;
