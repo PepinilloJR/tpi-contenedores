@@ -64,7 +64,9 @@ public class TramoControlador {
         tramoActual.setEstado(tramoDto.estado() != null ? tramoDto.estado() : tramoActual.getEstado());
         tramoActual.setFechaHoraFin(
                 tramoDto.fechaHoraFin() != null ? tramoDto.fechaHoraFin() : tramoActual.getFechaHoraFin());
-
+        if (tramoDto.camion() != null) {
+            tramoActual.setCamion(DtoHandler.convertirCamionEntidad(tramoDto.camion()));
+        }
         Tramo tramoActualizado = servicio.actualizar(id, tramoActual);
 
         return ResponseEntity.ok(DtoHandler.convertirTramoDto(tramoActualizado));
@@ -76,7 +78,7 @@ public class TramoControlador {
         return ResponseEntity.ok(DtoHandler.convertirTramoDto(tramo));
     }
 
-    @GetMapping("/{transportista}")
+    @GetMapping("/transportista/{transportista}")
     public ResponseEntity<List<TramoDto>> obtener(@PathVariable String transportista) {
         List<Tramo> tramos = servicio.obtenerPorTransportista(transportista);
         return ResponseEntity.ok(DtoHandler.convertirTramosDto(tramos));

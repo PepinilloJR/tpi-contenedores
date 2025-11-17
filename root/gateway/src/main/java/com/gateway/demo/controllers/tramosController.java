@@ -14,7 +14,7 @@ import com.commonlib.dto.CamionDto;
 import com.commonlib.dto.TramoDto;
 
 @RestController
-@RequestMapping("/protected/tramos")
+@RequestMapping("/controlled/tramos")
 public class tramosController {
     @Autowired
     RestClient pedidosClient;
@@ -36,16 +36,25 @@ public class tramosController {
         // Obtener el tramo
         TramoDto tramoActual;
         CamionDto camionApto;
+        System.out.println("++++++++++++++++++++++===============================");
+        System.out.println("++++++++++++++++++++++===============================");
+        System.out.println("++++++++++++++++++++++===============================");
+        System.out.println();
         try {
             if (tramoDto == null) {
                 return ResponseEntity.badRequest().body(null);
             }
 
             tramoActual = tramosClient.get()
-                    .uri("/" + tramoDto.id())
+                    .uri("/" + id)
                     .retrieve()
                     .toEntity(TramoDto.class)
                     .getBody();
+            System.out.println("++++++++++++++++++++++===============================");
+            System.out.println("++++++++++++++++++++++===============================");
+            System.out.println("++++++++++++++++++++++===============================");
+
+            System.out.println(tramoActual);
 
             if (tramoActual.ruta() == null || tramoActual.ruta().solicitud() == null
                     || tramoActual.ruta().solicitud().contenedor() == null) {
@@ -69,6 +78,13 @@ public class tramosController {
         }
 
         // Validar que el camión asignado sea apto para el tramo
+        System.out.println("++++++++++++++++++++++===============================");
+        System.out.println("++++++++++++++++++++++===============================");
+        System.out.println("++++++++++++++++++++++===============================");
+
+        System.out.println(volumen);
+        System.out.println(peso);
+
         try {
             camionApto = camionesClient.get()
                     .uri("/disponible/por-capacidad?peso=" + peso + "&volumen=" + volumen)
@@ -85,9 +101,9 @@ public class tramosController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al validar camión disponible: " + e.getMessage());
         }
-
+        CamionDto camionActualizado;
         try {
-            CamionDto camionActualizado = new CamionDto(
+            camionActualizado = new CamionDto(
                     camionApto.id(),
                     camionApto.patente(),
                     camionApto.nombreTransportista(),
@@ -109,12 +125,16 @@ public class tramosController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al actualizar el estado del camión: " + e.getMessage());
         }
+                System.out.println("++++++++++++++++++++++===============================");
+        System.out.println("++++++++++++++++++++++===============================");
+        System.out.println("++++++++++++++++++++++===============================");
 
+        System.out.println(camionActualizado);
         TramoDto tramoConCamion = new TramoDto(
                 tramoActual.id(),
                 tramoActual.origen(),
                 tramoActual.destino(),
-                camionApto,
+                camionActualizado,
                 tramoActual.ruta(),
                 tramoActual.tipo(),
                 "pendiente",
@@ -125,6 +145,7 @@ public class tramosController {
                 tramoActual.distancia());
 
         // Actualizar el estado del camion
+        tramoConCamion = tramosClient.put().uri("/" + id).body(tramoConCamion).retrieve().toEntity(TramoDto.class).getBody();
 
         return ResponseEntity.ok(tramoConCamion);
 

@@ -142,6 +142,24 @@ public interface DtoHandler {
                 c.getDisponible());
     }
 
+    public static Camion convertirCamionEntidad(CamionDto dto) {
+    if (dto == null)
+        return null;
+
+    Camion c = new Camion();
+    c.setId(dto.id());
+    c.setPatente(dto.patente());
+    c.setNombreTransportista(dto.nombreTransportista());
+    c.setTelefono(dto.telefono());
+    c.setCapacidadPesoKg(dto.capacidadPesoKg());
+    c.setCapacidadVolumenM3(dto.capacidadVolumenM3());
+    c.setCostoPorKm(dto.costoPorKm());
+    c.setConsumoCombustibleLx100km(dto.consumoCombustibleLx100km());
+    c.setDisponible(dto.disponible());
+
+    return c;
+}
+
     public static Tramo convertirTramoEntidad(TramoDto dto) {
         if (dto == null)
             return null;
