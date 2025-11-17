@@ -76,8 +76,8 @@ public class Tramo {
         Double capacidadVol = this.camion.getCapacidadVolumen() != null ? this.camion.getCapacidadVolumen() : 1.0;
         Double capacidadPeso = this.camion.getCapacidadPeso() != null ? this.camion.getCapacidadPeso() : 1.0;
 
-        double parteCombustible = consumoPromedio * distanciaVal * costoKm;
-        double parteVolumenPeso = costoLitro * costoVolumen * capacidadVol * capacidadPeso;
+        double parteCombustible = consumoPromedio * distanciaVal * costoKm * 0.09;
+        double parteVolumenPeso = costoLitro * costoVolumen * capacidadVol * capacidadPeso * 0.10;
 
         // Llama esta funcion al asignar un camion
         this.costoAproximado = parteCombustible + parteVolumenPeso;
@@ -85,12 +85,40 @@ public class Tramo {
 
     // Esto hay que cambiar
 
-    public Double calcularCostoReal() {
-        if (this.costoAproximado != null) {
-            return costoAproximado;
+    public void calcularCostoReal(Double costoEstadia) {
+        if (this.camion == null || this.distancia == null) {
+            this.costoReal = null;
+            return;
         }
-        return 0.0;
+
+        var tarifa = this.camion.getTarifa();
+        if (tarifa == null) {
+            this.costoAproximado = null;
+            return;
+        }
+
+        if (costoEstadia == 0.0 || costoEstadia == null) {
+            costoEstadia = 0.0;
+        }
+
+        Double consumoPromedio = this.combustibleConsumido != null
+                ? this.combustibleConsumido
+                : 1.0;
+
+        Double distanciaVal = this.distancia != null ? this.distancia : 0.0;
+
+        Double costoKm = tarifa.getCostoKilometro() != null ? tarifa.getCostoKilometro() : 0.0;
+        Double costoLitro = tarifa.getCostoLitro() != null ? tarifa.getCostoLitro() : 0.0;
+        Double costoVolumen = tarifa.getCostoVolumen() != null ? tarifa.getCostoVolumen() : 0.0;
+
+        Double capacidadVol = this.camion.getCapacidadVolumen() != null ? this.camion.getCapacidadVolumen() : 1.0;
+        Double capacidadPeso = this.camion.getCapacidadPeso() != null ? this.camion.getCapacidadPeso() : 1.0;
+
+        double parteCombustible = consumoPromedio * distanciaVal * costoKm * 0.09;
+        double parteVolumenPeso = costoLitro * costoVolumen * capacidadVol * capacidadPeso * 0.10;
+
+        this.costoReal = parteCombustible + parteVolumenPeso + costoEstadia;
+
     }
 
-    // costo real costo aproximado + estadia
 }
