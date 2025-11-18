@@ -71,6 +71,8 @@ public class TramoControlador {
         tramoActual.setCombustibleConsumido(tramoDto.combustibleConsumido() != null ? tramoDto.combustibleConsumido() : tramoActual.getCombustibleConsumido());
         if (tramoDto.camion() != null) {
             tramoActual.setCamion(DtoHandler.convertirCamionEntidad(tramoDto.camion()));
+        } else if (tramoDto.estado() != null && tramoDto.estado().equals("finalizado")) {
+            tramoActual.setCamion(null);
         }
 
         tramoActual.setCostoAproximado(tramoDto.costoAproximado() != null ? tramoDto.costoAproximado() : tramoActual.getCostoAproximado());
