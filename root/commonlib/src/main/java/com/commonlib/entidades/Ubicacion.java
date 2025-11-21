@@ -27,5 +27,5 @@ public class Ubicacion {
     private String tipo; // Puede ser un deposito
     private Double latitud;
     private Double longitud;
-    private Double costo;
+    private Double costoEstadia; // Esto lo saco o q onda
 }

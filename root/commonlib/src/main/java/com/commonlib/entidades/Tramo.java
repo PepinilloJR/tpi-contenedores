@@ -30,19 +30,31 @@ public class Tramo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_origen", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_tramo_ubicacion_origen"))
+    @JoinColumn(name = "id_origen", nullable = true, 
+    referencedColumnName = "id", 
+    foreignKey = @ForeignKey(name = "fk_tramo_ubicacion_origen"))
     private Ubicacion origen;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_destino", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_tramo_ubicacion_destino"))
+    @JoinColumn(name = "id_destino", nullable = true, 
+    referencedColumnName = "id", 
+    foreignKey = @ForeignKey(name = "fk_tramo_ubicacion_destino"))
     private Ubicacion destino;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ruta", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_tramo_ruta"))
+    @JoinColumn(name = "id_ruta", nullable = true, 
+    referencedColumnName = "id", 
+    foreignKey = @ForeignKey(name = "fk_tramo_ruta"))
     private Ruta ruta;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_camion", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_tramo_camion"))
+    @JoinColumn(name = "id_camion", nullable = true, 
+    referencedColumnName = "id", 
+    foreignKey = @ForeignKey(name = "fk_tramo_camion"))
     private Camion camion;
 
+    private double costoVolumen;
+    private double costoKilometro;
     private String tipo;
     private String estado;
     private Double costoAproximado;
@@ -71,14 +83,13 @@ public class Tramo {
         Double distanciaVal = this.distancia != null ? this.distancia : 0.0;
 
         Double costoKm = tarifa.getCostoKilometro() != null ? tarifa.getCostoKilometro() : 0.0;
-        Double costoLitro = tarifa.getCostoLitro() != null ? tarifa.getCostoLitro() : 0.0;
         Double costoVolumen = tarifa.getCostoVolumen() != null ? tarifa.getCostoVolumen() : 0.0;
         //Double costoPeso = tarifa.getcoso() != null ? tarifa.getCostoVolumen() : 0.0;
         //Double capacidadVol = this.camion.getCapacidadVolumen() != null ? this.camion.getCapacidadVolumen() : 1.0;
         //Double capacidadPeso = this.camion.getCapacidadPeso() != null ? this.camion.getCapacidadPeso() : 1.0;
         Double volumenContenedor = this.ruta.getSolicitud().getContenedor().getVolumen();       
         //Double pesoContenedor = this.ruta.getSolicitud().getContenedor().getPeso();
-        double parteCombustible = consumoPromedio * costoLitro + distanciaVal * costoKm;
+        double parteCombustible = consumoPromedio + distanciaVal * costoKm;
         double parteVolumenPeso = costoVolumen * volumenContenedor;
 
         // Llama esta funcion al asignar un camion
@@ -110,14 +121,11 @@ public class Tramo {
         Double distanciaVal = this.distancia != null ? this.distancia : 0.0;
 
         Double costoKm = tarifa.getCostoKilometro() != null ? tarifa.getCostoKilometro() : 0.0;
-        Double costoLitro = tarifa.getCostoLitro() != null ? tarifa.getCostoLitro() : 0.0;
         Double costoVolumen = tarifa.getCostoVolumen() != null ? tarifa.getCostoVolumen() : 0.0;
 
-        //Double capacidadVol = this.camion.getCapacidadVolumen() != null ? this.camion.getCapacidadVolumen() : 1.0;
-        //Double capacidadPeso = this.camion.getCapacidadPeso() != null ? this.camion.getCapacidadPeso() : 1.0;
         Double volumenContenedor = this.ruta.getSolicitud().getContenedor().getVolumen();       
 
-        double parteCombustible = consumoPromedio * costoLitro + distanciaVal * costoKm;
+        double parteCombustible = consumoPromedio + distanciaVal * costoKm;
         double parteVolumenPeso = costoVolumen * volumenContenedor;
 
         this.costoReal = parteCombustible + parteVolumenPeso + costoEstadia;
