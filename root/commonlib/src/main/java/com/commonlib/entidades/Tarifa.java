@@ -25,9 +25,11 @@ public class Tarifa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
+    @Column(nullable = false)
     private Double costoVolumen;
-
+    
+    @Column(nullable = false)
     private Double costoKilometro;
 
 }

@@ -20,8 +20,10 @@ public class TarifaServicio {
     /* ----------------- CREATE ----------------- */
     @Transactional
     public Tarifa crear(Tarifa tarifa) {
+        if (tarifa == null) {
+            throw new IllegalArgumentException("Tarifa inválida, no puede ser nula");
+        }
         validarDatos(tarifa);
-
         return repositorio.save(tarifa);
     }
 
@@ -43,9 +45,12 @@ public class TarifaServicio {
         Tarifa existente = repositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarifa no encontrada con id " + id));
 
-        // en tu controlador ya hicimos el merge de campos no nulos sobre "datos",
-        // así que acá asumimos que "datos" viene completo y coherente
+        if (datos == null) {
+            throw new IllegalArgumentException("Datos de tarifa inválidos");
+        }
 
+        // asumimos que el controlador hizo el merge y 'datos' representa el estado
+        // deseado
         validarDatos(datos);
 
         existente.setCostoKilometro(datos.getCostoKilometro());

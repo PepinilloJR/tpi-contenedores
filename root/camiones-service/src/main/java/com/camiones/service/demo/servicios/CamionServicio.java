@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.camiones.service.demo.exepciones.ResourceNotFoundException;
 import com.camiones.service.demo.repositorios.CamionRepositorio;
 import com.commonlib.entidades.Camion;
+import com.commonlib.entidades.Tarifa;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +20,10 @@ public class CamionServicio {
 
     @Transactional
     public Camion crear(Camion camion) {
+        if (camion == null) {
+            throw new IllegalArgumentException("Camion invalido, no puede ser nulo");
+        }
+
         validarDatos(camion);
 
         // patente única
@@ -70,22 +75,41 @@ public class CamionServicio {
         Camion existente = repositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Camión no encontrado con id " + id));
 
-        validarDatos(datos);
+        if (datos == null) {
+            throw new IllegalArgumentException("Datos de actualización inválidos");
+        }
 
-        // si cambia patente, validar unicidad
+        // si intenta cambiar la patente, validar unicidad (comparando con la existente)
         if (datos.getPatente() != null && !datos.getPatente().equals(existente.getPatente())
                 && repositorio.existsByPatente(datos.getPatente())) {
             throw new IllegalArgumentException("Ya existe un camión con patente " + datos.getPatente());
         }
 
-        existente.setPatente(datos.getPatente());
-        existente.setNombreTransportista(datos.getNombreTransportista());
-        existente.setTelefonoTransportista(datos.getTelefonoTransportista());
-        existente.setCapacidadPeso(datos.getCapacidadPeso());
-        existente.setCapacidadVolumen(datos.getCapacidadVolumen());
-        existente.setTarifa(existente.getTarifa());
-        existente.setConsumoCombustiblePromedio(datos.getConsumoCombustiblePromedio());
-        existente.setDisponible(datos.getDisponible() != null ? datos.getDisponible() : existente.getDisponible());
+        // Merge: aplicar solo los campos no nulos de 'datos' sobre 'existente'
+        if (datos.getPatente() != null)
+            existente.setPatente(datos.getPatente());
+        if (datos.getNombreTransportista() != null)
+            existente.setNombreTransportista(datos.getNombreTransportista());
+        if (datos.getTelefonoTransportista() != null)
+            existente.setTelefonoTransportista(datos.getTelefonoTransportista());
+        if (datos.getCapacidadPeso() != null)
+            existente.setCapacidadPeso(datos.getCapacidadPeso());
+        if (datos.getCapacidadVolumen() != null)
+            existente.setCapacidadVolumen(datos.getCapacidadVolumen());
+        if (datos.getConsumoCombustiblePromedio() != null)
+            existente.setConsumoCombustiblePromedio(datos.getConsumoCombustiblePromedio());
+        if (datos.getDisponible() != null)
+            existente.setDisponible(datos.getDisponible());
+
+        // Tarifa: si 'datos' trae una tarifa no nula, la aplicamos; si no, mantenemos
+        // la existente
+        Tarifa tarifaNueva = datos.getTarifa();
+        if (tarifaNueva != null) {
+            existente.setTarifa(tarifaNueva);
+        }
+
+        // Validar el objeto resultante (coincide con constraints de la entidad)
+        validarDatos(existente);
 
         return repositorio.save(existente);
     }

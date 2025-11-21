@@ -42,31 +42,38 @@ public class TarifaControlador {
             Tarifa creada = servicio.crear(entity);
             return ResponseEntity.status(201).body(DtoHandler.convertirTarifaDto(creada));
 
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
                     .body(new ErrorRequest(400, "No se pudo crear la tarifa: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorRequest(500, "Error interno al crear la tarifa"));
         }
 
     }
 
-    @Operation(summary = "Actualizar una Tarifa", description = "Actualiza una Tarifa dada segun id")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody TarifaDto dto) {
-        // actualización parcial: aplica solo campos no nulos
-        Tarifa actual;
-
         try {
-            actual = servicio.obtenerPorId(id);
+            Tarifa actual = servicio.obtenerPorId(id); // ResourceNotFoundException si no existe
+
+            // merge parcial (como tenías antes)
+            if (dto.costoKilometro() != null)
+                actual.setCostoKilometro(dto.costoKilometro());
+            if (dto.costoVolumen() != null)
+                actual.setCostoVolumen(dto.costoVolumen());
+
+            Tarifa actualizada = servicio.actualizar(id, actual); // puede lanzar IllegalArgumentException
+            return ResponseEntity.ok(DtoHandler.convertirTarifaDto(actualizada));
+
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorRequest(404, e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorRequest(404, "La tarifa con id " + id + " no existe"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorRequest(500, "Error interno al actualizar la tarifa"));
         }
-
-        actual.setCostoKilometro(dto.costoKilometro() != null ? dto.costoKilometro() : actual.getCostoKilometro());
-        actual.setCostoVolumen(dto.costoVolumen() != null ? dto.costoVolumen() : actual.getCostoVolumen());
-
-        Tarifa actualizada = servicio.actualizar(id, actual);
-        return ResponseEntity.ok(DtoHandler.convertirTarifaDto(actualizada));
     }
 
     @Operation(summary = "Obtener una Tarifa", description = "Obtener una Tarifa dada segun id")
@@ -79,7 +86,7 @@ public class TarifaControlador {
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorRequest(404, e.getMessage()));
-                    
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorRequest(500, "Error interno al obtener la tarifa"));
@@ -89,18 +96,34 @@ public class TarifaControlador {
 
     @Operation(summary = "Obtener todas las Tarifas", description = "Obtiene todas las Tarifas")
     @GetMapping
-    public ResponseEntity<List<TarifaDto>> obtenerTodos() {
-        List<Tarifa> lista = servicio.listarTodos();
-        List<TarifaDto> dtos = lista.stream()
-                .map(DtoHandler::convertirTarifaDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<?> obtenerTodos() {
+        try {
+            List<Tarifa> lista = servicio.listarTodos();
+            List<TarifaDto> dtos = lista.stream()
+                    .map(DtoHandler::convertirTarifaDto)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(dtos);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorRequest(500, "Error interno al listar las tarifas"));
+        }
+
     }
 
     @Operation(summary = "Eliminar una Tarifa", description = "Elimina una Tarifa dada segun id")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        servicio.eliminar(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        try {
+            servicio.eliminar(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorRequest(404, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorRequest(500, "Error interno al eliminar la tarifa"));
+        }
+
     }
 }
