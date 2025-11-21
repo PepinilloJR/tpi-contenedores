@@ -71,13 +71,13 @@ public class TarifaServicio {
     /* ----------------- reglas de negocio básicas ----------------- */
     private void validarDatos(Tarifa t) {
 
-        if (neg(t.getCostoKilometro()) || neg(t.getCostoVolumen())) {
-            throw new IllegalArgumentException("Los valores de precio no pueden ser negativos");
+        if (t.getCostoKilometro() == null || t.getCostoVolumen() == null) {
+            throw new IllegalArgumentException("Los costos no pueden ser nulos");
         }
 
+        if (t.getCostoKilometro() < 0 || t.getCostoVolumen() < 0) {
+            throw new IllegalArgumentException("Los valores de precio no pueden ser negativos");
+        }
     }
 
-    private boolean neg(Double v) {
-        return v != null && v < 0;
-    }
 }

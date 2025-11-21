@@ -56,7 +56,7 @@ public class CamionServicio {
 
     @Transactional(readOnly = true)
     public Camion obtenerDisponible() {
-        return repositorio.findByDisponibleTrueOrderByIdAsc()
+        return repositorio.findFirstByDisponibleTrueOrderByIdAsc()
                 .orElseThrow(() -> new ResourceNotFoundException("No hay ningun camion disponible"));
     }
 
@@ -125,16 +125,48 @@ public class CamionServicio {
 
     /* ----------------- reglas de negocio básicas ----------------- */
     private void validarDatos(Camion c) {
+        if (c == null) {
+            throw new IllegalArgumentException("Camión inválido");
+        }
+
+        // Patente
         if (c.getPatente() == null || c.getPatente().isBlank()) {
             throw new IllegalArgumentException("La patente es obligatoria");
         }
-        if (neg(c.getCapacidadPeso()) || neg(c.getCapacidadVolumen())
-                || neg(c.getConsumoCombustiblePromedio())) {
-            throw new IllegalArgumentException("Capacidades y consumo no pueden ser negativos");
+
+        // Tarifa obligatoria
+        if (c.getTarifa() == null) {
+            throw new IllegalArgumentException("La tarifa asociada es obligatoria");
+        }
+
+        // Nombre y teléfono del transportista
+        if (c.getNombreTransportista() == null || c.getNombreTransportista().isBlank()) {
+            throw new IllegalArgumentException("El nombre del transportista es obligatorio");
+        }
+        if (c.getTelefonoTransportista() == null || c.getTelefonoTransportista().isBlank()) {
+            throw new IllegalArgumentException("El teléfono del transportista es obligatorio");
+        }
+
+        // Numéricos obligatorios y > 0
+        if (c.getCapacidadPeso() == null) {
+            throw new IllegalArgumentException("La capacidad de peso es obligatoria");
+        }
+        if (c.getCapacidadVolumen() == null) {
+            throw new IllegalArgumentException("La capacidad de volumen es obligatoria");
+        }
+        if (c.getConsumoCombustiblePromedio() == null) {
+            throw new IllegalArgumentException("El consumo combustible promedio es obligatorio");
+        }
+
+        if (c.getCapacidadPeso() <= 0) {
+            throw new IllegalArgumentException("La capacidad de peso debe ser mayor a 0");
+        }
+        if (c.getCapacidadVolumen() <= 0) {
+            throw new IllegalArgumentException("La capacidad de volumen debe ser mayor a 0");
+        }
+        if (c.getConsumoCombustiblePromedio() <= 0) {
+            throw new IllegalArgumentException("El consumo combustible promedio debe ser mayor a 0");
         }
     }
 
-    private boolean neg(Double v) {
-        return v != null && v < 0;
-    }
 }

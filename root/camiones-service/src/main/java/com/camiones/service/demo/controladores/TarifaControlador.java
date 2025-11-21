@@ -17,12 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.camiones.service.demo.servicios.TarifaServicio;
 import com.camiones.service.demo.dto.DtoHandler;
 import com.camiones.service.demo.dto.TarifaDto;
-import com.camiones.service.demo.exepciones.ResourceNotFoundException;
 import com.commonlib.entidades.Tarifa;
-import com.commonlib.error.ErrorRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/tarifas")
@@ -36,94 +34,54 @@ public class TarifaControlador {
 
     @Operation(summary = "Crear una Tarifa", description = "Crea una Tarifa")
     @PostMapping
-    public ResponseEntity<?> crear(@Valid @RequestBody TarifaDto dto) {
-        try {
-            Tarifa entity = DtoHandler.convertirTarifaEntidad(dto);
-            Tarifa creada = servicio.crear(entity);
-            return ResponseEntity.status(201).body(DtoHandler.convertirTarifaDto(creada));
+    public ResponseEntity<TarifaDto> crear(@RequestBody TarifaDto dto) {
 
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(new ErrorRequest(400, "No se pudo crear la tarifa: " + e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorRequest(500, "Error interno al crear la tarifa"));
-        }
+        Tarifa entity = DtoHandler.convertirTarifaEntidad(dto);
 
+        Tarifa creada = servicio.crear(entity);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(DtoHandler.convertirTarifaDto(creada));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody TarifaDto dto) {
-        try {
-            Tarifa actual = servicio.obtenerPorId(id); // ResourceNotFoundException si no existe
+    public ResponseEntity<TarifaDto> actualizar(
+            @PathVariable Long id,
+            @RequestBody TarifaDto dto) {
 
-            // merge parcial (como tenías antes)
-            if (dto.costoKilometro() != null)
-                actual.setCostoKilometro(dto.costoKilometro());
-            if (dto.costoVolumen() != null)
-                actual.setCostoVolumen(dto.costoVolumen());
+        Tarifa actual = servicio.obtenerPorId(id);
 
-            Tarifa actualizada = servicio.actualizar(id, actual); // puede lanzar IllegalArgumentException
-            return ResponseEntity.ok(DtoHandler.convertirTarifaDto(actualizada));
+        // merge parcial
+        if (dto.costoKilometro() != null)
+            actual.setCostoKilometro(dto.costoKilometro());
 
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorRequest(404, e.getMessage()));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorRequest(500, "Error interno al actualizar la tarifa"));
-        }
+        if (dto.costoVolumen() != null)
+            actual.setCostoVolumen(dto.costoVolumen());
+
+        Tarifa actualizada = servicio.actualizar(id, actual);
+
+        return ResponseEntity.ok(DtoHandler.convertirTarifaDto(actualizada));
     }
 
-    @Operation(summary = "Obtener una Tarifa", description = "Obtener una Tarifa dada segun id")
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtener(@PathVariable Long id) {
-        try {
-            Tarifa tarifa = servicio.obtenerPorId(id);
-            return ResponseEntity.ok(DtoHandler.convertirTarifaDto(tarifa));
-
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorRequest(404, e.getMessage()));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorRequest(500, "Error interno al obtener la tarifa"));
-        }
-
+    public ResponseEntity<TarifaDto> obtener(@PathVariable Long id) {
+        Tarifa tarifa = servicio.obtenerPorId(id);
+        return ResponseEntity.ok(DtoHandler.convertirTarifaDto(tarifa));
     }
 
-    @Operation(summary = "Obtener todas las Tarifas", description = "Obtiene todas las Tarifas")
     @GetMapping
-    public ResponseEntity<?> obtenerTodos() {
-        try {
-            List<Tarifa> lista = servicio.listarTodos();
-            List<TarifaDto> dtos = lista.stream()
-                    .map(DtoHandler::convertirTarifaDto)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(dtos);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorRequest(500, "Error interno al listar las tarifas"));
-        }
-
+    public ResponseEntity<List<TarifaDto>> obtenerTodos() {
+        List<Tarifa> lista = servicio.listarTodos();
+        List<TarifaDto> dtos = lista.stream()
+                .map(DtoHandler::convertirTarifaDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
-    @Operation(summary = "Eliminar una Tarifa", description = "Elimina una Tarifa dada segun id")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            servicio.eliminar(id);
-            return ResponseEntity.noContent().build();
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorRequest(404, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorRequest(500, "Error interno al eliminar la tarifa"));
-        }
-
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        servicio.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,14 +1,18 @@
 package com.camiones.service.demo.exepciones;
 
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
 import com.commonlib.error.ErrorRequest;
 
 @RestControllerAdvice
 public class ExepcionesManejadorGlobal {
+  
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorRequest> manejarNoEncontrado(ResourceNotFoundException ex) {
@@ -20,6 +24,17 @@ public class ExepcionesManejadorGlobal {
     public ResponseEntity<ErrorRequest> manejarBadRequest(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorRequest(400, ex.getMessage()));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorRequest> handleDataIntegrity(DataIntegrityViolationException ex) {
+        String detalle = null;
+        if (ex.getMostSpecificCause() != null && ex.getMostSpecificCause().getMessage() != null) {
+            detalle = ex.getMostSpecificCause().getMessage();
+        } else {
+            detalle = "Violación de integridad en la base de datos";
+        }
+        return ResponseEntity.badRequest().body(new ErrorRequest(400, "Violación de datos: " + detalle));
     }
 
     @ExceptionHandler(Exception.class)
