@@ -1,32 +1,27 @@
 package com.pedidos.service.demo.controladores;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.pedidos.service.demo.servicios.ContenedorServicio;
-
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
-
-import com.commonlib.dto.ContenedorDto;
-import com.commonlib.entidades.Contenedor;
-import com.commonlib.error.ErrorRequest;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.commonlib.Enums.EstadosContenedor;
+import com.commonlib.entidades.Contenedor;
+import com.commonlib.error.ErrorRequest;
 import com.pedidos.service.demo.dto.ContenedorDtoIn;
 import com.pedidos.service.demo.dto.ContenedorDtoOut;
-import com.pedidos.service.demo.dto.DtoHandler;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
+import com.pedidos.service.demo.servicios.ContenedorServicio;
+
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/api/contenedores")
@@ -45,18 +40,17 @@ public class ContenedorControlador {
             contenedorCreado = servicio.crear(contenedorDto);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
 
         }
 
-        ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(contenedorCreado.getId(), 
-            contenedorCreado.getPeso(), 
-            contenedorCreado.getVolumen(), 
-            contenedorCreado.getEstado(), 
-            contenedorCreado.getUbicacion() != null ? contenedorCreado.getUbicacion().getId() : null);
-        
+        ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(contenedorCreado.getId(),
+                contenedorCreado.getPeso(),
+                contenedorCreado.getVolumen(),
+                contenedorCreado.getEstado(),
+                contenedorCreado.getUbicacion() != null ? contenedorCreado.getUbicacion().getId() : null);
+
         return ResponseEntity.status(201).body(contenedorDtoOut);
     }
 
@@ -71,32 +65,48 @@ public class ContenedorControlador {
             contenedorActualizado = servicio.actualizar(id, contenedorDtoIn);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
         }
+
+        ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(contenedorActualizado.getId(),
+                contenedorActualizado.getPeso(), contenedorActualizado.getVolumen(), contenedorActualizado.getEstado(),
+                contenedorActualizado.getUbicacion() != null ? contenedorActualizado.getUbicacion().getId() : null);
+
+        return ResponseEntity.ok(contenedorDtoOut);
+    }
+
+    @Operation(summary = "Obtener un Contenedor", description = "Obtener un Contenedor dado segun id")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtener(@PathVariable Long id) {
+        Contenedor contenedor;
+        try {
+            contenedor = servicio.obtenerPorId(id);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        }
+
         catch (Exception e) {
             return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
         }
 
-        ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(contenedorActualizado.getId()
-        , contenedorActualizado.getPeso(), contenedorActualizado.getVolumen(), contenedorActualizado.getEstado(), 
-        contenedorActualizado.getUbicacion() != null ? contenedorActualizado.getUbicacion().getId() : null);
-        
-        return ResponseEntity.ok(contenedorDtoOut);
-    }
-
-
-
-    @Operation(summary = "Obtener un Contenedor", description = "Obtener un Contenedor dado segun id")
-    @GetMapping("/{id}")
-    public ResponseEntity<ContenedorDto> obtener(@PathVariable Long id) {
-        Contenedor contenedor = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedor));
+        ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(
+                contenedor.getId(), contenedor.getPeso(), contenedor.getVolumen(),
+                contenedor.getEstado(),
+                contenedor.getUbicacion() != null ? contenedor.getUbicacion().getId() : null);
+        return ResponseEntity.ok().body(contenedorDtoOut);
     }
 
     @Operation(summary = "Obtener todos los Contenedores", description = "Obtiene todos los contenedores")
     @GetMapping
-    public ResponseEntity<List<ContenedorDto>> obtenerTodos() {
+    public ResponseEntity<?> obtenerTodos() {
         List<Contenedor> lista = servicio.listarTodos();
-        List<ContenedorDto> dtos = lista.stream().map(DtoHandler::convertirContenedorDto).collect(Collectors.toList());
+        List<ContenedorDtoOut> dtos = lista.stream().map((c) -> {
+            return new ContenedorDtoOut(
+                    c.getId(), c.getPeso(), c.getVolumen(),
+                    c.getEstado(),
+                    c.getUbicacion() != null ? c.getUbicacion().getId() : null);
+        }).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
@@ -104,24 +114,48 @@ public class ContenedorControlador {
 
     @Operation(summary = "Obtener un Contenedor segun su estado", description = "Obtiene un Contenedor segun su estado")
     @GetMapping("/estado/{estado}")
-    public ResponseEntity<ContenedorDto> obtenerPorEstado(@PathVariable String estado) {
-        Contenedor contenedorSegunEstado = servicio.obtenerPorEstado(estado);
-        return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedorSegunEstado));
+    public ResponseEntity<?> obtenerPorEstado(@PathVariable EstadosContenedor estado) {
+        Contenedor contenedorSegunEstado;
+        try {
+            contenedorSegunEstado = servicio.obtenerPorEstado(estado);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+        }
+
+        ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(
+                contenedorSegunEstado.getId(), contenedorSegunEstado.getPeso(), contenedorSegunEstado.getVolumen(),
+                contenedorSegunEstado.getEstado(),
+                contenedorSegunEstado.getUbicacion() != null ? contenedorSegunEstado.getUbicacion().getId() : null);
+        return ResponseEntity.ok(contenedorDtoOut);
     }
 
     @Operation(summary = "Obtener todos los Contenedores pendientes", description = "Obtiene todos los Contenedores en estado pendiente")
     @GetMapping("/pendientes")
-    public ResponseEntity<List<ContenedorDto>> obtenerPendientes() {
+    public ResponseEntity<List<ContenedorDtoOut>> obtenerPendientes() {
+
         List<Contenedor> pendientes = servicio.listarPendientes();
-        List<ContenedorDto> dtos = pendientes.stream().map(DtoHandler::convertirContenedorDto)
+        List<ContenedorDtoOut> dtos = pendientes.stream().map((c) -> {
+            return new ContenedorDtoOut(
+                    c.getId(), c.getPeso(), c.getVolumen(),
+                    c.getEstado(),
+                    c.getUbicacion() != null ? c.getUbicacion().getId() : null);
+        })
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Eliminar un Contenedor", description = "Elimina un Contenedor dado segun id")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        servicio.eliminar(id);
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        try {
+            servicio.eliminar(id);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+        }
         return ResponseEntity.noContent().build();
     }
 

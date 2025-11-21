@@ -1,30 +1,26 @@
 package com.pedidos.service.demo.controladores;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.commonlib.dto.UbicacionDto;
-import com.commonlib.entidades.Ubicacion;
-import com.commonlib.error.ErrorRequest;
-import com.pedidos.service.demo.servicios.UbicacionServicio;
-
-import io.swagger.v3.oas.annotations.Operation;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.commonlib.Enums.TiposUbicacion;
+import com.commonlib.entidades.Ubicacion;
+import com.commonlib.error.ErrorRequest;
 import com.pedidos.service.demo.dto.UbicacionDtoIn;
 import com.pedidos.service.demo.dto.UbicacionDtoOut;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
+import com.pedidos.service.demo.servicios.UbicacionServicio;
+
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/api/ubicaciones")
@@ -42,14 +38,15 @@ public class UbicacionControlador {
         try {
             ubicacionCreada = servicio.crear(ubicacionDto);
         } catch (IllegalArgumentException e) {
-            return  ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
+            return ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
 
         }
- 
+
         UbicacionDtoOut ubicacionDtoOut = new UbicacionDtoOut(ubicacionCreada.getId(),
-        ubicacionCreada.getLatitud(), ubicacionCreada.getLongitud(), ubicacionCreada.getTipo().toString(), ubicacionCreada.getNombre(), ubicacionCreada.getCostoEstadia());
+                ubicacionCreada.getLatitud(), ubicacionCreada.getLongitud(), ubicacionCreada.getTipo().toString(),
+                ubicacionCreada.getNombre(), ubicacionCreada.getCostoEstadia());
         return ResponseEntity.status(201).body(ubicacionDtoOut);
     }
 
@@ -71,36 +68,69 @@ public class UbicacionControlador {
 
         }
         UbicacionDtoOut ubicacionDtoOut = new UbicacionDtoOut(
-            ubicacionActualizada.getId(),
-            ubicacionActualizada.getLatitud(), 
-            ubicacionActualizada.getLongitud(), 
-            ubicacionActualizada.getTipo().toString(), 
-            ubicacionActualizada.getNombre(), 
-            ubicacionActualizada.getCostoEstadia()
-        );
+                ubicacionActualizada.getId(),
+                ubicacionActualizada.getLatitud(),
+                ubicacionActualizada.getLongitud(),
+                ubicacionActualizada.getTipo().toString(),
+                ubicacionActualizada.getNombre(),
+                ubicacionActualizada.getCostoEstadia());
 
         return ResponseEntity.ok(ubicacionDtoOut);
     }
 
     @Operation(summary = "Obtener una Ubicacion", description = "Obtiene una Ubicacion dada segun id")
     @GetMapping("/{id}")
-    public ResponseEntity<UbicacionDto> obtener(@PathVariable Long id) {
-        Ubicacion ubicacion = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(DtoHandler.convertirUbicacionDto(ubicacion));
+    public ResponseEntity<?> obtener(@PathVariable Long id) {
+        Ubicacion ubicacion;
+        try {
+            ubicacion = servicio.obtenerPorId(id);
+
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+
+        }
+
+        UbicacionDtoOut ubicacionDtoOut = new UbicacionDtoOut(
+                ubicacion.getId(),
+                ubicacion.getLatitud(),
+                ubicacion.getLongitud(),
+                ubicacion.getTipo().toString(),
+                ubicacion.getNombre(),
+                ubicacion.getCostoEstadia());
+
+        return ResponseEntity.ok(ubicacionDtoOut);
     }
 
     @Operation(summary = "Obtener todas las Ubicaciones", description = "Obteniene todas las Ubicaciones")
     @GetMapping
-    public ResponseEntity<List<UbicacionDto>> obtenerTodos() {
+    public ResponseEntity<List<UbicacionDtoOut>> obtenerTodos() {
         List<Ubicacion> lista = servicio.listarTodos();
-        List<UbicacionDto> dtos = lista.stream().map(DtoHandler::convertirUbicacionDto).collect(Collectors.toList());
+        List<UbicacionDtoOut> dtos = lista.stream().map((u) -> {
+            return new UbicacionDtoOut(
+                u.getId(),
+                u.getLatitud(),
+                u.getLongitud(),
+                u.getTipo().toString(),
+                u.getNombre(),
+                u.getCostoEstadia());
+        }).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Eliminar una Ubicacion", description = "Elimina una Ubicacion dada segun id")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        servicio.eliminar(id);
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        try {
+            servicio.eliminar(id);
+
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+
+        }
         return ResponseEntity.noContent().build();
     }
 
