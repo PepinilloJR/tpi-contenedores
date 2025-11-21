@@ -12,15 +12,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+<<<<<<< HEAD
+ 
+import com.commonlib.dto.DtoHandler;
+=======
 
-import com.commonlib.entidades.Ubicacion;
-import com.commonlib.error.ErrorRequest;
+import com.commonlib.Enums.TiposUbicacion;
 import com.pedidos.service.demo.dto.UbicacionDtoIn;
 import com.pedidos.service.demo.dto.UbicacionDtoOut;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
-import com.pedidos.service.demo.servicios.UbicacionServicio;
-
-import io.swagger.v3.oas.annotations.Operation;
+>>>>>>> e970425e5f74a7e345d5d8d11fa0ebb31a8b0829
 
 @RestController
 @RequestMapping("/api/ubicaciones")

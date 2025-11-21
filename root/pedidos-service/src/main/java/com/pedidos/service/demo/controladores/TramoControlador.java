@@ -22,16 +22,7 @@ import com.pedidos.service.demo.servicios.TramoServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-/*
-!!!!!!!!!
-!!!!!!!!!
- * Repasar todos los servicios y ver las reglas!!!!!!!!!
- * Tambien en los dto usar los validate!!!!!!!!!
-!!!!!!!!!
-!!!!!!!!!
-!!!!!!!!!
-!!!!!!!!!
- */
+
 
 @RestController
 @RequestMapping("/api/tramos")
