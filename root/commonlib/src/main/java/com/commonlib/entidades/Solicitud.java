@@ -33,8 +33,6 @@ public class Solicitud {
     private Long id;
     private String estado;
     private Double costoEstimado;
-    private Double tiempoEstimado;
-    private Long tiempoReal;
     private Double costoFinal;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente", 

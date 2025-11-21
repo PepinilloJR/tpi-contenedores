@@ -13,7 +13,7 @@ import com.commonlib.entidades.Solicitud;
 import com.commonlib.entidades.Tarifa;
 import com.commonlib.entidades.Tramo;
 import com.commonlib.entidades.Ubicacion;
-
+/* 
 public interface DtoHandler {
 
     // Seguimiento
@@ -22,13 +22,13 @@ public interface DtoHandler {
     public static SeguimientoDto convertirSeguimientoDto(Seguimiento s) {
         if (s == null)
             return null;
-        return new SeguimientoDto(s.getId(), s.getEstado(), s.getFecha());
+        return new SeguimientoDto(s.getId(), null, s.getFecha());
     }
 
     // Para un solo seguimientoDto
     public static Seguimiento convertirSeguimientoEntidad(SeguimientoDto dto) {
         Seguimiento s = new Seguimiento();
-        s.setEstado(dto.estado());
+        //s.setEstado(dto.estado());
         s.setFecha(dto.fecha());
         return s;
     }
@@ -57,7 +57,7 @@ public interface DtoHandler {
     public static ContenedorDto convertirContenedorDto(Contenedor c) {
         if (c == null)
             return null;
-        return new ContenedorDto(c.getId(), c.getPeso(), c.getVolumen(), c.getEstado(), c.getCostoVolumen());
+        return new ContenedorDto(c.getId(), c.getPeso(), c.getVolumen(), c.getEstado(), null);
     }
 
     public static Contenedor convertirContenedorEntidad(ContenedorDto dto) {
@@ -68,7 +68,7 @@ public interface DtoHandler {
         c.setPeso(dto.peso());
         c.setVolumen(dto.volumen());
         c.setEstado(dto.estado());
-        c.setCostoVolumen(dto.costoVolumen());
+        //c.setCostoVolumen(dto.costoVolumen());
         return c;
     }
 
@@ -77,7 +77,8 @@ public interface DtoHandler {
     public static UbicacionDto convertirUbicacionDto(Ubicacion u) {
         if (u == null)
             return null;
-        return new UbicacionDto(u.getId(), u.getNombre(), u.getTipo(), u.getLatitud(), u.getLongitud(), u.getCosto());
+        //return new UbicacionDto(u.getId(), u.getNombre(), u.getTipo(), u.getLatitud(), u.getLongitud(), null);
+        return null;
     }
 
     public static Ubicacion convertirUbicacionEntidad(UbicacionDto dto) {
@@ -88,15 +89,15 @@ public interface DtoHandler {
             u.setId(dto.id());
         }
         u.setNombre(dto.nombre());
-        u.setTipo(dto.tipo());
+        //u.setTipo(dto.tipo());
         u.setLatitud(dto.latitud());
         u.setLongitud(dto.longitud());
-        u.setCosto(dto.costo());
+        //u.setCosto(dto.costo());
         return u;
     }
 
     // Ruta
-
+    
     public static RutaDto convertirRutaDto(Ruta r) {
         if (r == null)
             return null;
@@ -153,7 +154,7 @@ public interface DtoHandler {
     public static TarifaDto convertirTarifaDto(Tarifa t) {
         if (t == null)
             return null;
-        return new TarifaDto(t.getId(), t.getCostoLitro(), t.getCostoVolumen(), t.getCostoKilometro());
+        return new TarifaDto(t.getId(), null, t.getCostoVolumen(), t.getCostoKilometro());
     }
 
     public static Tarifa convertirTarifaEntidad(TarifaDto dto) {
@@ -161,7 +162,6 @@ public interface DtoHandler {
             return null;
         Tarifa t = new Tarifa();
         t.setId(dto.id());
-        t.setCostoLitro(dto.costoLitro());
         t.setCostoKilometro(dto.costoKilometro());
         t.setCostoVolumen(dto.costoVolumen());
         return t;
@@ -244,6 +244,7 @@ public interface DtoHandler {
     }
 
     // Solicitud
+
     public static SolicitudDto convertirSolicitudDto(Solicitud s) {
         if (s == null)
             return null;
@@ -303,3 +304,4 @@ public interface DtoHandler {
         return e;
     }
 }
+*/

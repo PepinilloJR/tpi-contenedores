@@ -2,7 +2,8 @@ package com.commonlib.entidades;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
+import com.commonlib.Enums.TiposTramos;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
@@ -55,7 +56,7 @@ public class Tramo {
 
     private double costoVolumen;
     private double costoKilometro;
-    private String tipo;
+    private TiposTramos tipo;
     private String estado;
     private Double costoAproximado;
     private Double costoReal;
