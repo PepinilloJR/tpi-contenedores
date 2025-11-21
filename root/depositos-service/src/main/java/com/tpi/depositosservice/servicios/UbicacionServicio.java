@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import com.commonlib.Enums.TiposUbicacion;
 import com.commonlib.entidades.Ubicacion;
 import com.tpi.depositosservice.repositorios.UbicacionRepository;
@@ -18,7 +18,12 @@ public class UbicacionServicio {
         this.repository = repository;
     }
 
+    @Transactional
     public Ubicacion crear(Ubicacion ubicacion) {
+        if (ubicacion == null) {
+            throw new IllegalArgumentException("Ubicacion invalida, no puede ser nula");
+        }
+        
         validarDatos(ubicacion);
 
         // Chequear que no exista otra ubicación con la misma latitud y longitud
@@ -31,6 +36,7 @@ public class UbicacionServicio {
         return repository.save(ubicacion);
     }
 
+    @Transactional
     public Ubicacion actualizar(Long id, Ubicacion ubicacion) {
         if (!repository.existsById(id)) {
             throw new NoSuchElementException("No se encontró la ubicación con id: " + id);
@@ -49,15 +55,18 @@ public class UbicacionServicio {
         return repository.save(ubicacion);
     }
 
+    @Transactional(readOnly = true)
     public Ubicacion obtenerPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No se encontró la ubicación con id: " + id));
     }
 
+    @Transactional(readOnly = true)
     public List<Ubicacion> listarTodos() {
         return repository.findAll();
     }
 
+    @Transactional
     public void eliminar(Long id) {
         if (!repository.existsById(id)) {
             throw new NoSuchElementException("No se encontró la ubicación con id: " + id);
