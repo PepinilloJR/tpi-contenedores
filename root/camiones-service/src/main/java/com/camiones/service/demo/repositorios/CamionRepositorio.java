@@ -19,7 +19,7 @@ public interface CamionRepositorio extends JpaRepository<Camion, Long> {
     List<Camion> findByNombreTransportista(String nombreTransportista);
 
     // Buscar por disponibilidad
-    Optional<Camion> findByDisponibleTrueOrderByIdAsc();
+    Optional<Camion> findFirstByDisponibleTrueOrderByIdAsc();
 
     // Buscar disponibles y con capacidad determinada
     Optional<Camion> findFirstByDisponibleTrueAndCapacidadPesoGreaterThanEqualAndCapacidadVolumenGreaterThanEqual(

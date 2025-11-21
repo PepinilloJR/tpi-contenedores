@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.commonlib.dto.DtoHandler;
 import com.commonlib.dto.RutaDto;
 import com.commonlib.entidades.Ruta;
+import com.pedidos.service.demo.dto.RutaTentativaDtoIn;
+import com.pedidos.service.demo.dto.RutaTentativaDtoOut;
 import com.pedidos.service.demo.servicios.RutaServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,6 +76,17 @@ public class RutaControlador {
         List<Ruta> lista = servicio.listarTodos();
         List<RutaDto> dtos = lista.stream().map(DtoHandler::convertirRutaDto).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
+    }
+
+    @PostMapping("/tentativas")
+    public ResponseEntity<RutaTentativaDtoOut[]> guardarTentativas(@RequestBody RutaTentativaDtoIn dto) {
+        try {
+            RutaTentativaDtoOut[] rutas = servicio.crearRutasTentativas(dto);
+            return ResponseEntity.ok(rutas);
+        } catch (Exception e) {
+            return ResponseEntity.status()
+        }
+
     }
 
     @Operation(summary = "Elimina una Ruta", description = "Elimina una Ruta dada segun id")

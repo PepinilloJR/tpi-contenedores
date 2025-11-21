@@ -3,6 +3,7 @@ package com.camiones.service.demo.controladores;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ import com.commonlib.entidades.Camion;
 import com.commonlib.entidades.Tarifa;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/camiones")
@@ -38,45 +39,40 @@ public class CamionControlador {
 
     @Operation(summary = "Crear un Camion", description = "Crea un Camion")
     @PostMapping
-    public ResponseEntity<CamionDto> crear(@Valid @RequestBody CamionDto dto) {
+    public ResponseEntity<CamionDto> crear(@RequestBody CamionDto dto) {
         Camion entity = DtoHandler.convertirCamionEntidad(dto);
-        Tarifa tarifa = servicioTarifa.obtenerPorId(dto.id());
-        entity.setTarifa(tarifa);
+
+        // Si viene idTarifa, traer la entidad y setearla (si no existe, servicioTarifa lanzará ResourceNotFoundException)
+        if (dto.idTarifa() != null) {
+            Tarifa tarifa = servicioTarifa.obtenerPorId(dto.idTarifa());
+            entity.setTarifa(tarifa);
+        }
+
         Camion creado = servicio.crear(entity);
-        return ResponseEntity.status(201).body(DtoHandler.convertirCamionDto(creado));
+        return ResponseEntity.status(HttpStatus.CREATED).body(DtoHandler.convertirCamionDto(creado));
     }
 
     @Operation(summary = "Actualizar un Camion", description = "Actualiza un Camion dado segun id")
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody CamionDto dto) {
+    public ResponseEntity<CamionDto> actualizar(@PathVariable Long id, @RequestBody CamionDto dto) {
 
+        // obtenemos la entidad actual (si no existe, el servicio lanza ResourceNotFoundException)
         Camion actual = servicio.obtenerPorId(id);
 
+        // Si se provee idTarifa, buscarla y setearla (si no existe -> ResourceNotFoundException)
         if (dto.idTarifa() != null) {
-            try {
-                Tarifa tarifa = servicioTarifa.obtenerPorId(dto.idTarifa());
-                actual.setTarifa(tarifa);
-            } catch (Exception e) {
-                return ResponseEntity
-                        .badRequest()
-                        .body("La tarifa con id " + dto.idTarifa() + " no existe");
-            }
+            Tarifa tarifa = servicioTarifa.obtenerPorId(dto.idTarifa());
+            actual.setTarifa(tarifa);
         }
 
-        if (dto.patente() != null)
-            actual.setPatente(dto.patente());
-        if (dto.nombreTransportista() != null)
-            actual.setNombreTransportista(dto.nombreTransportista());
-        if (dto.telefonoTransportista() != null)
-            actual.setTelefonoTransportista(dto.telefonoTransportista());
-        if (dto.capacidadPeso() != null)
-            actual.setCapacidadPeso(dto.capacidadPeso());
-        if (dto.capacidadVolumen() != null)
-            actual.setCapacidadVolumen(dto.capacidadVolumen());
-        if (dto.consumoCombustiblePromedio() != null)
-            actual.setConsumoCombustiblePromedio(dto.consumoCombustiblePromedio());
-        if (dto.disponible() != null)
-            actual.setDisponible(dto.disponible());
+        // Merge manual de campos no nulos (actualiza solo lo que llega en el DTO)
+        if (dto.patente() != null) actual.setPatente(dto.patente());
+        if (dto.nombreTransportista() != null) actual.setNombreTransportista(dto.nombreTransportista());
+        if (dto.telefonoTransportista() != null) actual.setTelefonoTransportista(dto.telefonoTransportista());
+        if (dto.capacidadPeso() != null) actual.setCapacidadPeso(dto.capacidadPeso());
+        if (dto.capacidadVolumen() != null) actual.setCapacidadVolumen(dto.capacidadVolumen());
+        if (dto.consumoCombustiblePromedio() != null) actual.setConsumoCombustiblePromedio(dto.consumoCombustiblePromedio());
+        if (dto.disponible() != null) actual.setDisponible(dto.disponible());
 
         Camion actualizado = servicio.actualizar(id, actual);
         return ResponseEntity.ok(DtoHandler.convertirCamionDto(actualizado));

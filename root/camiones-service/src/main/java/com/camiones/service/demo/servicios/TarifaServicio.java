@@ -20,8 +20,10 @@ public class TarifaServicio {
     /* ----------------- CREATE ----------------- */
     @Transactional
     public Tarifa crear(Tarifa tarifa) {
+        if (tarifa == null) {
+            throw new IllegalArgumentException("Tarifa inválida, no puede ser nula");
+        }
         validarDatos(tarifa);
-
         return repositorio.save(tarifa);
     }
 
@@ -43,9 +45,12 @@ public class TarifaServicio {
         Tarifa existente = repositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarifa no encontrada con id " + id));
 
-        // en tu controlador ya hicimos el merge de campos no nulos sobre "datos",
-        // así que acá asumimos que "datos" viene completo y coherente
+        if (datos == null) {
+            throw new IllegalArgumentException("Datos de tarifa inválidos");
+        }
 
+        // asumimos que el controlador hizo el merge y 'datos' representa el estado
+        // deseado
         validarDatos(datos);
 
         existente.setCostoKilometro(datos.getCostoKilometro());
@@ -66,13 +71,13 @@ public class TarifaServicio {
     /* ----------------- reglas de negocio básicas ----------------- */
     private void validarDatos(Tarifa t) {
 
-        if (neg(t.getCostoKilometro()) || neg(t.getCostoVolumen())) {
-            throw new IllegalArgumentException("Los valores de precio no pueden ser negativos");
+        if (t.getCostoKilometro() == null || t.getCostoVolumen() == null) {
+            throw new IllegalArgumentException("Los costos no pueden ser nulos");
         }
 
+        if (t.getCostoKilometro() < 0 || t.getCostoVolumen() < 0) {
+            throw new IllegalArgumentException("Los valores de precio no pueden ser negativos");
+        }
     }
 
-    private boolean neg(Double v) {
-        return v != null && v < 0;
-    }
 }

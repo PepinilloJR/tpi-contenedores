@@ -1,0 +1,93 @@
+### CREAR TARIFA (válida)
+POST http://localhost:8002/api/tarifas
+Content-Type: application/json
+
+{
+  "costoVolumen": 120.5,
+  "costoKilometro": 80.75
+}
+
+
+###
+
+
+### CREAR TARIFA (error: costoVolumen negativo)
+POST http://localhost:8002/api/tarifas
+Content-Type: application/json
+
+{
+  "costoVolumen": -10,
+  "costoKilometro": 50
+}
+
+
+###
+
+
+### CREAR TARIFA (error: costoVolumen nulo)
+POST http://localhost:8002/api/tarifas
+Content-Type: application/json
+
+{
+  "costoVolumen": null,
+  "costoKilometro": 50
+}
+
+
+###
+
+
+### CREAR TARIFA (error: costoKilometro nulo)
+POST http://localhost:8002/api/tarifas
+Content-Type: application/json
+
+{
+  "costoVolumen": 50
+}
+
+
+###
+
+
+### OBTENER TARIFA POR ID
+GET http://localhost:8002/api/tarifas/1
+
+
+###
+
+
+### LISTAR TODAS LAS TARIFAS
+GET http://localhost:8002/api/tarifas
+
+
+###
+
+
+### ACTUALIZAR TARIFA (válido)
+PUT http://localhost:8002/api/tarifas/1
+Content-Type: application/json
+
+{
+  "costoVolumen": 150.0,
+  "costoKilometro": 95.0
+}
+
+
+###
+
+
+### ACTUALIZAR TARIFA (error: valores negativos)
+PUT http://localhost:8002/api/tarifas/1
+Content-Type: application/json
+
+{
+  "costoVolumen": -20,
+  "costoKilometro": 30
+}
+
+
+###
+
+
+### ELIMINAR TARIFA
+DELETE http://localhost:8002/api/tarifas/1

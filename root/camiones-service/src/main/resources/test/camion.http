@@ -1,0 +1,157 @@
+### ============================
+### 1) Crear TARIFAS (OBLIGATORIO ANTES DE CREAR CAMIONES)
+### ============================
+
+### Crear tarifa válida
+POST http://localhost:8002/api/tarifas
+Content-Type: application/json
+
+{
+  "costoVolumen": 100,
+  "costoKilometro": 50
+}
+
+### Crear segunda tarifa
+POST http://localhost:8002/api/tarifas
+Content-Type: application/json
+
+{
+  "costoVolumen": 150,
+  "costoKilometro": 70
+}
+
+### Listar tarifas
+GET http://localhost:8002/api/tarifas
+
+
+### ============================
+### 2) CREAR CAMIONES
+### ============================
+
+### Crear camión válido (usa tarifa con id 1)
+POST http://localhost:8002/api/camiones
+Content-Type: application/json
+
+{
+  "idTarifa": 1,
+  "patente": "AAA111",
+  "nombreTransportista": "Juan Perez",
+  "telefonoTransportista": "3511234567",
+  "capacidadPeso": 10000,
+  "capacidadVolumen": 50,
+  "consumoCombustiblePromedio": 10,
+  "disponible": true
+}
+
+
+### Crear camión válido (usa tarifa con id 2)
+POST http://localhost:8002/api/camiones
+Content-Type: application/json
+
+{
+  "idTarifa": 2,
+  "patente": "BBB222",
+  "nombreTransportista": "Carlos Lopez",
+  "telefonoTransportista": "3519876543",
+  "capacidadPeso": 8000,
+  "capacidadVolumen": 40,
+  "consumoCombustiblePromedio": 12,
+  "disponible": true
+}
+
+
+### ============================
+### 3) TESTEAR EXCEPCIONES
+### ============================
+
+### ❌ Crear camión SIN tarifa → debe fallar (tarifa obligatoria)
+POST http://localhost:8002/api/camiones
+Content-Type: application/json
+
+{
+  "patente": "CCC333",
+  "nombreTransportista": "Sin Tarifa",
+  "telefonoTransportista": "123",
+  "capacidadPeso": 5000,
+  "capacidadVolumen": 30,
+  "consumoCombustiblePromedio": 9
+}
+
+
+### ❌ Crear camión con patente duplicada → debe fallar
+POST http://localhost:8002/api/camiones
+Content-Type: application/json
+
+{
+  "idTarifa": 1,
+  "patente": "AAA111",
+  "nombreTransportista": "Duplicado",
+  "telefonoTransportista": "123",
+  "capacidadPeso": 5000,
+  "capacidadVolumen": 30,
+  "consumoCombustiblePromedio": 9
+}
+
+
+### ❌ Crear camión con capacidadPeso negativa → debe fallar
+POST http://localhost:8002/api/camiones
+Content-Type: application/json
+
+{
+  "idTarifa": 1,
+  "patente": "DDD444",
+  "nombreTransportista": "Error Peso",
+  "telefonoTransportista": "123",
+  "capacidadPeso": -10,
+  "capacidadVolumen": 30,
+  "consumoCombustiblePromedio": 9
+}
+
+
+### ============================
+### 4) LISTAR / BUSCAR
+### ============================
+
+### Listar todos los camiones
+GET http://localhost:8002/api/camiones
+
+### Obtener camión por id (ej: id = 1)
+GET http://localhost:8002/api/camiones/1
+
+### Obtener camión disponible
+GET http://localhost:8002/api/camiones/disponible
+
+### Buscar camión disponible por capacidad
+GET http://localhost:8002/api/camiones/disponible/por-capacidad?peso=5000&volumen=10
+
+
+### ============================
+### 5) ACTUALIZAR CAMIÓN
+### ============================
+
+### Actualizar sólo algunos campos del camión con id = 1
+PUT http://localhost:8002/api/camiones/1
+Content-Type: application/json
+
+{
+  "telefonoTransportista": "3515551212",
+  "capacidadPeso": 12000,
+  "idTarifa": 2,
+  "disponible": false
+}
+
+
+### Actualizar patente (si no está duplicada)
+PUT http://localhost:8002/api/camiones/2
+Content-Type: application/json
+
+{
+  "patente": "ZZZ999"
+}
+
+
+### ============================
+### 6) ELIMINAR
+### ============================
+
+DELETE http://localhost:8002/api/camiones/1
