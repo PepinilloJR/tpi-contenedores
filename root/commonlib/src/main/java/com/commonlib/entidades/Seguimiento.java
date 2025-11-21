@@ -26,6 +26,7 @@ public class Seguimiento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String estado;
+    private String estadoAnterior;
     private LocalDateTime fecha;
+    private String comentario;
 }

@@ -30,7 +30,8 @@ public class Camion {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_tarifa", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_camion_tarifa"))
+    @JoinColumn(name = "id_tarifa", nullable = true, 
+    referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_camion_tarifa"))
     private Tarifa tarifa;
 
     @Column(nullable = false, unique = true, length = 12)

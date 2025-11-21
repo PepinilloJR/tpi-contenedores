@@ -43,7 +43,7 @@ public class Estadia {
         }
         return Duration.between(fechaHoraEntrada, fechaHoraSalida).toDays();
     }
-
+/* 
     public Double calcularCostoEstadia() {
         if (this.tramo != null && this.tramo.getOrigen() != null) {
             return this.tramo.getOrigen().getCosto() * calcularEstadia();
@@ -51,4 +51,5 @@ public class Estadia {
         return 0.0;
 
     }
+        */
 }

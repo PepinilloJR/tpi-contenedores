@@ -26,8 +26,6 @@ public class Tarifa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Double costoLitro;
-
     private Double costoVolumen;
 
     private Double costoKilometro;
