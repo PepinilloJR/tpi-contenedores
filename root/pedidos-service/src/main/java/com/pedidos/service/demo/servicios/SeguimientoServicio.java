@@ -29,8 +29,9 @@ public class SeguimientoServicio {
     public Seguimiento actualizarSeguimiento(Long id, Seguimiento seguimientoActualizado) {
         Seguimiento existente = repositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Seguimiento no encontrado con id " + id));
-        existente.setEstado(seguimientoActualizado.getEstado());
+        existente.setEstadoAnterior(seguimientoActualizado.getEstadoAnterior());
         existente.setFecha(seguimientoActualizado.getFecha());
+        existente.setComentario(seguimientoActualizado.getComentario());
 
         return repositorio.save(existente);
     }

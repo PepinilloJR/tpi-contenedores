@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.commonlib.dto.DtoHandler;
 
+import com.pedidos.service.demo.dto.ContenedorDtoIn;
+
 @RestController
 @RequestMapping("/api/contenedores")
 public class ContenedorControlador {
@@ -41,24 +43,27 @@ public class ContenedorControlador {
         return ResponseEntity.status(201).body(DtoHandler.convertirContenedorDto(contenedorCreado));
     }
 
+    // Primero en corregir
+
     // En el servicio hay que controlar el costoVolumen
     @Operation(summary = "Actualizar un Contenedor", description = "Actualiza un Contenedor dado segun id")
     @PutMapping("/{id}")
-    public ResponseEntity<ContenedorDto> actualizar(@PathVariable Long id,
-            @RequestBody ContenedorDto contenedorDto) {
+    public ResponseEntity<ContenedorDto> actualizar(@PathVariable Long id, @RequestBody ContenedorDto contenedorDtoIn) {
         Contenedor contenedorActual = servicio.obtenerPorId(id);
 
-        contenedorActual.setPeso(contenedorDto.peso() != null ? contenedorDto.peso() : contenedorActual.getPeso());
-        contenedorActual
-                .setVolumen(contenedorDto.volumen() != null ? contenedorDto.volumen() : contenedorActual.getVolumen());
-        contenedorActual
-                .setEstado(contenedorDto.estado() != null ? contenedorDto.estado() : contenedorActual.getEstado());
-        contenedorActual.setCostoVolumen(contenedorDto.costoVolumen() != null ? contenedorDto.costoVolumen()
-                : contenedorActual.getCostoVolumen());
+        contenedorActual.setPeso(contenedorDtoIn.peso() != null ? contenedorDtoIn.peso() : contenedorActual.getPeso());
+        contenedorActual.setVolumen(contenedorDtoIn.volumen() != null ? contenedorDtoIn.volumen() : contenedorActual.getVolumen());
+        contenedorActual.setEstado(contenedorDtoIn.estado() != null ? contenedorDtoIn.estado() : contenedorActual.getEstado());
+
+        if (contenedorDtoIn.idUbicacionUltima() != null) {
+
+        }
 
         Contenedor contenedorActualizado = servicio.actualizar(id, contenedorActual);
         return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedorActualizado));
     }
+
+
 
     @Operation(summary = "Obtener un Contenedor", description = "Obtener un Contenedor dado segun id")
     @GetMapping("/{id}")
