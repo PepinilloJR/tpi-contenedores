@@ -3,6 +3,7 @@ package com.camiones.service.demo.controladores;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.camiones.service.demo.servicios.TarifaServicio;
-import com.commonlib.dto.DtoHandler;
-import com.commonlib.dto.TarifaDto;
+import com.camiones.service.demo.dto.DtoHandler;
+import com.camiones.service.demo.dto.TarifaDto;
+import com.camiones.service.demo.exepciones.ResourceNotFoundException;
 import com.commonlib.entidades.Tarifa;
+import com.commonlib.error.ErrorRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -31,26 +34,36 @@ public class TarifaControlador {
         this.servicio = servicio;
     }
 
-
-
     @Operation(summary = "Crear una Tarifa", description = "Crea una Tarifa")
     @PostMapping
-    public ResponseEntity<TarifaDto> crear(@Valid @RequestBody TarifaDto dto) {
-        Tarifa entity = DtoHandler.convertirTarifaEntidad(dto);
-        Tarifa creada = servicio.crear(entity);
-        return ResponseEntity.status(201).body(DtoHandler.convertirTarifaDto(creada));
+    public ResponseEntity<?> crear(@Valid @RequestBody TarifaDto dto) {
+        try {
+            Tarifa entity = DtoHandler.convertirTarifaEntidad(dto);
+            Tarifa creada = servicio.crear(entity);
+            return ResponseEntity.status(201).body(DtoHandler.convertirTarifaDto(creada));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorRequest(400, "No se pudo crear la tarifa: " + e.getMessage()));
+        }
+
     }
 
     @Operation(summary = "Actualizar una Tarifa", description = "Actualiza una Tarifa dada segun id")
     @PutMapping("/{id}")
-    public ResponseEntity<TarifaDto> actualizar(@PathVariable Long id, @RequestBody TarifaDto dto) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody TarifaDto dto) {
         // actualización parcial: aplica solo campos no nulos
-        Tarifa actual = servicio.obtenerPorId(id);
+        Tarifa actual;
+
+        try {
+            actual = servicio.obtenerPorId(id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorRequest(404, "La tarifa con id " + id + " no existe"));
+        }
 
         actual.setCostoKilometro(dto.costoKilometro() != null ? dto.costoKilometro() : actual.getCostoKilometro());
-        actual.setCostoLitro(dto.costoLitro() != null ? dto.costoLitro() : actual.getCostoLitro());
         actual.setCostoVolumen(dto.costoVolumen() != null ? dto.costoVolumen() : actual.getCostoVolumen());
-
 
         Tarifa actualizada = servicio.actualizar(id, actual);
         return ResponseEntity.ok(DtoHandler.convertirTarifaDto(actualizada));
@@ -58,9 +71,20 @@ public class TarifaControlador {
 
     @Operation(summary = "Obtener una Tarifa", description = "Obtener una Tarifa dada segun id")
     @GetMapping("/{id}")
-    public ResponseEntity<TarifaDto> obtener(@PathVariable Long id) {
-        Tarifa tarifa = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(DtoHandler.convertirTarifaDto(tarifa));
+    public ResponseEntity<?> obtener(@PathVariable Long id) {
+        try {
+            Tarifa tarifa = servicio.obtenerPorId(id);
+            return ResponseEntity.ok(DtoHandler.convertirTarifaDto(tarifa));
+
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorRequest(404, e.getMessage()));
+                    
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorRequest(500, "Error interno al obtener la tarifa"));
+        }
+
     }
 
     @Operation(summary = "Obtener todas las Tarifas", description = "Obtiene todas las Tarifas")

@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.camiones.service.demo.servicios.CamionServicio;
 import com.camiones.service.demo.servicios.TarifaServicio;
-import com.commonlib.dto.CamionDto;
-import com.commonlib.dto.DtoHandler;
+import com.camiones.service.demo.dto.CamionDto;
+import com.camiones.service.demo.dto.DtoHandler;
 import com.commonlib.entidades.Camion;
 import com.commonlib.entidades.Tarifa;
 
@@ -31,21 +31,16 @@ public class CamionControlador {
     private final CamionServicio servicio;
     private final TarifaServicio servicioTarifa;
 
-    public CamionControlador(CamionServicio servicio,TarifaServicio servicioTarifa) {
+    public CamionControlador(CamionServicio servicio, TarifaServicio servicioTarifa) {
         this.servicio = servicio;
         this.servicioTarifa = servicioTarifa;
     }
-
-    // ======== Helpers ========
-
-
-    // ======== Endpoints ========
 
     @Operation(summary = "Crear un Camion", description = "Crea un Camion")
     @PostMapping
     public ResponseEntity<CamionDto> crear(@Valid @RequestBody CamionDto dto) {
         Camion entity = DtoHandler.convertirCamionEntidad(dto);
-        Tarifa tarifa = servicioTarifa.obtenerPorId(dto.tarifa().id());
+        Tarifa tarifa = servicioTarifa.obtenerPorId(dto.id());
         entity.setTarifa(tarifa);
         Camion creado = servicio.crear(entity);
         return ResponseEntity.status(201).body(DtoHandler.convertirCamionDto(creado));
@@ -53,12 +48,21 @@ public class CamionControlador {
 
     @Operation(summary = "Actualizar un Camion", description = "Actualiza un Camion dado segun id")
     @PutMapping("/{id}")
-    public ResponseEntity<CamionDto> actualizar(@PathVariable Long id, @RequestBody CamionDto dto) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody CamionDto dto) {
 
         Camion actual = servicio.obtenerPorId(id);
 
-        if (dto.tarifa() != null)
-            actual.setTarifa(DtoHandler.convertirTarifaEntidad(dto.tarifa()));
+        if (dto.idTarifa() != null) {
+            try {
+                Tarifa tarifa = servicioTarifa.obtenerPorId(dto.idTarifa());
+                actual.setTarifa(tarifa);
+            } catch (Exception e) {
+                return ResponseEntity
+                        .badRequest()
+                        .body("La tarifa con id " + dto.idTarifa() + " no existe");
+            }
+        }
+
         if (dto.patente() != null)
             actual.setPatente(dto.patente());
         if (dto.nombreTransportista() != null)

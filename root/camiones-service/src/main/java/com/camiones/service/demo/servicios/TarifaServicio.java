@@ -22,7 +22,6 @@ public class TarifaServicio {
     public Tarifa crear(Tarifa tarifa) {
         validarDatos(tarifa);
 
-
         return repositorio.save(tarifa);
     }
 
@@ -49,10 +48,8 @@ public class TarifaServicio {
 
         validarDatos(datos);
 
-
         existente.setCostoKilometro(datos.getCostoKilometro());
         existente.setCostoVolumen(datos.getCostoVolumen());
-        existente.setCostoLitro(datos.getCostoLitro());
 
         return repositorio.save(existente);
     }
@@ -69,7 +66,7 @@ public class TarifaServicio {
     /* ----------------- reglas de negocio básicas ----------------- */
     private void validarDatos(Tarifa t) {
 
-        if (neg(t.getCostoKilometro()) || neg(t.getCostoVolumen()) || neg(t.getCostoLitro())) {
+        if (neg(t.getCostoKilometro()) || neg(t.getCostoVolumen())) {
             throw new IllegalArgumentException("Los valores de precio no pueden ser negativos");
         }
 
