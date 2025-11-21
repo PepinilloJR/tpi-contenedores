@@ -57,8 +57,6 @@ public class SolicitudServicio {
         existente.setContenedor(solicitudActualizada.getContenedor());
         existente.setCostoEstimado(solicitudActualizada.getCostoEstimado());
         existente.setCostoFinal(solicitudActualizada.getCostoFinal());
-        existente.setTiempoEstimado(solicitudActualizada.getTiempoEstimado());
-        existente.setTiempoReal(solicitudActualizada.getTiempoReal());
 
         return repositorio.save(existente);
     }

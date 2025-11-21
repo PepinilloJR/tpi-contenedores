@@ -39,6 +39,7 @@ public class Ruta {
     private Integer cantidadDepositos;
     private BigDecimal costoPorTramo;
     private Double distanciaTotal;
-
+    private Double tiempoEstimado;
+    private Long tiempoReal;
 
 }

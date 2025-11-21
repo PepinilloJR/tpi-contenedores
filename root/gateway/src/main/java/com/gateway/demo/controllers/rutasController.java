@@ -1,30 +1,9 @@
 package com.gateway.demo.controllers;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.service.annotation.PutExchange;
-
-import com.commonlib.dto.DtoHandler;
-import com.commonlib.dto.RutaDto;
-import com.commonlib.dto.SolicitudDto;
-import com.commonlib.dto.TramoDto;
-import com.commonlib.dto.UbicacionDto;
-import com.commonlib.entidades.Solicitud;
 
 @RestController
 @RequestMapping("/controlled/rutas")
@@ -45,7 +24,7 @@ public class rutasController {
 
     @Autowired 
     RestClient tramosClient;
-
+/* 
     @PostMapping
     public ResponseEntity<?> agregarRutas(@RequestBody RutaDto rutaDto) {
         SolicitudDto pedidoActual;
@@ -164,7 +143,8 @@ public class rutasController {
         // http://localhost:5000/route/v1/driving/-58.38,-34.60;-58.40,-34.61;-58.43,-34.62;-58.45,-34.63?steps=true&overview=simplified&geometries=geojson
         return ResponseEntity.status(201).body(rutaFinal);
     }
-
+*/
+    /* 
     @PutExchange("/{id}")
     public ResponseEntity<?> FinalizarRuta( @PathVariable Long id) {
         RutaDto ruta;
@@ -223,8 +203,8 @@ public class rutasController {
         
         return ResponseEntity.ok(solicitud);
     }
-
-
+*/
+/* 
     @GetMapping("/tentativas/{solicitudId}")
     public ResponseEntity<?> rutasTentativas(@PathVariable Long solicitudId, @RequestBody RutaDto rutaDto) {
 
@@ -341,4 +321,6 @@ public class rutasController {
 
     return ResponseEntity.ok(alternativas);
 }
+*/
+
 }
