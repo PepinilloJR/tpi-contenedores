@@ -2,7 +2,7 @@ package com.pedidos.service.demo.dto;
 
 import com.commonlib.Enums.EstadosContenedor;
 
-public record ContenedorDtoIn(
+public record ContenedorDtoOut(
         Long id,
         Double peso,
         Double volumen,
@@ -10,5 +10,3 @@ public record ContenedorDtoIn(
         Long idUbicacionUltima) {
 
 }
-
-

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service; // Necesario
 
 import com.commonlib.entidades.Estadia;
 import com.commonlib.entidades.Tramo;
-import com.tpi.depositosservice.repositorios.DepositoRepository;
+import com.tpi.depositosservice.repositorios.UbicacionRepository;
 import com.tpi.depositosservice.repositorios.EstadiaRepository;
 import com.tpi.depositosservice.repositorios.TramoRepositorio;
 
@@ -15,9 +15,9 @@ import com.tpi.depositosservice.repositorios.TramoRepositorio;
 public class EstadiaServicio {
 
     private final EstadiaRepository estadiaRepository;
-    private final DepositoRepository depositoRepository; // Para buscar el Depósito por ID
+    private final UbicacionRepository depositoRepository; // Para buscar el Depósito por ID
     private final TramoRepositorio tramoRepositorio;
-    public EstadiaServicio(EstadiaRepository estadiaRepository, DepositoRepository depositoRepository, TramoRepositorio tramoRepositorio) {
+    public EstadiaServicio(EstadiaRepository estadiaRepository, UbicacionRepository depositoRepository, TramoRepositorio tramoRepositorio) {
         this.estadiaRepository = estadiaRepository;
         this.depositoRepository = depositoRepository;
         this.tramoRepositorio = tramoRepositorio;

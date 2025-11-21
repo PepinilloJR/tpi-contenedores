@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.commonlib.dto.DepositoDto;
-import com.commonlib.entidades.Deposito;
-import com.tpi.depositosservice.servicios.DepositoServicio;
+
+import com.tpi.depositosservice.servicios.UbicacionServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping("/api/depositos")
-public class DepositoControlador {
+@RequestMapping("/api/ubicaciones")
+public class UbicacionControlador {
 
-    private final DepositoServicio servicio;
+    private final UbicacionServicio servicio;
 
-    public DepositoControlador(DepositoServicio servicio) {
+    public UbicacionControlador(UbicacionServicio servicio) {
         this.servicio = servicio;
     }
 
