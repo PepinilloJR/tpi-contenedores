@@ -66,6 +66,7 @@ public class CamionControlador {
         }
 
         // Merge manual de campos no nulos (actualiza solo lo que llega en el DTO)
+        // capaz hay q eliminar esto
         if (dto.patente() != null) actual.setPatente(dto.patente());
         if (dto.nombreTransportista() != null) actual.setNombreTransportista(dto.nombreTransportista());
         if (dto.telefonoTransportista() != null) actual.setTelefonoTransportista(dto.telefonoTransportista());

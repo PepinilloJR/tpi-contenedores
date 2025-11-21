@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import com.commonlib.entidades.Cliente;
 import com.pedidos.service.demo.servicios.ClienteServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
+
 
 import com.pedidos.service.demo.dto.*;
 
@@ -33,7 +32,7 @@ public class ClienteControlador {
 
     @Operation(summary = "Crear una cliente", description = "Crea un nuevo Cliente")
     @PostMapping
-    public ResponseEntity<ClienteDto> crear(@Valid @RequestBody ClienteDto clienteDto) {
+    public ResponseEntity<ClienteDto> crear(@RequestBody ClienteDto clienteDto) {
         Cliente clienteEntidad = DtoHandler.convertirClienteEntidad(clienteDto);
         Cliente clienteCreado = servicio.crear(clienteEntidad);
         return ResponseEntity.status(201).body(DtoHandler.convertirClienteDto(clienteCreado));
@@ -42,19 +41,8 @@ public class ClienteControlador {
     @Operation(summary = "Actualizar un cliente", description = "Actualiza un Cliente dado segun id")
     @PutMapping("/{id}")
     public ResponseEntity<ClienteDto> actualizar(@PathVariable Long id, @RequestBody ClienteDto clienteDto) {
-        // soporta la actualizacion parcial, aplicando campos no nulos del dto y guardo
-
-        Cliente clienteActual = servicio.obtenerPorId(id);
-
-        clienteActual.setNombre(clienteDto.nombre() != null ? clienteDto.nombre() : clienteActual.getNombre());
-        clienteActual.setApellido(clienteDto.apellido() != null ? clienteDto.apellido() : clienteActual.getApellido());
-        clienteActual.setTelefono(clienteDto.telefono() != null ? clienteDto.telefono() : clienteActual.getTelefono());
-        clienteActual
-                .setDireccion(clienteDto.direccion() != null ? clienteDto.direccion() : clienteActual.getDireccion());
-        clienteActual.setDni(clienteDto.dni() != null ? clienteDto.dni() : clienteActual.getDni());
-
-        Cliente clienteActualizado = servicio.actualizar(id, clienteActual);
-
+        Cliente clienteEntidad = DtoHandler.convertirClienteEntidad(clienteDto);
+        Cliente clienteActualizado = servicio.actualizar(id, clienteEntidad);
         return ResponseEntity.ok(DtoHandler.convertirClienteDto(clienteActualizado));
     }
 

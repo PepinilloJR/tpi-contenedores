@@ -1,0 +1,161 @@
+# ==========================
+# CREAR CLIENTES
+# ==========================
+
+### Crear cliente válido 1
+POST http://localhost:8001/api/clientes
+Content-Type: application/json
+
+{
+  "id": null,
+  "dni": "12345678",
+  "nombre": "Juan",
+  "apellido": "Perez",
+  "telefono": "555-1234",
+  "direccion": "Calle Falsa 123"
+}
+
+### Crear cliente válido 2
+POST http://localhost:8001/api/clientes
+Content-Type: application/json
+
+{
+  "id": null,
+  "dni": "87654321",
+  "nombre": "Ana",
+  "apellido": "Gomez",
+  "telefono": "555-9876",
+  "direccion": "Calle Verdadera 456"
+}
+
+# ==========================
+# LISTAR CLIENTES
+# ==========================
+
+### Listar todos los clientes
+GET http://localhost:8001/api/clientes
+
+### Obtener cliente por id válido
+GET http://localhost:8001/api/clientes/1
+
+### Obtener cliente por id inexistente -> 404
+GET http://localhost:8001/api/clientes/999
+
+# ==========================
+# ACTUALIZAR CLIENTE
+# ==========================
+
+### Actualizar cliente 1 válido
+PUT http://localhost:8001/api/clientes/1
+Content-Type: application/json
+
+{
+  "dni": "12345678",
+  "nombre": "Juan Carlos",
+  "apellido": "Perez",
+  "telefono": "555-0000",
+  "direccion": "Calle Nueva 123"
+}
+
+### Intentar actualizar cliente 1 con DNI duplicado (87654321) -> 400
+PUT http://localhost:8001/api/clientes/1
+Content-Type: application/json
+
+{
+  "dni": "87654321",
+  "nombre": "Juan Carlos",
+  "apellido": "Perez",
+  "telefono": "555-0000",
+  "direccion": "Calle Nueva 123"
+}
+
+### Intentar actualizar cliente inexistente -> 404
+PUT http://localhost:8001/api/clientes/999
+Content-Type: application/json
+
+{
+  "dni": "55555555",
+  "nombre": "Test",
+  "apellido": "Test",
+  "telefono": "555-5555",
+  "direccion": "Calle Test 1"
+}
+
+# ==========================
+# CREAR CLIENTE CON CAMPOS NULOS -> 400
+# ==========================
+
+### Nombre nulo
+POST http://localhost:8001/api/clientes
+Content-Type: application/json
+
+{
+  "id": null,
+  "dni": "11111111",
+  "nombre": null,
+  "apellido": "Apellido",
+  "telefono": "555-1111",
+  "direccion": "Calle 1"
+}
+
+### Apellido nulo
+POST http://localhost:8001/api/clientes
+Content-Type: application/json
+
+{
+  "id": null,
+  "dni": "11111112",
+  "nombre": "Nombre",
+  "apellido": null,
+  "telefono": "555-1112",
+  "direccion": "Calle 2"
+}
+
+### Telefono nulo
+POST http://localhost:8001/api/clientes
+Content-Type: application/json
+
+{
+  "id": null,
+  "dni": "11111113",
+  "nombre": "Nombre",
+  "apellido": "Apellido",
+  "telefono": null,
+  "direccion": "Calle 3"
+}
+
+### Direccion nula
+POST http://localhost:8001/api/clientes
+Content-Type: application/json
+
+{
+  "id": null,
+  "dni": "11111114",
+  "nombre": "Nombre",
+  "apellido": "Apellido",
+  "telefono": "555-1114",
+  "direccion": null
+}
+
+### DNI nulo
+POST http://localhost:8001/api/clientes
+Content-Type: application/json
+
+{
+  "id": null,
+  "dni": null,
+  "nombre": "Nombre",
+  "apellido": "Apellido",
+  "telefono": "555-1115",
+  "direccion": "Calle 5"
+}
+
+# ==========================
+# ELIMINAR CLIENTE
+# ==========================
+
+### Eliminar cliente válido
+DELETE http://localhost:8001/api/clientes/2
+
+### Eliminar cliente inexistente -> 404
+DELETE http://localhost:8001/api/clientes/999
