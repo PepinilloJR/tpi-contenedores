@@ -5,6 +5,7 @@ SERVICES=(
   "pedidos-service"
   "camiones-service"
   "depositos-service"
+  "commonlib"
 )
 
 echo "=== Checking Docker login using config.json ==="
