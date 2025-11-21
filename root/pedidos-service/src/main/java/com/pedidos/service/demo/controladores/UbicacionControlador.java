@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.commonlib.dto.UbicacionDto;
 import com.commonlib.entidades.Ubicacion;
+import com.commonlib.error.ErrorRequest;
 import com.pedidos.service.demo.servicios.UbicacionServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,8 +20,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+<<<<<<< HEAD
  
 import com.commonlib.dto.DtoHandler;
+=======
+
+import com.commonlib.Enums.TiposUbicacion;
+import com.pedidos.service.demo.dto.UbicacionDtoIn;
+import com.pedidos.service.demo.dto.UbicacionDtoOut;
+import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
+>>>>>>> e970425e5f74a7e345d5d8d11fa0ebb31a8b0829
 
 @RestController
 @RequestMapping("/api/ubicaciones")
@@ -33,33 +42,49 @@ public class UbicacionControlador {
 
     @Operation(summary = "Crear una Ubicacion", description = "Crea una Ubicacion")
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody UbicacionDto ubicacionDto) {
-        Ubicacion ubicacionEntidad = DtoHandler.convertirUbicacionEntidad(ubicacionDto);
-        if (ubicacionDto.costo() == null && ubicacionDto.tipo() == "deposito") {
-            return ResponseEntity.badRequest().body("Error al crear, un deposito requiere un costo de estadia");
-        }
-        Ubicacion ubicacionCreada = servicio.crear(ubicacionEntidad);
+    public ResponseEntity<?> crear(@RequestBody UbicacionDtoIn ubicacionDto) {
+        Ubicacion ubicacionCreada;
+        try {
+            ubicacionCreada = servicio.crear(ubicacionDto);
+        } catch (IllegalArgumentException e) {
+            return  ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
 
-        return ResponseEntity.status(201).body(DtoHandler.convertirUbicacionDto(ubicacionCreada));
+        }
+ 
+        UbicacionDtoOut ubicacionDtoOut = new UbicacionDtoOut(ubicacionCreada.getId(),
+        ubicacionCreada.getLatitud(), ubicacionCreada.getLongitud(), ubicacionCreada.getTipo().toString(), ubicacionCreada.getNombre(), ubicacionCreada.getCostoEstadia());
+        return ResponseEntity.status(201).body(ubicacionDtoOut);
     }
 
     @Operation(summary = "Actualizar una Ubicacion", description = "Actualiza una Ubicacion dada por id")
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody UbicacionDto ubicacionDto) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody UbicacionDtoIn ubicacionDto) {
+        Ubicacion ubicacionActualizada;
+        try {
+            ubicacionActualizada = servicio.actualizar(id, ubicacionDto);
 
-        Ubicacion ubicacionActual = servicio.obtenerPorId(id);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
 
-        ubicacionActual.setNombre(ubicacionDto.nombre() != null ? ubicacionDto.nombre() : ubicacionActual.getNombre());
-        // ubicacionActual.setLatitud(ubicacionDto.latitud() != null ? ubicacionDto.latitud() : ubicacionActual.getLatitud());
-        // ubicacionActual.setLongitud(ubicacionDto.longitud() != null ? ubicacionDto.longitud() : ubicacionActual.getLongitud());
-        ubicacionActual.setCosto(ubicacionDto.costo() != null ? ubicacionDto.costo() : ubicacionActual.getCosto());
-        Ubicacion ubicacionActualizada = servicio.actualizar(id, ubicacionActual);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(new ErrorRequest(400, e.getMessage()));
 
-        if (ubicacionDto.costo() == null && ubicacionDto.tipo() == "deposito") {
-            return ResponseEntity.badRequest().body("Error al actualizar, un deposito requiere un costo de estadia");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+
         }
+        UbicacionDtoOut ubicacionDtoOut = new UbicacionDtoOut(
+            ubicacionActualizada.getId(),
+            ubicacionActualizada.getLatitud(), 
+            ubicacionActualizada.getLongitud(), 
+            ubicacionActualizada.getTipo().toString(), 
+            ubicacionActualizada.getNombre(), 
+            ubicacionActualizada.getCostoEstadia()
+        );
 
-        return ResponseEntity.ok(DtoHandler.convertirUbicacionDto(ubicacionActualizada));
+        return ResponseEntity.ok(ubicacionDtoOut);
     }
 
     @Operation(summary = "Obtener una Ubicacion", description = "Obtiene una Ubicacion dada segun id")

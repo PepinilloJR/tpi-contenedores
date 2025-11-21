@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 
 import com.commonlib.dto.ContenedorDto;
 import com.commonlib.entidades.Contenedor;
+import com.commonlib.error.ErrorRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,9 +23,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.commonlib.dto.DtoHandler;
-
 import com.pedidos.service.demo.dto.ContenedorDtoIn;
+import com.pedidos.service.demo.dto.ContenedorDtoOut;
+import com.pedidos.service.demo.dto.DtoHandler;
+import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/api/contenedores")
@@ -37,10 +39,25 @@ public class ContenedorControlador {
 
     @Operation(summary = "Crear un Contenedor", description = "Crea un Contenedor")
     @PostMapping
-    public ResponseEntity<ContenedorDto> crear(@Valid @RequestBody ContenedorDto contenedorDto) {
-        Contenedor contenedorEntidad = DtoHandler.convertirContenedorEntidad(contenedorDto);
-        Contenedor contenedorCreado = servicio.crear(contenedorEntidad);
-        return ResponseEntity.status(201).body(DtoHandler.convertirContenedorDto(contenedorCreado));
+    public ResponseEntity<?> crear(@RequestBody ContenedorDtoIn contenedorDto) {
+        Contenedor contenedorCreado;
+        try {
+            contenedorCreado = servicio.crear(contenedorDto);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+
+        }
+
+        ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(contenedorCreado.getId(), 
+            contenedorCreado.getPeso(), 
+            contenedorCreado.getVolumen(), 
+            contenedorCreado.getEstado(), 
+            contenedorCreado.getUbicacion() != null ? contenedorCreado.getUbicacion().getId() : null);
+        
+        return ResponseEntity.status(201).body(contenedorDtoOut);
     }
 
     // Primero en corregir
@@ -48,19 +65,22 @@ public class ContenedorControlador {
     // En el servicio hay que controlar el costoVolumen
     @Operation(summary = "Actualizar un Contenedor", description = "Actualiza un Contenedor dado segun id")
     @PutMapping("/{id}")
-    public ResponseEntity<ContenedorDto> actualizar(@PathVariable Long id, @RequestBody ContenedorDto contenedorDtoIn) {
-        Contenedor contenedorActual = servicio.obtenerPorId(id);
-
-        contenedorActual.setPeso(contenedorDtoIn.peso() != null ? contenedorDtoIn.peso() : contenedorActual.getPeso());
-        contenedorActual.setVolumen(contenedorDtoIn.volumen() != null ? contenedorDtoIn.volumen() : contenedorActual.getVolumen());
-        contenedorActual.setEstado(contenedorDtoIn.estado() != null ? contenedorDtoIn.estado() : contenedorActual.getEstado());
-
-        if (contenedorDtoIn.idUbicacionUltima() != null) {
-
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody ContenedorDtoIn contenedorDtoIn) {
+        Contenedor contenedorActualizado;
+        try {
+            contenedorActualizado = servicio.actualizar(id, contenedorDtoIn);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
         }
 
-        Contenedor contenedorActualizado = servicio.actualizar(id, contenedorActual);
-        return ResponseEntity.ok(DtoHandler.convertirContenedorDto(contenedorActualizado));
+        ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(contenedorActualizado.getId()
+        , contenedorActualizado.getPeso(), contenedorActualizado.getVolumen(), contenedorActualizado.getEstado(), 
+        contenedorActualizado.getUbicacion() != null ? contenedorActualizado.getUbicacion().getId() : null);
+        
+        return ResponseEntity.ok(contenedorDtoOut);
     }
 
 

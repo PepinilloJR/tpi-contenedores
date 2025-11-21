@@ -1,5 +1,7 @@
 package com.commonlib.entidades;
 
+import com.commonlib.Enums.EstadosContenedor;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -33,7 +35,7 @@ public class Contenedor {
     private Double peso;
     @Column(nullable = false)
     private Double volumen;
-    private String estado;
+    private EstadosContenedor estado;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
