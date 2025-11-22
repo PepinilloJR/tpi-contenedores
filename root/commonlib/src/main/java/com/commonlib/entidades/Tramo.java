@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.commonlib.Enums.EstadosTramo;
 import com.commonlib.Enums.TiposTramos;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
@@ -49,11 +50,8 @@ public class Tramo {
     foreignKey = @ForeignKey(name = "fk_tramo_ruta"))
     private Ruta ruta;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_camion", nullable = true, 
-    referencedColumnName = "id", 
-    foreignKey = @ForeignKey(name = "fk_tramo_camion"))
-    private Camion camion;
+    @Column(name = "id_camion", nullable = true)
+    private Long idCamion;
 
     private double costoVolumen;
     private double costoKilometro;
@@ -65,7 +63,7 @@ public class Tramo {
     private LocalDateTime fechaHoraFin;
     private Double distancia;
     private Integer combustibleConsumido;
-
+/* 
     public void calcularCostoAproximado() {
         if (this.camion == null || this.distancia == null) {
             this.costoAproximado = null;
@@ -97,9 +95,9 @@ public class Tramo {
         // Llama esta funcion al asignar un camion
         this.costoAproximado = parteCombustible + parteVolumenPeso;
     }
-
+*/
     // Esto hay que cambiar
-
+    /* 
     public void calcularCostoReal(Double costoEstadia) {
         if (this.camion == null || this.distancia == null) {
             this.costoReal = null;
@@ -133,5 +131,5 @@ public class Tramo {
         this.costoReal = parteCombustible + parteVolumenPeso + costoEstadia;
 
     }
-
+*/
 }

@@ -12,4 +12,9 @@ public class RestClientsConfig {
         return RestClient.create("http://osrm:5000/route/v1/");
     }
 
+    @Bean
+    RestClient camionesClient() {
+        return RestClient.create("http://camiones:8002/api/camiones");
+    }
+
 }
