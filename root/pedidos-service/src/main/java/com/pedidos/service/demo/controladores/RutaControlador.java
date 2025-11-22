@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
- 
-import com.commonlib.dto.DtoHandler;
-import com.commonlib.dto.RutaDto;
+
 import com.commonlib.entidades.Ruta;
 import com.commonlib.error.ErrorRequest;
+import com.pedidos.service.demo.dto.RutaDtoIn;
+import com.pedidos.service.demo.dto.RutaDtoOut;
 import com.pedidos.service.demo.dto.RutaTentativaDtoIn;
 import com.pedidos.service.demo.dto.RutaTentativaDtoOut;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
@@ -34,49 +34,120 @@ public class RutaControlador {
     public RutaControlador(RutaServicio servicio) {
         this.servicio = servicio;
     }
-
-    @Operation(summary = "Crear una Ruta", description = "Crea una Ruta")
-    @PostMapping
-    public ResponseEntity<RutaDto> crear(@RequestBody RutaDto rutaDto) {
-
-        
-        Ruta rutaEntidad = DtoHandler.convertirRutaEntidad(rutaDto);
-        Ruta rutaCreada = servicio.crear(rutaEntidad);
-        return ResponseEntity.status(201).body(DtoHandler.convertirRutaDto(rutaCreada));
-    }
-
+    /*
+     * @Operation(summary = "Crear una Ruta", description = "Crea una Ruta")
+     * 
+     * @PostMapping
+     * public ResponseEntity<RutaDto> crear(@RequestBody RutaDto rutaDto) {
+     * 
+     * 
+     * Ruta rutaEntidad = DtoHandler.convertirRutaEntidad(rutaDto);
+     * Ruta rutaCreada = servicio.crear(rutaEntidad);
+     * return
+     * ResponseEntity.status(201).body(DtoHandler.convertirRutaDto(rutaCreada));
+     * }
+     */
     // Recordar siempre lo de actualizacion parcial
 
     @Operation(summary = "Actualizar una Ruta", description = "Actualiza una Ruta")
     @PutMapping("/{id}")
-    public ResponseEntity<RutaDto> actualizar(@PathVariable Long id, @RequestBody RutaDto rutaDto) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody RutaDtoIn rutaDto) {
 
-        Ruta rutaActual = servicio.obtenerPorId(id);
+        Ruta rutaActualizada;
+        try {
+            rutaActualizada = servicio.actualizar(id, rutaDto);
 
-        rutaActual.setCantidadDepositos(
-                rutaDto.cantidadDepositos() != null ? rutaDto.cantidadDepositos() : rutaActual.getCantidadDepositos());
-        rutaActual.setCantidadTramos(
-                rutaDto.cantidadTramos() != null ? rutaDto.cantidadTramos() : rutaActual.getCantidadTramos());
-        rutaActual.setCostoPorTramo(
-                rutaDto.costoPorTramo() != null ? rutaDto.costoPorTramo() : rutaActual.getCostoPorTramo());
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+        }
 
-        Ruta rutaActualizada = servicio.actualizar(id, rutaActual);
+        // pasar tiempos a Long para expresarlo en dias
+        Long Estimado = null;
+        Long Real = null;
 
-        return ResponseEntity.ok(DtoHandler.convertirRutaDto(rutaActualizada));
+        if (rutaActualizada.getTiempoEstimado() != null) {
+            Estimado = Math.round(rutaActualizada.getTiempoEstimado() / 86400.0);
+        }
+        if (rutaActualizada.getTiempoReal() != null) {
+            Real = Math.round(rutaActualizada.getTiempoReal() / 86400.0);
+        }
+
+        RutaDtoOut rutaDtoOut = new RutaDtoOut(
+                rutaActualizada.getId(),
+                rutaActualizada.getDistanciaTotal(),
+                rutaActualizada.getSolicitud() != null ? rutaActualizada.getSolicitud().getId() : null,
+                Estimado,
+                Real,
+                rutaActualizada.getCostoPorTramo(),
+                rutaActualizada.getCantidadDepositos(),
+                rutaActualizada.getCantidadTramos());
+        return ResponseEntity.ok(rutaDtoOut);
     }
 
     @Operation(summary = "Obtener una Ruta", description = "Obtiene una Ruta dada segun id")
     @GetMapping("/{id}")
-    public ResponseEntity<RutaDto> obtener(@PathVariable Long id) {
-        Ruta ruta = servicio.obtenerPorId(id);
-        return ResponseEntity.ok(DtoHandler.convertirRutaDto(ruta));
+    public ResponseEntity<?> obtener(@PathVariable Long id) {
+        Ruta ruta;
+        try {
+            ruta = servicio.obtenerPorId(id);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+        }
+
+        // pasar tiempos a Long para expresarlo en dias
+        Long Estimado = null;
+        Long Real = null;
+
+        if (ruta.getTiempoEstimado() != null) {
+            Estimado = Math.round(ruta.getTiempoEstimado() / 86400.0);
+        }
+        if (ruta.getTiempoReal() != null) {
+            Real = Math.round(ruta.getTiempoReal() / 86400.0);
+        }
+
+        RutaDtoOut rutaDtoOut = new RutaDtoOut(
+                ruta.getId(),
+                ruta.getDistanciaTotal(),
+                ruta.getSolicitud() != null ? ruta.getSolicitud().getId() : null,
+                Estimado,
+                Real,
+                ruta.getCostoPorTramo(),
+                ruta.getCantidadDepositos(),
+                ruta.getCantidadTramos());
+        return ResponseEntity.ok(rutaDtoOut);
     }
 
     @Operation(summary = "Obtener todas las Ruta", description = "Obtiene todas las Rutas")
     @GetMapping
-    public ResponseEntity<List<RutaDto>> obtenerTodos() {
+    public ResponseEntity<List<RutaDtoOut>> obtenerTodos() {
+
         List<Ruta> lista = servicio.listarTodos();
-        List<RutaDto> dtos = lista.stream().map(DtoHandler::convertirRutaDto).collect(Collectors.toList());
+        List<RutaDtoOut> dtos = lista.stream().map((r) -> {
+            Long Estimado = null;
+            Long Real = null;
+
+            if (r.getTiempoEstimado() != null) {
+                Estimado = Math.round(r.getTiempoEstimado() / 86400.0);
+            }
+            if (r.getTiempoReal() != null) {
+                Real = Math.round(r.getTiempoReal() / 86400.0);
+            }
+
+            return new RutaDtoOut(
+                    r.getId(),
+                    r.getDistanciaTotal(),
+                    r.getSolicitud() != null ? r.getSolicitud().getId() : null,
+                    Estimado,
+                    Real,
+                    r.getCostoPorTramo(),
+                    r.getCantidadDepositos(),
+                    r.getCantidadTramos());
+
+        }).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
@@ -86,7 +157,7 @@ public class RutaControlador {
             List<RutaTentativaDtoOut> rutas = servicio.crearRutasTentativas(dto);
             return ResponseEntity.ok(rutas);
         } catch (IllegalArgumentException e) {
-           return ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
+            return ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
         } catch (Exception e) {

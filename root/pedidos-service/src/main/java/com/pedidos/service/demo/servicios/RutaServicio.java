@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
+import com.commonlib.Enums.EstadosTramo;
 import com.commonlib.Enums.TiposTramos;
 import com.commonlib.Enums.TiposUbicacion;
 import com.commonlib.entidades.Ruta;
 import com.commonlib.entidades.Solicitud;
 import com.commonlib.entidades.Tramo;
 import com.commonlib.entidades.Ubicacion;
+import com.pedidos.service.demo.dto.RutaDtoIn;
 import com.pedidos.service.demo.dto.RutaTentativaDtoIn;
 import com.pedidos.service.demo.dto.RutaTentativaDtoOut;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
@@ -54,13 +56,30 @@ public class RutaServicio {
     // Fijarse bien esto
 
     @Transactional
-    public Ruta actualizar(Long id, Ruta rutaActualizada) {
+    public Ruta actualizar(Long id, RutaDtoIn rutaActualizada) {
         Ruta existente = repositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ruta no encontrada con id " + id));
 
-        existente.setCantidadDepositos(rutaActualizada.getCantidadDepositos());
-        existente.setCantidadTramos(rutaActualizada.getCantidadTramos());
-        existente.setCostoPorTramo(rutaActualizada.getCostoPorTramo());
+
+        existente.setCantidadDepositos(rutaActualizada.cantidadDepositos() != null ? 
+            rutaActualizada.cantidadDepositos() : existente.getCantidadDepositos());
+
+        existente.setCantidadTramos(rutaActualizada.cantidadTramos() != null ? 
+            rutaActualizada.cantidadTramos() : existente.getCantidadTramos());
+        existente.setCostoPorTramo(rutaActualizada.costoPorTramo() != null ? 
+            rutaActualizada.costoPorTramo() : existente.getCostoPorTramo());
+        existente.setTiempoReal(rutaActualizada.tiempoReal() != null ? 
+            rutaActualizada.tiempoReal() : existente.getTiempoReal());
+        
+
+        return repositorio.save(existente);
+    }
+
+    // necesito que funcione bien solicitud todavia
+    @Transactional
+    public Ruta asignarRutaSolicitud(Long idRuta, Long idSolicitud) {
+        Ruta existente = repositorio.findById(idRuta)
+                .orElseThrow(() -> new ResourceNotFoundException("Ruta no encontrada con id " + idRuta));
 
         return repositorio.save(existente);
     }
@@ -107,8 +126,8 @@ public class RutaServicio {
             Ruta ruta = Ruta.builder()
                     .distanciaTotal(r.getDistance())
                     .tiempoEstimado(r.getDuration())
-                    .cantidadTramos(r.getLegs().size())
-                    .cantidadDepositos(depositos.size()) // cada leg equivale a un tramo
+                    .cantidadTramos(r.getLegs().size()) // cada leg equivale a un tramo
+                    .cantidadDepositos(depositos.size()) 
                     .build();
             ruta = crear(ruta);
 
@@ -122,6 +141,7 @@ public class RutaServicio {
                         .destino(solicitud.getDestino())
                         .distancia(ruta.getDistanciaTotal())
                         .tipo(TiposTramos.ORIGEN_DESTINO)
+                        .estado(EstadosTramo.PENDIENTE)
                         .ruta(ruta)
                         .build();
 
@@ -151,7 +171,7 @@ public class RutaServicio {
                         tramo.setTipo(TiposTramos.DEPOSITO_DESTINO);
 
                     }
-
+                    tramo.setEstado(EstadosTramo.PENDIENTE);
                     c++;
 
                     tramoServicio.crear(tramo);
@@ -160,7 +180,7 @@ public class RutaServicio {
             }
 
             rutas.add(new RutaTentativaDtoOut(ruta.getId(), ruta.getDistanciaTotal(), ruta.getTiempoEstimado(),
-                    ruta.getCantidadTramos()));
+                    ruta.getCantidadTramos(), ruta.getCantidadDepositos()));
 
         }
 

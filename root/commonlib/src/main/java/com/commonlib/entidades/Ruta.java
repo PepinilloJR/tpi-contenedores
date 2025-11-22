@@ -1,7 +1,5 @@
 package com.commonlib.entidades;
 
-import java.math.BigDecimal;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
@@ -34,12 +32,11 @@ public class Ruta {
     nullable = false, referencedColumnName = "id", 
     foreignKey = @ForeignKey(name = "fk_ruta_solicitud"))
     private Solicitud solicitud;
-
     private Integer cantidadTramos;
     private Integer cantidadDepositos;
-    private BigDecimal costoPorTramo;
+    private Double costoPorTramo;
     private Double distanciaTotal;
-    private Double tiempoEstimado;
-    private Long tiempoReal;
+    private Double tiempoEstimado; // en segundos
+    private Double tiempoReal;
 
 }

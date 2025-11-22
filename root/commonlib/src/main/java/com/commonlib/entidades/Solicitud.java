@@ -2,6 +2,8 @@ package com.commonlib.entidades;
 
 import java.util.List;
 
+import com.commonlib.Enums.EstadoSolicitud;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,7 +33,7 @@ public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String estado;
+    private EstadoSolicitud estado;
     private Double costoEstimado;
     private Double costoFinal;
     @ManyToOne(fetch = FetchType.LAZY)

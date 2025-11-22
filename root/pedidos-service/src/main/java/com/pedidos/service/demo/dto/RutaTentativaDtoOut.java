@@ -4,7 +4,8 @@ public record  RutaTentativaDtoOut (
     Long idRuta,
     Double distanciaTotal,
     Double tiempoEstimado,
-    Integer cantidadTramos
+    Integer cantidadTramos,
+    Integer cantidadDepositos
     
 ) {
 

@@ -2,6 +2,7 @@ package com.commonlib.entidades;
 
 import java.time.LocalDateTime;
 
+import com.commonlib.Enums.EstadosTramo;
 import com.commonlib.Enums.TiposTramos;
 
 import jakarta.persistence.Entity;
@@ -57,7 +58,7 @@ public class Tramo {
     private double costoVolumen;
     private double costoKilometro;
     private TiposTramos tipo;
-    private String estado;
+    private EstadosTramo estado;
     private Double costoAproximado;
     private Double costoReal;
     private LocalDateTime fechaHoraInicio;
