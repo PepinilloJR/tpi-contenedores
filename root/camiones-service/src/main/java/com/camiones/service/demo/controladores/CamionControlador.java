@@ -15,15 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.camiones.service.demo.servicios.CamionServicio;
-import com.camiones.service.demo.servicios.TarifaServicio;
 import com.camiones.service.demo.dto.CamionDto;
 import com.camiones.service.demo.dto.DtoHandler;
+import com.camiones.service.demo.servicios.CamionServicio;
+import com.camiones.service.demo.servicios.TarifaServicio;
 import com.commonlib.entidades.Camion;
 import com.commonlib.entidades.Tarifa;
 
 import io.swagger.v3.oas.annotations.Operation;
-
 
 @RestController
 @RequestMapping("/api/camiones")
@@ -42,7 +41,6 @@ public class CamionControlador {
     public ResponseEntity<CamionDto> crear(@RequestBody CamionDto dto) {
         Camion entity = DtoHandler.convertirCamionEntidad(dto);
 
-        // Si viene idTarifa, traer la entidad y setearla (si no existe, servicioTarifa lanzará ResourceNotFoundException)
         if (dto.idTarifa() != null) {
             Tarifa tarifa = servicioTarifa.obtenerPorId(dto.idTarifa());
             entity.setTarifa(tarifa);
@@ -56,17 +54,13 @@ public class CamionControlador {
     @PutMapping("/{id}")
     public ResponseEntity<CamionDto> actualizar(@PathVariable Long id, @RequestBody CamionDto dto) {
 
-        // obtenemos la entidad actual (si no existe, el servicio lanza ResourceNotFoundException)
         Camion actual = servicio.obtenerPorId(id);
 
-        // Si se provee idTarifa, buscarla y setearla (si no existe -> ResourceNotFoundException)
         if (dto.idTarifa() != null) {
             Tarifa tarifa = servicioTarifa.obtenerPorId(dto.idTarifa());
             actual.setTarifa(tarifa);
         }
 
-        // Merge manual de campos no nulos (actualiza solo lo que llega en el DTO)
-        // capaz hay q eliminar esto
         if (dto.patente() != null) actual.setPatente(dto.patente());
         if (dto.nombreTransportista() != null) actual.setNombreTransportista(dto.nombreTransportista());
         if (dto.telefonoTransportista() != null) actual.setTelefonoTransportista(dto.telefonoTransportista());
@@ -116,5 +110,24 @@ public class CamionControlador {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    /* =====================================================================
+     *                     NUEVOS ENDPOINTS: OCUPAR / LIBERAR
+     * ===================================================================== */
+
+    @Operation(summary = "Marcar camión como ocupado", description = "El tramo lo está utilizando")
+    @PutMapping("/{id}/ocupar")
+    public ResponseEntity<CamionDto> ocupar(@PathVariable Long id) {
+        Camion camion = servicio.marcarComoOcupado(id);
+        return ResponseEntity.ok(DtoHandler.convertirCamionDto(camion));
+    }
+
+    @Operation(summary = "Liberar camión", description = "Lo deja disponible para nuevos tramos")
+    @PutMapping("/{id}/liberar")
+    public ResponseEntity<CamionDto> liberar(@PathVariable Long id) {
+        Camion camion = servicio.liberar(id);
+        return ResponseEntity.ok(DtoHandler.convertirCamionDto(camion));
     }
 }
