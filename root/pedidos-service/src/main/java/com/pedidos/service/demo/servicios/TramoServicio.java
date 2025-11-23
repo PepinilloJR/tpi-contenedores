@@ -1,5 +1,6 @@
 package com.pedidos.service.demo.servicios;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestClient;
 import com.commonlib.Enums.EstadosTramo;
 import com.commonlib.entidades.Tramo;
 import com.pedidos.service.demo.dto.CamionDtoHttp;
+import com.pedidos.service.demo.dto.TarifaDtoHttp;
 import com.pedidos.service.demo.dto.TramoDtoIn;
 import com.pedidos.service.demo.exepciones.ConflictException;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
@@ -25,6 +27,8 @@ public class TramoServicio {
 
     @Autowired
     private RestClient camionesClient;
+    @Autowired
+    private RestClient tarifasClient;
 
     @Transactional
     public Tramo crear(Tramo tramo) {
@@ -75,36 +79,57 @@ public class TramoServicio {
 
         manejarAsignacionCamion(existente, camion);
 
-        if (tramoActualizado.fechaInicio() != null && existente.getEstado().equals(EstadosTramo.ASIGNADO)) {
+        if (tramoActualizado.fechaInicio() != null) {
+            if (!existente.getEstado().equals(EstadosTramo.ASIGNADO))
+            {
+                throw new ConflictException("No se iniciar un tramo que esta " + existente.getEstado().toString());
+            }
             existente.setFechaHoraInicio(tramoActualizado.fechaInicio());
             existente.setEstado(EstadosTramo.INICIADO);
-        } else {
-            throw new ConflictException("No se iniciar un tramo que esta " + existente.getEstado().toString());
-        }
+        } 
 
-        if (tramoActualizado.fechaFin() != null && existente.getEstado().equals(EstadosTramo.INICIADO)) {
+        if (tramoActualizado.fechaFin() != null) {
+            if (!existente.getEstado().equals(EstadosTramo.INICIADO))
+            {
+                throw new ConflictException("No se puede finalizar un tramo que esta " + existente.getEstado().toString());
+            }
             existente.setFechaHoraFin(tramoActualizado.fechaFin());
             existente.setEstado(EstadosTramo.FINALIZADO);
-        } else {
-            throw new ConflictException("No se finalizar un tramo que esta " + existente.getEstado().toString());
         }
 
         //existente.setEstado(tramoActualizado.estado() != null ? tramoActualizado.estado() : tramoActualizado.getEstado());
         //existente.setFechaHoraFin(tramoActualizado.getFechaHoraFin());
         existente.setCombustibleConsumido(tramoActualizado.combustibleConsumido() != null ? tramoActualizado.combustibleConsumido() : existente.getCombustibleConsumido());
 
-        existente.setCostoAproximado(tramoActualizado.costoAproximado() != null ? tramoActualizado.costoAproximado() : existente.getCostoAproximado());
+        //existente.setCostoAproximado(tramoActualizado.costoAproximado() != null ? tramoActualizado.costoAproximado() : existente.getCostoAproximado());
 
-        existente.setCostoReal(tramoActualizado.costoReal() != null ? tramoActualizado.costoReal() : existente.getCostoReal());
+        //existente.setCostoReal(tramoActualizado.costoReal() != null ? tramoActualizado.costoReal() : existente.getCostoReal());
 
 
         return repositorio.save(existente);
     }
 
+    @Transactional public Tramo iniciarTramo(Long idTramo) {
+        Tramo existente = repositorio.findById(idTramo)
+            .orElseThrow(() -> new ResourceNotFoundException("Tramo no encontrado con id " + idTramo));
+
+        if (existente.getTramoAnterior() != null) {
+            if (!existente.getTramoAnterior().getEstado().equals(EstadosTramo.FINALIZADO)) {
+                throw new ConflictException("No se puede iniciar el tramo si su tramo anterior no fue finalizado, tramo anterior: " + existente.getTramoAnterior().getId());
+            }
+        }
+
+        TramoDtoIn tramoDtoIn = new TramoDtoIn(LocalDateTime.now(), null, null, null, null, null);
+
+        Tramo tramoActualizado = actualizar(idTramo, tramoDtoIn);
+
+        return tramoActualizado;
+    }
+
+
 
     private void manejarAsignacionCamion(Tramo existente, CamionDtoHttp camion) {
         if (camion != null) {
-
             if (existente.getIdCamion() != null) {
                 camionesClient.put()
                     .uri("/{id}/liberar", existente.getIdCamion())
@@ -119,6 +144,8 @@ public class TramoServicio {
                 .retrieve()
                 .toBodilessEntity();
 
+            existente.setEstado(EstadosTramo.ASIGNADO);
+
         } else if (existente.getEstado().equals(EstadosTramo.FINALIZADO)) {
 
             if (existente.getIdCamion() != null) {
@@ -130,7 +157,20 @@ public class TramoServicio {
 
             existente.setIdCamion(null);
         }
+
+        // una vez asigne un camion, puedo obtener el costo aproximado
+
+
     }
+
+    private void manejarCostoAproximado(Tramo existente) {
+        TarifaDtoHttp tarifaDtoHttp; 
+        if (existente.getIdCamion() != null) {
+
+        }
+    }
+
+
 
 
     @Transactional
