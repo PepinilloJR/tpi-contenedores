@@ -21,4 +21,18 @@ public interface DtoHandler {
         c.setDni(dto.dni());
         return c;
     }
+
+    public static SolicitudDtoOut convertirSolicitudDtoOut(Solicitud s) {
+        if (s == null)
+            return null;
+        return new SolicitudDtoOut(
+                s.getId(),
+                s.getEstado() != null ? s.getEstado().name() : null,
+                s.getCostoEstimado(),
+                s.getCostoFinal(),
+                s.getCliente() != null ? s.getCliente().getId() : null,
+                s.getContenedor() != null ? s.getContenedor().getId() : null,
+                s.getOrigen() != null ? s.getOrigen().getId() : null,
+                s.getDestino() != null ? s.getDestino().getId() : null);
+    }
 }

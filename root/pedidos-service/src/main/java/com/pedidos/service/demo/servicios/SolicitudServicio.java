@@ -53,7 +53,7 @@ public class SolicitudServicio {
                     
             cliente = clienteServicio.crearSiNoExiste(cliente);
 
-            // Contenedor crearlo se construyo en el controlelr
+            // Contenedor 
             var contenedorDto = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(), null, null);
             var contenedor = contenedorServicio.crear(contenedorDto);
             

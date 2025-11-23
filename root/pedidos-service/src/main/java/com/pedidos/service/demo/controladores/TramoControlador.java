@@ -93,7 +93,7 @@ public class TramoControlador {
 
         return ResponseEntity.ok(tramoDtoOut);
     }
-
+/*
     @Operation(summary = "Obtener los Tramos de un transportista", description = "Obtiene los Tramos de un transportista dado")
     @GetMapping("/transportista/{transportista}")
     public ResponseEntity<List<TramoDtoOut>> obtener(@PathVariable String transportista) {
@@ -121,7 +121,7 @@ public class TramoControlador {
                     r.getCostoKilometro());
         }).collect(Collectors.toList()));
     }
-
+ */
     @Operation(summary = "Obtener un Tramo", description = "Obtiene un Tramo dado segun id")
     @GetMapping("/{id}")
     public ResponseEntity<?> obtener(@PathVariable Long id) {

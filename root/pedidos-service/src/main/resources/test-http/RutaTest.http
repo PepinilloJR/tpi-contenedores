@@ -1,177 +1,74 @@
-### Crear una solicitud
-POST http://localhost:8001/api/solicitudes
-Content-Type: application/json
+### Variables
+@baseUrl = http://localhost:8001
+@contentType = application/json
+
+### 1. Test: Crear rutas tentativas con lista vacía de depósitos (debe fallar)
+POST {{baseUrl}}/api/rutas/tentativas
+Content-Type: {{contentType}}
 
 {
-  "id": null,
-  "estado": "borrador",
-  "costoEstimado": 5000.0,
-  "tiempoEstimado": 120.0,
-  "tiempoReal": null,
-  "costoFinal": null,
-  "cliente": {
-    "id": null,
-    "nombre": "Juan",
-    "apellido": "Pérez",
-    "telefono": "1122334455",
-    "direccion": "Av. Independencia 1234, Buenos Aires",
-    "dni": 40123123
-  },
-  "contenedor": {
-    "id": null,
-    "peso": 1200.0,
-    "volumen": 30.5,
-    "estado": "EN_DEPÓSITO",
-    "costoVolumen": 2500.0
-  },
-  "origen": {
-    "id": null,
-    "nombre": "Depósito Barracas",
-    "tipo": "DEPOSITO",
-    "latitud": -34.63343,
-    "longitud": -58.36499,
-    "costo": null
-  },
-  "destino": {
-    "id": null,
-    "nombre": "Puerto de Buenos Aires",
-    "tipo": "PUERTO",
-    "latitud": -34.59085,
-    "longitud": -58.37165,
-    "costo": null
-  },
-  "seguimiento": []
+  "pedidoId": 1,
+  "depositosId": []
 }
 
-### Crear una ruta (usa la solicitud recién creada)
-POST http://localhost:8001/api/rutas
-Content-Type: application/json
+### 2. Test: Crear rutas tentativas con null en depositosId (debe fallar)
+POST {{baseUrl}}/api/rutas/tentativas
+Content-Type: {{contentType}}
 
 {
-  "id": null,
-  "solicitud": {
-    "id": 1,
-    "estado": "borrador",
-    "costoEstimado": 5000.0,
-    "tiempoEstimado": 120.0,
-    "tiempoReal": null,
-    "costoFinal": null,
-    "cliente": {
-      "id": 1,
-      "nombre": "Juan",
-      "apellido": "Pérez",
-      "telefono": "1122334455",
-      "direccion": "Av. Independencia 1234, Buenos Aires",
-      "dni": 40123123
-    },
-    "contenedor": {
-      "id": 1,
-      "peso": 1200.0,
-      "volumen": 30.5,
-      "estado": "EN_DEPÓSITO",
-      "costoVolumen": 2500.0
-    },
-    "origen": {
-      "id": 1,
-      "nombre": "Depósito Barracas",
-      "tipo": "DEPOSITO",
-      "latitud": -34.63343,
-      "longitud": -58.36499,
-      "costo": null
-    },
-    "destino": {
-      "id": 2,
-      "nombre": "Puerto de Buenos Aires",
-      "tipo": "PUERTO",
-      "latitud": -34.59085,
-      "longitud": -58.37165,
-      "costo": null
-    },
-    "seguimiento": []
-  },
-  "cantidadTramos": 2,
-  "cantidadDepositos": 1,
-  "costoPorTramo": null,
-  "depositosID": null,
-  "distanciaTotal": 5623.5
+  "pedidoId": 1,
+  "depositosId": null
 }
 
-### Crear el tramo
-POST http://localhost:8001/api/tramos
-Content-Type: application/json
+### 3. Test: Crear rutas tentativas sin el campo depositosId (debe fallar)
+POST {{baseUrl}}/api/rutas/tentativas
+Content-Type: {{contentType}}
 
 {
-  "id": null,
-  "origen": {
-    "id": 1,
-    "nombre": "Depósito Barracas",
-    "tipo": "DEPOSITO",
-    "latitud": -34.63343,
-    "longitud": -58.36499
-  },
-  "destino": {
-    "id": 2,
-    "nombre": "Puerto de Buenos Aires",
-    "tipo": "PUERTO",
-    "latitud": -34.59085,
-    "longitud": -58.37165
-  },
-  "ruta": {
-    "id": 1,
-    "solicitud": {
-      "id": 1,
-      "estado": "borrador",
-      "costoEstimado": 5000.0,
-      "tiempoEstimado": 120.0,
-      "tiempoReal": null,
-      "costoFinal": null,
-      "cliente": {
-        "id": 1,
-        "nombre": "Juan",
-        "apellido": "Pérez",
-        "telefono": "1122334455",
-        "direccion": "Av. Independencia 1234, Buenos Aires",
-        "dni": 40123123
-      },
-      "contenedor": {
-        "id": 1,
-        "peso": 1200.0,
-        "volumen": 30.5,
-        "estado": "EN_DEPÓSITO",
-        "costoVolumen": 2500.0
-      },
-      "origen": {
-        "id": 1,
-        "nombre": "Depósito Barracas",
-        "tipo": "DEPOSITO",
-        "latitud": -34.63343,
-        "longitud": -58.36499,
-        "costo": null
-      },
-      "destino": {
-        "id": 2,
-        "nombre": "Puerto de Buenos Aires",
-        "tipo": "PUERTO",
-        "latitud": -34.59085,
-        "longitud": -58.37165,
-        "costo": null
-      },
-      "seguimiento": []
-    },
-    "cantidadTramos": 2,
-    "cantidadDepositos": 1,
-    "costoPorTramo": null,
-    "depositosID": null,
-    "distanciaTotal": 5623.5
-  },
-  "camion": {
-    "id": null
-  },
-  "tipo": "ENTREGA",
-  "estado": "pendiente",
-  "costoAproximado": null,
-  "costoReal": null,
-  "fechaHoraInicio": null,
-  "fechaHoraFin": null,
-  "distancia": 2811.75
+  "pedidoId": 1
+}
+
+### 4. Test: Crear rutas tentativas con pedidoId null (debe fallar)
+POST {{baseUrl}}/api/rutas/tentativas
+Content-Type: {{contentType}}
+
+{
+  "pedidoId": null,
+  "depositosId": [1, 2, 3]
+}
+
+### 5. Test: Crear rutas tentativas válido (caso exitoso)
+POST {{baseUrl}}/api/rutas/tentativas
+Content-Type: {{contentType}}
+
+{
+  "pedidoId": 1,
+  "depositosId": [1, 2, 3]
+}
+
+### 6. Test: Crear rutas tentativas con un solo depósito
+POST {{baseUrl}}/api/rutas/tentativas
+Content-Type: {{contentType}}
+
+{
+  "pedidoId": 1,
+  "depositosId": [1]
+}
+
+### 7. Test: Crear rutas tentativas con pedidoId que no existe (debe fallar)
+POST {{baseUrl}}/api/rutas/tentativas
+Content-Type: {{contentType}}
+
+{
+  "pedidoId": 99999,
+  "depositosId": [1, 2]
+}
+
+### 8. Test: Crear rutas tentativas con depositosId que no existen (debe fallar)
+POST {{baseUrl}}/api/rutas/tentativas
+Content-Type: {{contentType}}
+
+{
+  "pedidoId": 1,
+  "depositosId": [99999, 88888]
 }
