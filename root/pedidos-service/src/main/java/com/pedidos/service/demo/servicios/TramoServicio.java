@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class TramoServicio {
 
     private final TramoRepositorio repositorio;
+    //private final SolicitudServicio solicitudServicio;
 
     @Autowired
     private RestClient camionesClient;
@@ -170,12 +171,16 @@ public class TramoServicio {
 
     private void manejarCostoAproximado(Tramo existente, CamionDtoHttp camionDtoHttp) {
         TarifaDtoHttp tarifaDtoHttp; 
-        if (existente.getIdCamion() != null) {
-            tarifaDtoHttp = tarifasClient.get().uri("/" + camionDtoHttp.idTarifa()).retrieve().toEntity(TarifaDtoHttp.class).getBody();
-        }
+        
+        tarifaDtoHttp = tarifasClient.get().uri("/" + camionDtoHttp.idTarifa()).retrieve().toEntity(TarifaDtoHttp.class).getBody();
 
         // debo obtener los datos del contenedor del tramo para poder realizar el calculo aproximado
+        Double volumen = existente.getRuta().getSolicitud().getContenedor().getVolumen();
 
+        Double parteCombustible = tarifaDtoHttp.costoKilometro() * camionDtoHttp.consumoCombustiblePromedio();
+        Double parteContenedor = tarifaDtoHttp.costoVolumen() * volumen;
+
+        existente.setCostoAproximado(parteContenedor + parteCombustible);
     }
 
 
