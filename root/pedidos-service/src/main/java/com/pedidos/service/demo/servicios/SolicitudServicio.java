@@ -1,30 +1,78 @@
 package com.pedidos.service.demo.servicios;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.commonlib.Enums.EstadoSolicitud;
+import com.commonlib.entidades.Cliente;
+import com.commonlib.entidades.Contenedor;
+import com.commonlib.entidades.Seguimiento;
 import com.commonlib.entidades.Solicitud;
+import com.pedidos.service.demo.dto.ContenedorDtoIn;
+import com.pedidos.service.demo.dto.SolicitudDtoCreacion;
+import com.pedidos.service.demo.dto.SolicitudDtoIn;
+import com.pedidos.service.demo.dto.UbicacionDtoIn;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.repositorios.SolicitudRepositorio;
 
 import lombok.RequiredArgsConstructor;
 
-// Calcular costo y el tiempo estimado inicial
-// crear la solicitud y asociar al contenedor y al cliente
-// setear el estado inicial en pendiente
-
-// ruta tentativa?
+// costoEstimado, costoFinal puede ser null pero mayores a <=0 LITO
+// el estado debe ser enum valido LITO, puede ser nulo solo al crear
+// setear en estado en borrador al principio
+// manejar el estado, cuando se actualiza guardar el estado anterior
+// cuando el estado pasa a finalizado deberia guardar el anterior y actual
+// No puede ser nulos:
+// Cliente -> si no existe hay que crearlo
+// Contenedor -> hay que crearlo
+// No puede ser nula la ubicacion de origen y destino
+// el seguimiento tampoco pero eso se maneja de otra forma
 
 @Service
 @RequiredArgsConstructor
 public class SolicitudServicio {
     private final SolicitudRepositorio repositorio;
+    private final ClienteServicio clienteServicio;
+    private final ContenedorServicio contenedorServicio;
+    private final UbicacionServicio ubicacionServicio;
 
     @Transactional
-    public Solicitud crear(Solicitud solicitud) {
-        return repositorio.save(solicitud);
+    public Solicitud crear(SolicitudDtoCreacion solicitud) {
+        if (solicitud == null) {
+            throw new IllegalArgumentException("Error al crear. Solicitud invalida, no puede ser nula");
+        }
+
+        try {
+            var cliente = new Cliente(null, solicitud.nombreCliente(), solicitud.apellidoCliente(),
+                    solicitud.telefonoCliente(), solicitud.direccionCliente(), solicitud.dniCliente());
+            clienteServicio.crearSiNoExiste(cliente);
+
+            // Contenedor crearlo se construyo en el controlelr
+            var contenedor = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(), null, null);
+            contenedorServicio.crear(contenedor);
+
+            // Origen
+            var origen = new UbicacionDtoIn(solicitud.latitudOrigen(), solicitud.longitudOrigen(), null, null, null);
+            // Destino
+            var destino = new UbicacionDtoIn(solicitud.latitudDestino(), solicitud.longitudOrigen(), null, null, null);
+            ubicacionServicio.crearSiNoExiste(origen);
+            ubicacionServicio.crearSiNoExiste(destino);
+
+            // Se puede manejar q en el dto me llegen los id de las ubicaciones
+
+            var solicitudNueva = new Solicitud(null, EstadoSolicitud.BORRADOR, null, null, cliente, null, null, null,
+                    null);
+            return repositorio.save(solicitudNueva);
+
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Error al crear contenedor: " + e.getMessage(), e);
+        }
+
     }
 
     @Transactional(readOnly = true)
@@ -49,15 +97,38 @@ public class SolicitudServicio {
     }
 
     @Transactional
-    public Solicitud actualizar(Long id, Solicitud solicitudActualizada) {
+    public Solicitud actualizar(Long id, SolicitudDtoIn datos) {
         Solicitud existente = repositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada con id " + id));
 
-        existente.setCliente(solicitudActualizada.getCliente());
-        existente.setContenedor(solicitudActualizada.getContenedor());
-        existente.setCostoEstimado(solicitudActualizada.getCostoEstimado());
-        existente.setCostoFinal(solicitudActualizada.getCostoFinal());
+        if (datos.estado() != null) {
+            try {
+                EstadoSolicitud nuevoEstado = EstadoSolicitud.valueOf(datos.estado().toUpperCase());
 
+                if (!nuevoEstado.equals(existente.getEstado())) {
+                    Seguimiento seguimiento = new Seguimiento();
+                    seguimiento.setEstadoAnterior(existente.getEstado().name());
+                    seguimiento.setFecha(LocalDateTime.now());
+                    seguimiento.setComentario("Cambio de estado: " + existente.getEstado() + " -> " + nuevoEstado);
+
+                    if (existente.getSeguimiento() == null) {
+                        existente.setSeguimiento(new ArrayList<>());
+                    }
+
+                    existente.getSeguimiento().add(seguimiento);
+                    existente.setEstado(nuevoEstado);
+                }
+
+                
+
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Estado inválido: " + datos.estado() +
+                        ". Valores permitidos: BORRADOR, PROGRAMADA, EN_TRANSITO, ENTREGADA");
+            }
+        }
+        existente
+                .setCostoEstimado(datos.costoEstimado() != null ? datos.costoEstimado() : existente.getCostoEstimado());
+        existente.setCostoFinal(datos.costoFinal() != null ? datos.costoFinal() : existente.getCostoFinal());
         return repositorio.save(existente);
     }
 

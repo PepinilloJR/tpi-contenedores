@@ -20,6 +20,8 @@ public class ContenedorServicio {
     private final ContenedorRepositorio repositorio;
     private final UbicacionServicio ubicacionServicio;
 
+    // NO CONTROLA QUE PESO, VOLUMEN SEAN MAYOR A 0
+
     @Transactional
     public Contenedor crear(ContenedorDtoIn contenedorDto) {
 
