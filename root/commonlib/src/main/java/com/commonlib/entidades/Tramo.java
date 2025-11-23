@@ -63,6 +63,12 @@ public class Tramo {
     private LocalDateTime fechaHoraFin;
     private Double distancia;
     private Integer combustibleConsumido;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_tramo_anterior", nullable = true, 
+    referencedColumnName = "id", 
+    foreignKey = @ForeignKey(name = "fk_tramo_anterior"))
+    private Tramo tramoAnterior;
 /* 
     public void calcularCostoAproximado() {
         if (this.camion == null || this.distancia == null) {

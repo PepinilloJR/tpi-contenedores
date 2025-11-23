@@ -56,6 +56,45 @@ public class TramoControlador {
      * ResponseEntity.status(201).body(DtoHandler.convertirTramoDto(tramoCreado));
      * }
      */
+
+    @PutMapping("/iniciar/{id}")
+    public ResponseEntity<?> iniciar(@PathVariable Long id) {
+
+        Tramo tramoActualizado;
+        try {
+            tramoActualizado = servicio.iniciarTramo(id);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (ConflictException e) {
+            return ResponseEntity.status(409).body(new ErrorRequest(409, e.getMessage()));
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.status(404).body(e.getResponseBodyAs(ErrorRequest.class));
+        }
+
+        Long idRuta = tramoActualizado.getRuta() != null ? tramoActualizado.getRuta().getId() : null;
+        Long idOrigen = tramoActualizado.getOrigen() != null ? tramoActualizado.getOrigen().getId() : null;
+        Long idDestino = tramoActualizado.getDestino() != null ? tramoActualizado.getDestino().getId() : null;
+
+        TramoDtoOut tramoDtoOut = new TramoDtoOut(tramoActualizado.getId(),
+                tramoActualizado.getDistancia(),
+                tramoActualizado.getFechaHoraInicio(),
+                tramoActualizado.getFechaHoraFin(),
+                tramoActualizado.getTipo(),
+                tramoActualizado.getEstado(),
+                tramoActualizado.getCombustibleConsumido(),
+                tramoActualizado.getIdCamion(),
+                idRuta,
+                idOrigen,
+                idDestino,
+                tramoActualizado.getCostoAproximado(),
+                tramoActualizado.getCostoReal(),
+                tramoActualizado.getCostoVolumen(),
+                tramoActualizado.getCostoKilometro());
+
+        return ResponseEntity.ok(tramoDtoOut);
+    }
+
+
     @Operation(summary = "Actualiza un Tramo", description = "Actualiza un Tramo dado segun id")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody TramoDtoIn tramoDto) {
@@ -93,35 +132,39 @@ public class TramoControlador {
 
         return ResponseEntity.ok(tramoDtoOut);
     }
-/*
-    @Operation(summary = "Obtener los Tramos de un transportista", description = "Obtiene los Tramos de un transportista dado")
-    @GetMapping("/transportista/{transportista}")
-    public ResponseEntity<List<TramoDtoOut>> obtener(@PathVariable String transportista) {
-        List<Tramo> tramos = servicio.obtenerPorTransportista(transportista);
 
-        return ResponseEntity.ok(tramos.stream().map((r) -> {
-            Long idRuta = r.getRuta() != null ? r.getRuta().getId() : null;
-            Long idOrigen = r.getOrigen() != null ? r.getOrigen().getId() : null;
-            Long idDestino = r.getDestino() != null ? r.getDestino().getId() : null;
-
-            return new TramoDtoOut(r.getId(),
-                    r.getDistancia(),
-                    r.getFechaHoraInicio(),
-                    r.getFechaHoraFin(),
-                    r.getTipo(),
-                    r.getEstado(),
-                    r.getCombustibleConsumido(),
-                    r.getIdCamion(),
-                    idRuta,
-                    idOrigen,
-                    idDestino,
-                    r.getCostoAproximado(),
-                    r.getCostoReal(),
-                    r.getCostoVolumen(),
-                    r.getCostoKilometro());
-        }).collect(Collectors.toList()));
-    }
- */
+    /*
+     * @Operation(summary = "Obtener los Tramos de un transportista", description =
+     * "Obtiene los Tramos de un transportista dado")
+     * 
+     * @GetMapping("/transportista/{transportista}")
+     * public ResponseEntity<List<TramoDtoOut>> obtener(@PathVariable String
+     * transportista) {
+     * List<Tramo> tramos = servicio.obtenerPorTransportista(transportista);
+     * 
+     * return ResponseEntity.ok(tramos.stream().map((r) -> {
+     * Long idRuta = r.getRuta() != null ? r.getRuta().getId() : null;
+     * Long idOrigen = r.getOrigen() != null ? r.getOrigen().getId() : null;
+     * Long idDestino = r.getDestino() != null ? r.getDestino().getId() : null;
+     * 
+     * return new TramoDtoOut(r.getId(),
+     * r.getDistancia(),
+     * r.getFechaHoraInicio(),
+     * r.getFechaHoraFin(),
+     * r.getTipo(),
+     * r.getEstado(),
+     * r.getCombustibleConsumido(),
+     * r.getIdCamion(),
+     * idRuta,
+     * idOrigen,
+     * idDestino,
+     * r.getCostoAproximado(),
+     * r.getCostoReal(),
+     * r.getCostoVolumen(),
+     * r.getCostoKilometro());
+     * }).collect(Collectors.toList()));
+     * }
+     */
     @Operation(summary = "Obtener un Tramo", description = "Obtiene un Tramo dado segun id")
     @GetMapping("/{id}")
     public ResponseEntity<?> obtener(@PathVariable Long id) {

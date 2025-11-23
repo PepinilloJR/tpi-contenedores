@@ -1,21 +1,5 @@
 package com.pedidos.service.demo.controladores;
 
-<<<<<<< HEAD
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.pedidos.service.demo.dto.SolicitudDtoCreacion;
-import com.pedidos.service.demo.dto.SolicitudDtoIn;
-import com.pedidos.service.demo.dto.SolicitudDtoOut;
-import com.pedidos.service.demo.dto.DtoHandler;
-import com.pedidos.service.demo.dto.SeguimientoDtoOut;
-import com.pedidos.service.demo.servicios.SolicitudServicio;
-
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-
-=======
->>>>>>> 2c26be2100b7cd385a24a2af4b18aed8d4d23bed
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import com.commonlib.entidades.Solicitud;
 import com.pedidos.service.demo.dto.DtoHandler;
+import com.pedidos.service.demo.dto.SeguimientoDtoOut;
 import com.pedidos.service.demo.dto.SolicitudDtoCreacion;
 import com.pedidos.service.demo.dto.SolicitudDtoIn;
 import com.pedidos.service.demo.dto.SolicitudDtoOut;
