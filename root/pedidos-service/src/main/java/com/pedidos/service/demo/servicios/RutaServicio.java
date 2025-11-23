@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
+import com.commonlib.Enums.EstadoSolicitud;
 import com.commonlib.Enums.EstadosTramo;
 import com.commonlib.Enums.TiposTramos;
 import com.commonlib.Enums.TiposUbicacion;
@@ -208,7 +209,7 @@ public class RutaServicio {
         RutaDtoIn rutaCambio = new RutaDtoIn(null, null, null, null, idSolicitud);
         Ruta rutaNueva = actualizar(idRuta, rutaCambio);
 
-        SolicitudDtoIn solicitudCambio = new SolicitudDtoIn("PROGRAMADA", null, null);
+        SolicitudDtoIn solicitudCambio = new SolicitudDtoIn(EstadoSolicitud.PROGRAMADA, null, null);
 
         solicitudServicio.actualizar(idSolicitud, solicitudCambio);
         return rutaNueva;
