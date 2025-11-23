@@ -96,6 +96,45 @@ public class TramoControlador {
         return ResponseEntity.ok(tramoDtoOut);
     }
 
+    @PutMapping("/finalizar/{id}")
+    public ResponseEntity<?> finalizar(@PathVariable Long id, @RequestBody TramoDtoIn tramoDto) {
+
+        Tramo tramoActualizado;
+        try {
+            tramoActualizado = servicio.finalizarTramo(id, tramoDto);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (ConflictException e) {
+            return ResponseEntity.status(409).body(new ErrorRequest(409, e.getMessage()));
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.status(404).body(e.getResponseBodyAs(ErrorRequest.class));
+        }
+
+        Long idRuta = tramoActualizado.getRuta() != null ? tramoActualizado.getRuta().getId() : null;
+        Long idOrigen = tramoActualizado.getOrigen() != null ? tramoActualizado.getOrigen().getId() : null;
+        Long idDestino = tramoActualizado.getDestino() != null ? tramoActualizado.getDestino().getId() : null;
+        Long idTramoAnterior = tramoActualizado.getTramoAnterior() != null ? tramoActualizado.getTramoAnterior().getId() : null;
+
+        TramoDtoOut tramoDtoOut = new TramoDtoOut(tramoActualizado.getId(),
+                tramoActualizado.getDistancia(),
+                tramoActualizado.getFechaHoraInicio(),
+                tramoActualizado.getFechaHoraFin(),
+                tramoActualizado.getTipo(),
+                tramoActualizado.getEstado(),
+                tramoActualizado.getCombustibleConsumido(),
+                tramoActualizado.getIdCamion(),
+                idRuta,
+                idOrigen,
+                idDestino,
+                tramoActualizado.getCostoAproximado(),
+                tramoActualizado.getCostoReal(),
+                tramoActualizado.getCostoVolumen(),
+                tramoActualizado.getCostoKilometro(), 
+                idTramoAnterior);
+
+        return ResponseEntity.ok(tramoDtoOut);
+    }
+
 
     @Operation(summary = "Actualiza un Tramo", description = "Actualiza un Tramo dado segun id")
     @PutMapping("/{id}")
