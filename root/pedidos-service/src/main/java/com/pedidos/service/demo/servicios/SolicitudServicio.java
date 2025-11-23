@@ -40,6 +40,7 @@ public class SolicitudServicio {
     private final ClienteServicio clienteServicio;
     private final ContenedorServicio contenedorServicio;
     private final UbicacionServicio ubicacionServicio;
+    //private final RutaServicio rutaServicio;
 
     @Transactional
     public Solicitud crear(SolicitudDtoCreacion solicitud) {
@@ -141,6 +142,7 @@ public class SolicitudServicio {
 
         return repositorio.save(existente);
     }
+
 
     @Transactional
     public void eliminar(Long id) {

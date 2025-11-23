@@ -29,9 +29,10 @@ public class Ruta {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_solicitud", 
-    nullable = false, referencedColumnName = "id", 
+    nullable = true, referencedColumnName = "id", 
     foreignKey = @ForeignKey(name = "fk_ruta_solicitud"))
     private Solicitud solicitud;
+    private Long idSolicitudBorrador;
     private Integer cantidadTramos;
     private Integer cantidadDepositos;
     private Double costoPorTramo;

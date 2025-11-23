@@ -18,6 +18,7 @@ public class CamionServicio {
 
     private final CamionRepositorio repositorio;
 
+    /* ----------------- CREATE ----------------- */
     @Transactional
     public Camion crear(Camion camion) {
         if (camion == null) {
@@ -38,6 +39,7 @@ public class CamionServicio {
         return repositorio.save(camion);
     }
 
+    /* ----------------- READ ----------------- */
     @Transactional(readOnly = true)
     public List<Camion> listarTodos() {
         return repositorio.findAll();
@@ -70,6 +72,7 @@ public class CamionServicio {
                                 + " y volumen de " + volumen));
     }
 
+    /* ----------------- UPDATE ----------------- */
     @Transactional
     public Camion actualizar(Long id, Camion datos) {
         Camion existente = repositorio.findById(id)
@@ -101,8 +104,7 @@ public class CamionServicio {
         if (datos.getDisponible() != null)
             existente.setDisponible(datos.getDisponible());
 
-        // Tarifa: si 'datos' trae una tarifa no nula, la aplicamos; si no, mantenemos
-        // la existente
+        // Tarifa: si 'datos' trae una tarifa no nula, la aplicamos; si no, mantenemos la existente
         Tarifa tarifaNueva = datos.getTarifa();
         if (tarifaNueva != null) {
             existente.setTarifa(tarifaNueva);
@@ -123,7 +125,7 @@ public class CamionServicio {
         repositorio.deleteById(id);
     }
 
-    /* ----------------- reglas de negocio básicas ----------------- */
+    /* ----------------- REGLAS DE NEGOCIO BÁSICAS ----------------- */
     private void validarDatos(Camion c) {
         if (c == null) {
             throw new IllegalArgumentException("Camión inválido");
@@ -169,4 +171,32 @@ public class CamionServicio {
         }
     }
 
+    /* ----------------- NUEVO: OCUPAR / LIBERAR CAMIÓN ----------------- */
+
+    @Transactional
+    public Camion marcarComoOcupado(Long idCamion) {
+        Camion camion = repositorio.findById(idCamion)
+                .orElseThrow(() -> new ResourceNotFoundException("Camión no encontrado con id " + idCamion));
+
+        if (Boolean.FALSE.equals(camion.getDisponible())) {
+            throw new IllegalStateException("El camión ya está ocupado");
+        }
+
+        camion.setDisponible(false);
+        return repositorio.save(camion);
+    }
+
+    @Transactional
+    public Camion liberar(Long idCamion) {
+        Camion camion = repositorio.findById(idCamion)
+                .orElseThrow(() -> new ResourceNotFoundException("Camión no encontrado con id " + idCamion));
+
+        // si ya está disponible, lo devolvemos tal cual
+        if (Boolean.TRUE.equals(camion.getDisponible())) {
+            return camion;
+        }
+
+        camion.setDisponible(true);
+        return repositorio.save(camion);
+    }
 }

@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 
 import com.commonlib.dto.CamionDto;
-import com.commonlib.dto.DtoHandler;
 import com.commonlib.dto.EstadiaDto;
 import com.commonlib.dto.TramoDto;
 import com.commonlib.entidades.Camion;
 import com.commonlib.entidades.Estadia;
 import com.commonlib.entidades.Tramo;
 
+/* 
 @RestController
 @RequestMapping("/controlled/tramos")
 public class tramosController {
@@ -238,3 +238,4 @@ public class tramosController {
 
     }
 }
+*/

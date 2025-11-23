@@ -165,6 +165,33 @@ public class RutaControlador {
         }
     }
 
+    @PutMapping("/{id_ruta}/solicitud/{id_solicitud}")
+    public ResponseEntity<?> asignarRuta(@PathVariable Long id_solicitud, @PathVariable Long id_ruta) {
+        Ruta ruta = servicio.asignarSolicitud(id_ruta, id_solicitud);
+
+        Long Estimado = null;
+        Long Real = null;
+
+        if (ruta.getTiempoEstimado() != null) {
+            Estimado = Math.round(ruta.getTiempoEstimado() / 86400.0);
+        }
+        if (ruta.getTiempoReal() != null) {
+            Real = Math.round(ruta.getTiempoReal() / 86400.0);
+        }
+
+        RutaDtoOut rutaDtoOut = new RutaDtoOut(
+                ruta.getId(),
+                ruta.getDistanciaTotal(),
+                ruta.getSolicitud() != null ? ruta.getSolicitud().getId() : null,
+                Estimado,
+                Real,
+                ruta.getCostoPorTramo(),
+                ruta.getCantidadDepositos(),
+                ruta.getCantidadTramos());
+
+        return ResponseEntity.ok(rutaDtoOut);
+    }
+
     @Operation(summary = "Elimina una Ruta", description = "Elimina una Ruta dada segun id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
