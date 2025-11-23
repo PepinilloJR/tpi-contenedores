@@ -54,9 +54,6 @@ public class SolicitudServicio {
                     
             cliente = clienteServicio.crearSiNoExiste(cliente);
 
-            // Contenedor 
-            var contenedorDto = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(), EstadosContenedor.EN_PREPARACION, null);
-            var contenedor = contenedorServicio.crear(contenedorDto);
             
             // Origen
             TiposUbicacion tipoOrigen = TiposUbicacion.valueOf(solicitud.tipoOrigen().toUpperCase());
@@ -65,6 +62,10 @@ public class SolicitudServicio {
             var destino = new Ubicacion(null, solicitud.nombreDestino(), tipoDestino, solicitud.latitudDestino(), solicitud.longitudDestino(), null);
             origen = ubicacionServicio.crearSiNoExiste(origen);
             destino = ubicacionServicio.crearSiNoExiste(destino);
+
+            // Contenedor 
+            var contenedorDto = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(), EstadosContenedor.EN_PREPARACION, origen.getId());
+            var contenedor = contenedorServicio.crear(contenedorDto);
 
             // Se puede manejar q en el dto me llegen los id de las ubicaciones
 
