@@ -1,4 +1,4 @@
-package com.pedidos.service.demo;
+package com.tpi.depositosservice;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,13 +8,13 @@ import org.springframework.web.client.RestClient;
 public class RestClientsConfig {
 
     @Bean
-    RestClient solicitudesClient() {
-        return RestClient.create("http://solicitudes:8001");
+    RestClient distanciaClient() {
+        return RestClient.create("http://osrm:5000/route/v1/");
     }
 
     @Bean
-    RestClient tarifasClient() {
-        return RestClient.create("http://camiones:8002/api/tarifas");
+    RestClient camionesClient() {
+        return RestClient.create("http://camiones:8002/api/camiones");
     }
 
 }

@@ -1,37 +1,64 @@
 package com.tpi.depositosservice.servicios;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.springframework.stereotype.Service; // Necesario
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.commonlib.Enums.TiposUbicacion;
 import com.commonlib.entidades.Estadia;
-import com.commonlib.entidades.Tramo;
-import com.tpi.depositosservice.repositorios.UbicacionRepository;
+import com.tpi.depositosservice.dto.ContenedorDtoOut;
+import com.tpi.depositosservice.dto.EstadiaDtoIn;
+import com.tpi.depositosservice.dto.UbicacionDtoOut;
 import com.tpi.depositosservice.repositorios.EstadiaRepository;
-import com.tpi.depositosservice.repositorios.TramoRepositorio;
+import com.tpi.depositosservice.restcliente.SolicitudesClient;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class EstadiaServicio {
 
     private final EstadiaRepository estadiaRepository;
-    private final UbicacionRepository depositoRepository; // Para buscar el Depósito por ID
-    private final TramoRepositorio tramoRepositorio;
-    public EstadiaServicio(EstadiaRepository estadiaRepository, UbicacionRepository depositoRepository, TramoRepositorio tramoRepositorio) {
-        this.estadiaRepository = estadiaRepository;
-        this.depositoRepository = depositoRepository;
-        this.tramoRepositorio = tramoRepositorio;
-    }
+    private final SolicitudesClient solicitudesClient;
 
-    public Estadia crear(Estadia estadia) {
-        // Asignamos el Deposito real antes de guardar
-        
+    @Transactional
+    public Estadia crear(EstadiaDtoIn datos) {
+        // Validaciones iniciales
+        if (datos == null) {
+            throw new IllegalArgumentException("Los datos de la estadía no pueden ser nulos");
+        }
+
+        if (datos.idContenedor() == null) {
+            throw new IllegalArgumentException("El ID del contenedor no puede ser nulo");
+        }
+
+        // 1) Obtengo la solicitud
+        var solicitud = solicitudesClient.obtenerSolicitudPorContenedor(datos.idContenedor());
+        // 2) Obtener la ruta 
+        var ruta = solicitudesClient.obtenerRutaPorSolicitud(solicitud.idContedor());
+        // 3) Obtener los tramos
+        var tramos = solicitudesClient.obtenerTramosPorRuta(ruta.idRuta());
+        // 4) Recorrer los tramos 
+
+
+
+
+        // Obtener y validar el contenedor
+        // Si no existe, solicitudesClient ya lanza ResourceNotFoundException
+        /* 
+        if (estadiaRepository.existsByIdContenedorAndFechaFinIsNull(datos.idContenedor())) {
+            throw new IllegalArgumentException(
+                    "El contenedor con id " + datos.idContenedor()) +
+                            " ya se encuentra en una estadía activa");
+        }*/
+
+        // Crear la estadía
+
+
         return estadiaRepository.save(estadia);
-    }
-
-    public Tramo obtener(Long id) {
-        return tramoRepositorio.findById(id)
-            .orElseThrow(() -> new NoSuchElementException("No se encontró el tramo con id: " + id));
     }
 
     public Estadia actualizar(Estadia estadia) {
@@ -40,7 +67,7 @@ public class EstadiaServicio {
         }
 
         // Asignamos el Deposito y el ID a la entidad;
-        
+
         return estadiaRepository.save(estadia);
     }
 

@@ -7,4 +7,5 @@ import com.commonlib.entidades.Estadia;
 
 @Repository
 public interface EstadiaRepository extends JpaRepository<Estadia, Long> {
+    boolean existsByIdContenedorAndFechaFinIsNull(Long idContenedor);
 }

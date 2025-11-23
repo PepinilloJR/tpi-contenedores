@@ -32,12 +32,20 @@ Content-Type: {{contentType}}
 GET {{baseUrl}}/api/solicitudes/1
 Content-Type: {{contentType}}
 
+### 3.1. Obtener solicitud por ID de contenedor
+GET {{baseUrl}}/api/solicitudes/contenedor/1
+Content-Type: {{contentType}}
+
+### 3.2. Test: Obtener solicitud por ID de contenedor inexistente (debe fallar)
+GET {{baseUrl}}/api/solicitudes/contenedor/999
+Content-Type: {{contentType}}
+
 ### 4. Obtener todas las solicitudes de un cliente por su ID
 GET {{baseUrl}}/api/solicitudes/cliente/1
 Content-Type: {{contentType}}
 
 ### 4.1. Obtener una solicitud específica de un cliente
-GET {{baseUrl}}/api/solicitudes/2/cliente/1
+GET {{baseUrl}}/api/solicitudes/1/cliente/1
 Content-Type: {{contentType}}
 
 ### 4.2. Test: Obtener solicitud con ID que no pertenece al cliente (debe fallar)
@@ -92,7 +100,7 @@ GET {{baseUrl}}/api/solicitudes/1/cliente/1/seguimiento
 Content-Type: {{contentType}}
 
 ### 9.1. Obtener seguimiento de otra solicitud
-GET {{baseUrl}}/api/solicitudes/1/cliente/1/seguimiento
+GET {{baseUrl}}/api/solicitudes/2/cliente/1/seguimiento
 Content-Type: {{contentType}}
 
 ### 9.2. Test: Obtener seguimiento de solicitud que no pertenece al cliente (debe fallar)
@@ -103,7 +111,7 @@ Content-Type: {{contentType}}
 GET {{baseUrl}}/api/solicitudes/999/cliente/1/seguimiento
 Content-Type: {{contentType}}
 
-### 9.4. Test: Obtener seguimiento de solicitud sin cambios de estado (lista vacía)
+### 9.4. Crear solicitud nueva para ver seguimiento inicial
 POST {{baseUrl}}/api/solicitudes
 Content-Type: {{contentType}}
 
@@ -125,8 +133,8 @@ Content-Type: {{contentType}}
   "longitudDestino": -64.1700
 }
 
-###
-GET {{baseUrl}}/api/solicitudes/3/cliente/2/seguimiento
+### 9.5. Obtener seguimiento de solicitud sin cambios (solo estado inicial BORRADOR)
+GET {{baseUrl}}/api/solicitudes/2/cliente/2/seguimiento
 Content-Type: {{contentType}}
 
 ### 10. Eliminar una solicitud

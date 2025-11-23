@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface SolicitudRepositorio extends JpaRepository<Solicitud, Long>{
     List<Solicitud> findByClienteId(Long id);
     Optional<Solicitud> findByIdAndClienteId(Long id, Long clienteId);
+    Optional<Solicitud> findByContenedorId(Long contenedorId);
 }
