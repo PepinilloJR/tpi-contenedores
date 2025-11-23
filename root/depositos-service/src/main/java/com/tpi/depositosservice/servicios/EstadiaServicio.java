@@ -1,18 +1,19 @@
 package com.tpi.depositosservice.servicios;
 
-import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.commonlib.Enums.EstadosTramo;
 import com.commonlib.Enums.TiposTramos;
 import com.commonlib.Enums.TiposUbicacion;
 import com.commonlib.entidades.Estadia;
-import com.tpi.depositosservice.dto.ContenedorDtoOut;
+
 import com.tpi.depositosservice.dto.EstadiaDtoIn;
-import com.tpi.depositosservice.dto.UbicacionDtoOut;
+
 import com.tpi.depositosservice.repositorios.EstadiaRepository;
 import com.tpi.depositosservice.restcliente.SolicitudesClient;
 
@@ -80,28 +81,43 @@ public class EstadiaServicio {
             throw new IllegalArgumentException("El tramo no es de tipo DESPOSITO-DEPOSITO O DEPOSITO-DESTINO");
         }
 
-        var ubicacionTramoMatch = solicitudesClient.obtenerUbicacionPorId(tramoMatcheado.idOrigen());
+        var tramoAnterior = solicitudesClient.obtenerTramoPorId(tramoMatcheado.id());
 
-        if (ubicacionTramoMatch.tipo().toUpperCase() != TiposUbicacion.DEPOSITO.name()) {
-            throw new IllegalArgumentException("La ubicacion de origen no es de tipo DESPOSITO");
+        if (tramoAnterior.fechaFin() == null || tramoAnterior.estado() != EstadosTramo.FINALIZADO) {
+            throw new IllegalArgumentException("El tramo anterior no esta finalizado");
         }
 
+        if (tramoAnterior.tipo() == TiposTramos.ORIGEN_DEPOSITO
+                || tramoAnterior.tipo() == TiposTramos.DEPOSITO_DEPOSITO) {
+            throw new IllegalArgumentException("El tramo anterior no es de tipo ORIGEN-DESPOSITO o DEPOSITO-DEPOSITO");
+        }
 
+        var ubicacionTramoMatchOrigen = solicitudesClient.obtenerUbicacionPorId(tramoMatcheado.idOrigen());
+        var ubicacionTramoAnteriorDestino = solicitudesClient.obtenerUbicacionPorId(tramoAnterior.idDestino());
 
+        if (ubicacionTramoMatchOrigen != ubicacionTramoAnteriorDestino) {
+            throw new IllegalArgumentException("La ubicacion de origen no es la misma que la de destino entre tramos");
+        }
 
+        if (!ubicacionTramoMatchOrigen.tipo().toUpperCase().equals(TiposUbicacion.DEPOSITO.name())) {
+            throw new IllegalArgumentException("La ubicacion no es un deposito");
 
+        }
+
+        var estadia = new Estadia(null, tramoMatcheado.idOrigen(), datos.idContenedor(), tramoAnterior.fechaFin(),
+                tramoMatcheado.fechaInicio(), null);
+        estadia.calcularCosto(ubicacionTramoMatchOrigen.costo());
         return estadiaRepository.save(estadia);
     }
 
-    public Estadia actualizar(Estadia estadia) {
-        if (!estadiaRepository.existsById(estadia.getIdEstadia())) {
-            throw new NoSuchElementException("No se encontró la estadía con id: " + estadia.getIdEstadia());
-        }
-
-        // Asignamos el Deposito y el ID a la entidad;
-
-        return estadiaRepository.save(estadia);
-    }
+    //public Estadia actualizar(Estadia estadia) {
+    //    if (!estadiaRepository.existsById(estadia.getIdEstadia())) {
+    //        throw new NoSuchElementException("No se encontró la estadía con id: " + estadia.getIdEstadia());
+    //    }
+//
+//
+    //    return estadiaRepository.save(estadia);
+    //}
 
     public Estadia obtenerPorId(Long id) {
         return estadiaRepository.findById(id)

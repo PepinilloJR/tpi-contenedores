@@ -30,7 +30,7 @@ public class Estadia {
     private Long idEstadia;
 
     @Column(name = "id_ubicacion")
-    private Long idDeposito; 
+    private Long idDeposito;
 
     @Column(name = "id_contenedor")
     private Long idContenedor;
@@ -41,14 +41,16 @@ public class Estadia {
 
     private Double costo;
 
+    public void calcularCosto(Double costoEstadia) {
+        if (this.fechaHoraEntrada != null && this.fechaHoraSalida != null) {
+            long dias = java.time.Duration.between(this.fechaHoraEntrada, this.fechaHoraSalida).toDays();
 
-/* 
-    public Double calcularCostoEstadia() {
-        if (this.tramo != null && this.tramo.getOrigen() != null) {
-            return this.tramo.getOrigen().getCosto() * calcularEstadia();
+            if (dias == 0) {
+                dias = 1;
+            }
+
+            this.costo = dias * costoEstadia;
         }
-        return 0.0;
-
     }
-        */
+
 }

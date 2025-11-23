@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.commonlib.dto.DtoHandler;
 import com.commonlib.dto.EstadiaDto;
 import com.commonlib.entidades.Estadia;
 import com.tpi.depositosservice.servicios.EstadiaServicio;
@@ -88,3 +87,4 @@ public class EstadiaControlador {
         return ResponseEntity.noContent().build();
     }
 }
+    

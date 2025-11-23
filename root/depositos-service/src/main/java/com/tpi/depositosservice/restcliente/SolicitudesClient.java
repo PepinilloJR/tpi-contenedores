@@ -68,6 +68,19 @@ public class SolicitudesClient {
 
     // Tramos
 
+    public TramoDtoOut obtenerTramoPorId(Long id) {
+        try {
+            return restClient.get()
+                    .uri("/api/tramos/{id}", id)
+                    .retrieve()
+                    .body(TramoDtoOut.class);
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new ResourceNotFoundException("Tramo no encontrado con id " + id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes", e);
+        }
+    }
+
     public List<TramoDtoOut> obtenerTodosTramosOPorRuta(Long rutaId) {
         try {
             String uri = rutaId != null ? "/api/tramos?rutaId=" + rutaId : "/api/tramos";
