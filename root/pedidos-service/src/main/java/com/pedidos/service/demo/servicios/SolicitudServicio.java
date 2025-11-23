@@ -50,7 +50,8 @@ public class SolicitudServicio {
         try {
             var cliente = new Cliente(null, solicitud.nombreCliente(), solicitud.apellidoCliente(),
                     solicitud.telefonoCliente(), solicitud.direccionCliente(), solicitud.dniCliente());
-            clienteServicio.crearSiNoExiste(cliente);
+                    
+            cliente = clienteServicio.crearSiNoExiste(cliente);
 
             // Contenedor crearlo se construyo en el controlelr
             var contenedorDto = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(), null, null);
@@ -61,8 +62,8 @@ public class SolicitudServicio {
             TiposUbicacion tipoDestino = TiposUbicacion.valueOf(solicitud.tipoDestino().toUpperCase());
             var origen = new Ubicacion(null, solicitud.nombreOrigen(), tipoOrigen, solicitud.latitudOrigen(), solicitud.longitudOrigen(), null);
             var destino = new Ubicacion(null, solicitud.nombreDestino(), tipoDestino, solicitud.latitudDestino(), solicitud.longitudDestino(), null);
-            ubicacionServicio.crearSiNoExiste(origen);
-            ubicacionServicio.crearSiNoExiste(destino);
+            origen = ubicacionServicio.crearSiNoExiste(origen);
+            destino = ubicacionServicio.crearSiNoExiste(destino);
 
             // Se puede manejar q en el dto me llegen los id de las ubicaciones
 
@@ -71,7 +72,7 @@ public class SolicitudServicio {
             return repositorio.save(solicitudNueva);
 
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Error al crear contenedor: " + e.getMessage(), e);
+            throw new IllegalArgumentException("Error al crear la solicitud: " + e.getMessage(), e);
         }
 
     }
