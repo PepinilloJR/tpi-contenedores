@@ -96,7 +96,7 @@ Content-Type: {{contentType}}
   "latitudOrigen": -31.4500,
   "longitudOrigen": -64.2000,
   "nombreDestino": "Sucursal Este",
-  "tipoDestino": "SUCURSAL",
+  "tipoDestino": "ORIGEN",
   "latitudDestino": -31.4100,
   "longitudDestino": -64.1700
 }

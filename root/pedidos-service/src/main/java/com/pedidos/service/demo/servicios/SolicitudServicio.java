@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,25 +50,28 @@ public class SolicitudServicio {
         try {
             var cliente = new Cliente(null, solicitud.nombreCliente(), solicitud.apellidoCliente(),
                     solicitud.telefonoCliente(), solicitud.direccionCliente(), solicitud.dniCliente());
-                    
+
             cliente = clienteServicio.crearSiNoExiste(cliente);
 
-            
             // Origen
             TiposUbicacion tipoOrigen = TiposUbicacion.valueOf(solicitud.tipoOrigen().toUpperCase());
             TiposUbicacion tipoDestino = TiposUbicacion.valueOf(solicitud.tipoDestino().toUpperCase());
-            var origen = new Ubicacion(null, solicitud.nombreOrigen(), tipoOrigen, solicitud.latitudOrigen(), solicitud.longitudOrigen(), null);
-            var destino = new Ubicacion(null, solicitud.nombreDestino(), tipoDestino, solicitud.latitudDestino(), solicitud.longitudDestino(), null);
+            var origen = new Ubicacion(null, solicitud.nombreOrigen(), tipoOrigen, solicitud.latitudOrigen(),
+                    solicitud.longitudOrigen(), null);
+            var destino = new Ubicacion(null, solicitud.nombreDestino(), tipoDestino, solicitud.latitudDestino(),
+                    solicitud.longitudDestino(), null);
             origen = ubicacionServicio.crearSiNoExiste(origen);
             destino = ubicacionServicio.crearSiNoExiste(destino);
 
-            // Contenedor 
-            var contenedorDto = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(), EstadosContenedor.EN_PREPARACION, origen.getId());
+            // Contenedor
+            var contenedorDto = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(),
+                    EstadosContenedor.EN_PREPARACION, origen.getId());
             var contenedor = contenedorServicio.crear(contenedorDto);
 
             // Se puede manejar q en el dto me llegen los id de las ubicaciones
 
-            var solicitudNueva = new Solicitud(null, EstadoSolicitud.BORRADOR, null, null, cliente, contenedor, origen, destino,
+            var solicitudNueva = new Solicitud(null, EstadoSolicitud.BORRADOR, null, null, cliente, contenedor, origen,
+                    destino,
                     null);
             return repositorio.save(solicitudNueva);
 
@@ -105,34 +107,23 @@ public class SolicitudServicio {
         Solicitud existente = repositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada con id " + id));
 
-        if (datos.estado() != null) {
-            try {
-                EstadoSolicitud nuevoEstado = EstadoSolicitud.valueOf(datos.estado().toUpperCase());
+        if (datos.estado() != null && !datos.estado().equals(existente.getEstado())) {
+            Seguimiento seguimiento = new Seguimiento();
+            seguimiento.setEstadoAnterior(existente.getEstado().name());
+            seguimiento.setFecha(LocalDateTime.now());
+            seguimiento.setComentario("Cambio de estado: " + existente.getEstado() + " -> " + datos.estado());
 
-                if (!nuevoEstado.equals(existente.getEstado())) {
-                    Seguimiento seguimiento = new Seguimiento();
-                    seguimiento.setEstadoAnterior(existente.getEstado().name());
-                    seguimiento.setFecha(LocalDateTime.now());
-                    seguimiento.setComentario("Cambio de estado: " + existente.getEstado() + " -> " + nuevoEstado);
-
-                    if (existente.getSeguimiento() == null) {
-                        existente.setSeguimiento(new ArrayList<>());
-                    }
-
-                    existente.getSeguimiento().add(seguimiento);
-                    existente.setEstado(nuevoEstado);
-                }
-
-                
-
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Estado inválido: " + datos.estado() +
-                        ". Valores permitidos: BORRADOR, PROGRAMADA, EN_TRANSITO, ENTREGADA");
+            if (existente.getSeguimiento() == null) {
+                existente.setSeguimiento(new ArrayList<>());
             }
+
+            existente.getSeguimiento().add(seguimiento);
+            existente.setEstado(datos.estado());
         }
-        existente
-                .setCostoEstimado(datos.costoEstimado() != null ? datos.costoEstimado() : existente.getCostoEstimado());
+
+        existente.setCostoEstimado(datos.costoEstimado() != null ? datos.costoEstimado() : existente.getCostoEstimado());
         existente.setCostoFinal(datos.costoFinal() != null ? datos.costoFinal() : existente.getCostoFinal());
+
         return repositorio.save(existente);
     }
 
