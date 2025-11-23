@@ -131,7 +131,20 @@ public class TramoServicio {
             }
         }
 
-        TramoDtoIn tramoDtoIn = new TramoDtoIn(LocalDateTime.now(), null, null, null, null, null);
+        // Mandarle al dtoIn el id del camion apto
+
+        var camionApto = camionesClient.get()
+        .uri(uriBuilder -> uriBuilder
+                .path("/disponible/por-capacidad")
+                .queryParam("peso", existente.getRuta().getSolicitud().getContenedor().getPeso())
+                .queryParam("volumen", existente.getRuta().getSolicitud().getContenedor().getVolumen())
+                .build()
+        )
+        .retrieve().toEntity(CamionDtoHttp.class).getBody();
+
+        
+
+        TramoDtoIn tramoDtoIn = new TramoDtoIn(LocalDateTime.now(), null, null, camionApto.id(), null, null);
 
         Tramo tramoActualizado = actualizar(idTramo, tramoDtoIn);
 

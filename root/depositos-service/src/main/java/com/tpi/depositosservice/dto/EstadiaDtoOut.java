@@ -9,7 +9,6 @@ public record EstadiaDtoOut(
         LocalDateTime fechaHoraEntrada,
         LocalDateTime fechaHoraSalida,
         Double costo
-
 ) {
 
 }
