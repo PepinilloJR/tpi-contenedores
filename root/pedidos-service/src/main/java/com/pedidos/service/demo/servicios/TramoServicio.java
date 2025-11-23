@@ -86,7 +86,7 @@ public class TramoServicio {
 
         manejarAsignacionCamion(existente, camion);
 
-        if (existente.getIdCamion() != null) {
+        if (camion != null) {
             manejarCostoAproximado(existente, camion);
         }
         
@@ -115,7 +115,7 @@ public class TramoServicio {
 
         //existente.setCostoAproximado(tramoActualizado.costoAproximado() != null ? tramoActualizado.costoAproximado() : existente.getCostoAproximado());
 
-        //existente.setCostoReal(tramoActualizado.costoReal() != null ? tramoActualizado.costoReal() : existente.getCostoReal());
+        existente.setCostoReal(tramoActualizado.costoReal() != null ? tramoActualizado.costoReal() : existente.getCostoReal());
 
 
         return repositorio.save(existente);
@@ -149,6 +149,30 @@ public class TramoServicio {
         Tramo tramoActualizado = actualizar(idTramo, tramoDtoIn);
 
         return tramoActualizado;
+    }
+
+    @Transactional public Tramo finalizarTramo(Long idTramo, TramoDtoIn tramoActualizado) {
+        Tramo existente = repositorio.findById(idTramo)
+            .orElseThrow(() -> new ResourceNotFoundException("Tramo no encontrado con id " + idTramo));
+
+        // no deberia hacer falta obtener la tarifa ya que los costos quedan guardados al asignarse un camion, y al calcular el costo aproximado
+        if (tramoActualizado.combustibleConsumido() == null) {
+            throw new IllegalArgumentException("Se debe ingresar el combustible consumido durante el tramo");
+        }
+
+        Integer combustible = tramoActualizado.combustibleConsumido();
+        Double volumen = existente.getRuta().getSolicitud().getContenedor().getVolumen();
+
+        Double parteCombustible = combustible * existente.getCostoKilometro();
+        Double parteVolumen = volumen * existente.getCostoVolumen();
+
+        Double costoReal = parteCombustible + parteVolumen;
+
+        TramoDtoIn tramoDtoIn = new TramoDtoIn(null, LocalDateTime.now(), combustible, null, null, costoReal);
+
+        Tramo tramo = actualizar(idTramo, tramoDtoIn);
+
+        return tramo;
     }
 
 
@@ -200,6 +224,8 @@ public class TramoServicio {
         Double parteContenedor = tarifaDtoHttp.costoVolumen() * volumen;
 
         existente.setCostoAproximado(parteContenedor + parteCombustible);
+        existente.setCostoKilometro(tarifaDtoHttp.costoKilometro());
+        existente.setCostoVolumen(tarifaDtoHttp.costoVolumen());
     }
 
 
