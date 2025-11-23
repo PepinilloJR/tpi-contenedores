@@ -20,8 +20,8 @@ public record TramoDtoOut (
     Double costoAproximado,
     Double costoReal,
     Double costoVolumen,
-    Double costoKilometro
-
+    Double costoKilometro,
+    Long idTramoAnterior
 ) 
 {
 

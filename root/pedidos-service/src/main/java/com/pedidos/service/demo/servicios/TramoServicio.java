@@ -79,6 +79,11 @@ public class TramoServicio {
 
         manejarAsignacionCamion(existente, camion);
 
+        if (camion != null) {
+            manejarCostoAproximado(existente, camion);
+        }
+        
+
         if (tramoActualizado.fechaInicio() != null) {
             if (!existente.getEstado().equals(EstadosTramo.ASIGNADO))
             {
@@ -163,11 +168,14 @@ public class TramoServicio {
 
     }
 
-    private void manejarCostoAproximado(Tramo existente) {
+    private void manejarCostoAproximado(Tramo existente, CamionDtoHttp camionDtoHttp) {
         TarifaDtoHttp tarifaDtoHttp; 
         if (existente.getIdCamion() != null) {
-
+            tarifaDtoHttp = tarifasClient.get().uri("/" + camionDtoHttp.idTarifa()).retrieve().toEntity(TarifaDtoHttp.class).getBody();
         }
+
+        // debo obtener los datos del contenedor del tramo para poder realizar el calculo aproximado
+
     }
 
 

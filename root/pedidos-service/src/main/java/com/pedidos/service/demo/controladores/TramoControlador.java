@@ -74,6 +74,7 @@ public class TramoControlador {
         Long idRuta = tramoActualizado.getRuta() != null ? tramoActualizado.getRuta().getId() : null;
         Long idOrigen = tramoActualizado.getOrigen() != null ? tramoActualizado.getOrigen().getId() : null;
         Long idDestino = tramoActualizado.getDestino() != null ? tramoActualizado.getDestino().getId() : null;
+        Long idTramoAnterior = tramoActualizado.getTramoAnterior() != null ? tramoActualizado.getTramoAnterior().getId() : null;
 
         TramoDtoOut tramoDtoOut = new TramoDtoOut(tramoActualizado.getId(),
                 tramoActualizado.getDistancia(),
@@ -89,7 +90,8 @@ public class TramoControlador {
                 tramoActualizado.getCostoAproximado(),
                 tramoActualizado.getCostoReal(),
                 tramoActualizado.getCostoVolumen(),
-                tramoActualizado.getCostoKilometro());
+                tramoActualizado.getCostoKilometro(), 
+                idTramoAnterior);
 
         return ResponseEntity.ok(tramoDtoOut);
     }
@@ -113,6 +115,7 @@ public class TramoControlador {
         Long idRuta = tramoActualizado.getRuta() != null ? tramoActualizado.getRuta().getId() : null;
         Long idOrigen = tramoActualizado.getOrigen() != null ? tramoActualizado.getOrigen().getId() : null;
         Long idDestino = tramoActualizado.getDestino() != null ? tramoActualizado.getDestino().getId() : null;
+        Long idTramoAnterior = tramoActualizado.getTramoAnterior() != null ? tramoActualizado.getTramoAnterior().getId() : null;
 
         TramoDtoOut tramoDtoOut = new TramoDtoOut(tramoActualizado.getId(),
                 tramoActualizado.getDistancia(),
@@ -128,7 +131,8 @@ public class TramoControlador {
                 tramoActualizado.getCostoAproximado(),
                 tramoActualizado.getCostoReal(),
                 tramoActualizado.getCostoVolumen(),
-                tramoActualizado.getCostoKilometro());
+                tramoActualizado.getCostoKilometro(),
+                idTramoAnterior);
 
         return ResponseEntity.ok(tramoDtoOut);
     }
@@ -178,6 +182,7 @@ public class TramoControlador {
         Long idRuta = tramo.getRuta() != null ? tramo.getRuta().getId() : null;
         Long idOrigen = tramo.getOrigen() != null ? tramo.getOrigen().getId() : null;
         Long idDestino = tramo.getDestino() != null ? tramo.getDestino().getId() : null;
+        Long idTramoAnterior = tramo.getTramoAnterior() != null ? tramo.getTramoAnterior().getId() : null;
 
         TramoDtoOut tramoDtoOut = new TramoDtoOut(tramo.getId(),
                 tramo.getDistancia(),
@@ -193,7 +198,8 @@ public class TramoControlador {
                 tramo.getCostoAproximado(),
                 tramo.getCostoReal(),
                 tramo.getCostoVolumen(),
-                tramo.getCostoKilometro());
+                tramo.getCostoKilometro(),
+                idTramoAnterior);
         return ResponseEntity.ok(tramoDtoOut);
     }
 
@@ -216,6 +222,7 @@ public class TramoControlador {
             Long idRuta = r.getRuta() != null ? r.getRuta().getId() : null;
             Long idOrigen = r.getOrigen() != null ? r.getOrigen().getId() : null;
             Long idDestino = r.getDestino() != null ? r.getDestino().getId() : null;
+            Long idTramoAnterior = r.getTramoAnterior() != null ? r.getTramoAnterior().getId() : null;
 
             return new TramoDtoOut(r.getId(),
                     r.getDistancia(),
@@ -231,7 +238,8 @@ public class TramoControlador {
                     r.getCostoAproximado(),
                     r.getCostoReal(),
                     r.getCostoVolumen(),
-                    r.getCostoKilometro());
+                    r.getCostoKilometro(),
+                    idTramoAnterior);
         }).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
