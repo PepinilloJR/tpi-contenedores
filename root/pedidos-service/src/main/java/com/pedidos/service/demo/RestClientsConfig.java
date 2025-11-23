@@ -8,13 +8,8 @@ import org.springframework.web.client.RestClient;
 public class RestClientsConfig {
 
     @Bean
-    RestClient distanciaClient() {
-        return RestClient.create("http://osrm:5000/route/v1/");
-    }
-
-    @Bean
-    RestClient camionesClient() {
-        return RestClient.create("http://camiones:8002/api/camiones");
+    RestClient solicitudesClient() {
+        return RestClient.create("http://solicitudes:8001");
     }
 
 }

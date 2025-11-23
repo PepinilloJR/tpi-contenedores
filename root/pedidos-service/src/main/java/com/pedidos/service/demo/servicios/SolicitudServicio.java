@@ -40,7 +40,7 @@ public class SolicitudServicio {
     private final ClienteServicio clienteServicio;
     private final ContenedorServicio contenedorServicio;
     private final UbicacionServicio ubicacionServicio;
-    //private final RutaServicio rutaServicio;
+    // private final RutaServicio rutaServicio;
 
     @Transactional
     public Solicitud crear(SolicitudDtoCreacion solicitud) {
@@ -106,6 +106,12 @@ public class SolicitudServicio {
     }
 
     @Transactional(readOnly = true)
+    public Solicitud obtenerPorIdContenedor(Long id) {
+        return repositorio.findByContenedorId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada con id de contenedor " + id));
+    }
+
+    @Transactional(readOnly = true)
     public List<Solicitud> obtenerPorClienteId(Long id) {
         return repositorio.findByClienteId(id);
     }
@@ -142,7 +148,6 @@ public class SolicitudServicio {
 
         return repositorio.save(existente);
     }
-
 
     @Transactional
     public void eliminar(Long id) {

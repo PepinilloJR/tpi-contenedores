@@ -24,6 +24,7 @@ import com.pedidos.service.demo.servicios.RutaServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+
 // Hacer una interfaz de uso comun para el manejo de los dto
 
 @RestController
@@ -189,6 +190,41 @@ public class RutaControlador {
                 ruta.getCantidadDepositos(),
                 ruta.getCantidadTramos());
 
+        return ResponseEntity.ok(rutaDtoOut);
+    }
+
+
+    @GetMapping("/solicitud/{idSolicitud}")
+    public ResponseEntity<?> obtenerRutasPorSolicitud(@PathVariable Long idSolicitud) {
+        Ruta ruta;
+        try {
+            ruta = servicio.obtenerPorIdSolicitud(idSolicitud);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+        }
+
+        // pasar tiempos a Long para expresarlo en dias
+        Long Estimado = null;
+        Long Real = null;
+
+        if (ruta.getTiempoEstimado() != null) {
+            Estimado = Math.round(ruta.getTiempoEstimado() / 86400.0);
+        }
+        if (ruta.getTiempoReal() != null) {
+            Real = Math.round(ruta.getTiempoReal() / 86400.0);
+        }
+
+        RutaDtoOut rutaDtoOut = new RutaDtoOut(
+                ruta.getId(),
+                ruta.getDistanciaTotal(),
+                ruta.getSolicitud() != null ? ruta.getSolicitud().getId() : null,
+                Estimado,
+                Real,
+                ruta.getCostoPorTramo(),
+                ruta.getCantidadDepositos(),
+                ruta.getCantidadTramos());
         return ResponseEntity.ok(rutaDtoOut);
     }
 

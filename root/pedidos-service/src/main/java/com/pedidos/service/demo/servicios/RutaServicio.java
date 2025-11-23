@@ -57,6 +57,12 @@ public class RutaServicio {
                 .orElseThrow(() -> new ResourceNotFoundException("Ruta no encontrada con id " + id));
     }
 
+    @Transactional(readOnly = true)
+    public Ruta obtenerPorIdSolicitud(Long idSolicitud) {
+        return repositorio.findBySolicitudId(idSolicitud)
+                .orElseThrow(() -> new ResourceNotFoundException("Ruta no encontrada con solicitud cuya id es " + idSolicitud));
+    }
+
     // Fijarse bien esto
 
     @Transactional
@@ -64,27 +70,24 @@ public class RutaServicio {
         Ruta existente = repositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ruta no encontrada con id " + id));
 
+        existente.setCantidadDepositos(rutaActualizada.cantidadDepositos() != null ? rutaActualizada.cantidadDepositos()
+                : existente.getCantidadDepositos());
 
-        existente.setCantidadDepositos(rutaActualizada.cantidadDepositos() != null ? 
-            rutaActualizada.cantidadDepositos() : existente.getCantidadDepositos());
-
-        existente.setCantidadTramos(rutaActualizada.cantidadTramos() != null ? 
-            rutaActualizada.cantidadTramos() : existente.getCantidadTramos());
-        existente.setCostoPorTramo(rutaActualizada.costoPorTramo() != null ? 
-            rutaActualizada.costoPorTramo() : existente.getCostoPorTramo());
-        existente.setTiempoReal(rutaActualizada.tiempoReal() != null ? 
-            rutaActualizada.tiempoReal() : existente.getTiempoReal());
+        existente.setCantidadTramos(rutaActualizada.cantidadTramos() != null ? rutaActualizada.cantidadTramos()
+                : existente.getCantidadTramos());
+        existente.setCostoPorTramo(rutaActualizada.costoPorTramo() != null ? rutaActualizada.costoPorTramo()
+                : existente.getCostoPorTramo());
+        existente.setTiempoReal(
+                rutaActualizada.tiempoReal() != null ? rutaActualizada.tiempoReal() : existente.getTiempoReal());
 
         if (rutaActualizada.solicitudId() != null) {
             Solicitud solicitud = solicitudServicio.obtenerPorId(rutaActualizada.solicitudId());
             if (!Objects.equals(solicitud.getId(), existente.getIdSolicitudBorrador())) {
-                throw new ConflictException("La ruta fue creada para la solicitud: " + existente.getIdSolicitudBorrador());
+                throw new ConflictException(
+                        "La ruta fue creada para la solicitud: " + existente.getIdSolicitudBorrador());
             }
             existente.setSolicitud(solicitud);
         }
-
-
-        
 
         return repositorio.save(existente);
     }
@@ -141,11 +144,10 @@ public class RutaServicio {
                     .distanciaTotal(r.getDistance())
                     .tiempoEstimado(r.getDuration())
                     .cantidadTramos(r.getLegs().size()) // cada leg equivale a un tramo
-                    .cantidadDepositos(depositos.size()) 
+                    .cantidadDepositos(depositos.size())
                     .idSolicitudBorrador(solicitud.getId())
                     .build();
             ruta = crear(ruta);
-
 
             // creo los tramos de la ruta
 
@@ -202,9 +204,11 @@ public class RutaServicio {
         return rutas;
     }
 
-    @Transactional public Ruta asignarSolicitud(Long idRuta, Long idSolicitud) {
+    @Transactional
+    public Ruta asignarSolicitud(Long idRuta, Long idSolicitud) {
         // Ruta ruta = rutaServicio.obtenerPorId(idRuta);
-        // Solicitud solicitud = obtenerPorId(idRuta); -> no hace falta porque el servicio de actualizar ruta ya comprueba todo esto antes
+        // Solicitud solicitud = obtenerPorId(idRuta); -> no hace falta porque el
+        // servicio de actualizar ruta ya comprueba todo esto antes
 
         RutaDtoIn rutaCambio = new RutaDtoIn(null, null, null, null, idSolicitud);
         Ruta rutaNueva = actualizar(idRuta, rutaCambio);
@@ -213,7 +217,7 @@ public class RutaServicio {
 
         solicitudServicio.actualizar(idSolicitud, solicitudCambio);
         return rutaNueva;
-    } 
+    }
 
     @Transactional
     public void eliminar(Long id) {

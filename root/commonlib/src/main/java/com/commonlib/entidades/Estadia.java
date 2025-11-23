@@ -29,8 +29,8 @@ public class Estadia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idEstadia;
 
-    @Column(name = "id_tramo")
-    private Long idTramo; 
+    @Column(name = "id_ubicacion")
+    private Long idDeposito; 
 
     @Column(name = "id_contenedor")
     private Long idContenedor;

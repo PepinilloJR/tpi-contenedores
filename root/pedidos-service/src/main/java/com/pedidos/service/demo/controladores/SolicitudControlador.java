@@ -1,6 +1,5 @@
 package com.pedidos.service.demo.controladores;
 
-<<<<<<< HEAD
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,8 +13,6 @@ import com.pedidos.service.demo.servicios.SolicitudServicio;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
-=======
->>>>>>> 2c26be2100b7cd385a24a2af4b18aed8d4d23bed
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,19 +24,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 
 import com.commonlib.entidades.Solicitud;
-import com.pedidos.service.demo.dto.DtoHandler;
-import com.pedidos.service.demo.dto.SolicitudDtoCreacion;
-import com.pedidos.service.demo.dto.SolicitudDtoIn;
-import com.pedidos.service.demo.dto.SolicitudDtoOut;
-import com.pedidos.service.demo.servicios.SolicitudServicio;
 
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/solicitudes")
@@ -61,6 +48,15 @@ public class SolicitudControlador {
     public ResponseEntity<SolicitudDtoOut> actualizar(@PathVariable Long id, @RequestBody SolicitudDtoIn datos) {
         Solicitud solicitudActualizada = solicitudServicio.actualizar(id, datos);
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitudActualizada));
+    }
+
+    
+
+    @Operation(summary = "Obtener solicitud por ID de contenedor", description = "Obtiene la solicitud asociada a un contenedor específico")
+    @GetMapping("/contenedor/{idContenedor}")
+    public ResponseEntity<SolicitudDtoOut> obtenerPorContenedor(@PathVariable Long idContenedor) {
+        Solicitud solicitud = solicitudServicio.obtenerPorIdContenedor(idContenedor);
+        return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitud));
     }
 
     @Operation(summary = "Obtener una Solicitud", description = "Obtiene una solicitud por su ID")
