@@ -45,10 +45,10 @@ public class TramoServicio {
         return repositorio.findByRutaId(idR);
     }
 
-    @Transactional(readOnly = true)
-    public List<Tramo> obtenerPorTransportista(String transportista) {
-        return repositorio.findByCamionNombreTransportista(transportista);
-    }
+    //@Transactional(readOnly = true)
+    //public List<Tramo> obtenerPorTransportista(String transportista) {
+    //    return repositorio.findByCamionNombreTransportista(transportista);
+    //}
 
     // Recordar el transportista solo puede modificar el estado y maybe la fecha
     // hora fin?
