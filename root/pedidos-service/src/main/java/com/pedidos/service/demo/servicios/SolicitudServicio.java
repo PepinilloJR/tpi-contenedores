@@ -53,8 +53,8 @@ public class SolicitudServicio {
             clienteServicio.crearSiNoExiste(cliente);
 
             // Contenedor crearlo se construyo en el controlelr
-            var contenedor = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(), null, null);
-            contenedorServicio.crear(contenedor);
+            var contenedorDto = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(), null, null);
+            var contenedor = contenedorServicio.crear(contenedorDto);
             
             // Origen
             TiposUbicacion tipoOrigen = TiposUbicacion.valueOf(solicitud.tipoOrigen().toUpperCase());
@@ -66,7 +66,7 @@ public class SolicitudServicio {
 
             // Se puede manejar q en el dto me llegen los id de las ubicaciones
 
-            var solicitudNueva = new Solicitud(null, EstadoSolicitud.BORRADOR, null, null, cliente, null, null, null,
+            var solicitudNueva = new Solicitud(null, EstadoSolicitud.BORRADOR, null, null, cliente, contenedor, origen, destino,
                     null);
             return repositorio.save(solicitudNueva);
 
