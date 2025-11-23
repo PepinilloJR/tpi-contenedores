@@ -1,0 +1,132 @@
+### Variables
+@baseUrl = http://localhost:8001
+@contentType = application/json
+
+### 1. Crear una nueva solicitud
+POST {{baseUrl}}/api/solicitudes
+Content-Type: {{contentType}}
+
+{
+  "nombreCliente": "Juan",
+  "apellidoCliente": "Pérez",
+  "telefonoCliente": "351-1234567",
+  "direccionCliente": "Av. Colón 1234",
+  "dniCliente": "12345678",
+  "peso": 150.5,
+  "volumen": 2.5,
+  "nombreOrigen": "Depósito Central",
+  "tipoOrigen": "ORIGEN",
+  "latitudOrigen": -31.4201,
+  "longitudOrigen": -64.1888,
+  "nombreDestino": "Sucursal Norte",
+  "tipoDestino": "DESTINO",
+  "latitudDestino": -31.3897,
+  "longitudDestino": -64.1834
+}
+
+### 2. Obtener todas las solicitudes
+GET {{baseUrl}}/api/solicitudes
+Content-Type: {{contentType}}
+
+### 3. Obtener una solicitud por ID (cambiar el ID según necesites)
+GET {{baseUrl}}/api/solicitudes/1
+Content-Type: {{contentType}}
+
+### 4. Obtener solicitudes por cliente ID
+GET {{baseUrl}}/api/solicitudes/cliente/1
+Content-Type: {{contentType}}
+
+### 5. Actualizar una solicitud (solo estado y costos)
+PUT {{baseUrl}}/api/solicitudes/1
+Content-Type: {{contentType}}
+
+{
+  "estado": "PROGRAMADA",
+  "costoEstimado": 5000.0,
+  "costoFinal": null
+}
+
+### 6. Actualizar estado a EN_TRANSITO
+PUT {{baseUrl}}/api/solicitudes/1
+Content-Type: {{contentType}}
+
+{
+  "estado": "EN_TRANSITO",
+  "costoEstimado": 5000.0,
+  "costoFinal": null
+}
+
+### 7. Actualizar estado a ENTREGADA con costo final
+PUT {{baseUrl}}/api/solicitudes/1
+Content-Type: {{contentType}}
+
+{
+  "estado": "ENTREGADA",
+  "costoEstimado": 5000.0,
+  "costoFinal": 4850.0
+}
+
+### 8. Actualizar solo costos sin cambiar estado
+PUT {{baseUrl}}/api/solicitudes/1
+Content-Type: {{contentType}}
+
+{
+  "costoEstimado": 5500.0,
+  "costoFinal": 5200.0
+}
+
+### 9. Eliminar una solicitud
+DELETE {{baseUrl}}/api/solicitudes/1
+Content-Type: {{contentType}}
+
+### 10. Crear solicitud con cliente existente (mismo DNI)
+POST {{baseUrl}}/api/solicitudes
+Content-Type: {{contentType}}
+
+{
+  "nombreCliente": "Juan",
+  "apellidoCliente": "Pérez",
+  "telefonoCliente": "351-1234567",
+  "direccionCliente": "Av. Colón 1234",
+  "dniCliente": "12345678",
+  "peso": 80.0,
+  "volumen": 1.2,
+  "nombreOrigen": "Depósito Sur",
+  "tipoOrigen": "DEPOSITO",
+  "latitudOrigen": -31.4500,
+  "longitudOrigen": -64.2000,
+  "nombreDestino": "Sucursal Este",
+  "tipoDestino": "SUCURSAL",
+  "latitudDestino": -31.4100,
+  "longitudDestino": -64.1700
+}
+
+### 11. Test: Crear con tipo de ubicación inválido (debe fallar)
+POST {{baseUrl}}/api/solicitudes
+Content-Type: {{contentType}}
+
+{
+  "nombreCliente": "María",
+  "apellidoCliente": "González",
+  "telefonoCliente": "351-9876543",
+  "direccionCliente": "Bv. San Juan 567",
+  "dniCliente": "87654321",
+  "peso": 100.0,
+  "volumen": 1.5,
+  "nombreOrigen": "Origen Test",
+  "tipoOrigen": "INVALIDO",
+  "latitudOrigen": -31.4000,
+  "longitudOrigen": -64.1800,
+  "nombreDestino": "Destino Test",
+  "tipoDestino": "SUCURSAL",
+  "latitudDestino": -31.3900,
+  "longitudDestino": -64.1750
+}
+
+### 12. Test: Actualizar con estado inválido (debe fallar)
+PUT {{baseUrl}}/api/solicitudes/1
+Content-Type: {{contentType}}
+
+{
+  "estado": "CANCELADA"
+}

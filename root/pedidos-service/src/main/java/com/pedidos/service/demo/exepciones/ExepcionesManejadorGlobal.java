@@ -39,6 +39,6 @@ public class ExepcionesManejadorGlobal {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorRequest> manejarExcepcionGeneral(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorRequest(500, "Error interno del servidor"));
+                .body(new ErrorRequest(500, "Error interno del servidor:" + ex.getCause()));
     }
 }
