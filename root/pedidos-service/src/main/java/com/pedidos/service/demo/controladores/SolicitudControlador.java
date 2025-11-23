@@ -1,17 +1,5 @@
 package com.pedidos.service.demo.controladores;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.pedidos.service.demo.dto.SolicitudDtoCreacion;
-import com.pedidos.service.demo.dto.SolicitudDtoIn;
-import com.pedidos.service.demo.dto.SolicitudDtoOut;
-import com.pedidos.service.demo.dto.DtoHandler;
-import com.pedidos.service.demo.servicios.SolicitudServicio;
-
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,8 +11,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.commonlib.entidades.Solicitud;
+import com.pedidos.service.demo.dto.DtoHandler;
+import com.pedidos.service.demo.dto.SolicitudDtoCreacion;
+import com.pedidos.service.demo.dto.SolicitudDtoIn;
+import com.pedidos.service.demo.dto.SolicitudDtoOut;
+import com.pedidos.service.demo.servicios.SolicitudServicio;
+
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/solicitudes")
@@ -81,4 +79,5 @@ public class SolicitudControlador {
         solicitudServicio.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
 }

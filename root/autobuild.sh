@@ -1,11 +1,11 @@
 #!/bin/bash
 
 SERVICES=(
+  "commonlib"
   "gateway"
   "pedidos-service"
   "camiones-service"
   "depositos-service"
-  "commonlib"
 )
 
 echo "=== Checking Docker login using config.json ==="

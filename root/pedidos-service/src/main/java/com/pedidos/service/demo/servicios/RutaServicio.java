@@ -2,6 +2,7 @@ package com.pedidos.service.demo.servicios;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ import com.commonlib.entidades.Ubicacion;
 import com.pedidos.service.demo.dto.RutaDtoIn;
 import com.pedidos.service.demo.dto.RutaTentativaDtoIn;
 import com.pedidos.service.demo.dto.RutaTentativaDtoOut;
+import com.pedidos.service.demo.dto.SolicitudDtoIn;
+import com.pedidos.service.demo.exepciones.ConflictException;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.osrmObjects.Leg;
 import com.pedidos.service.demo.osrmObjects.Route;
@@ -70,6 +73,16 @@ public class RutaServicio {
             rutaActualizada.costoPorTramo() : existente.getCostoPorTramo());
         existente.setTiempoReal(rutaActualizada.tiempoReal() != null ? 
             rutaActualizada.tiempoReal() : existente.getTiempoReal());
+
+        if (rutaActualizada.solicitudId() != null) {
+            Solicitud solicitud = solicitudServicio.obtenerPorId(rutaActualizada.solicitudId());
+            if (!Objects.equals(solicitud.getId(), existente.getIdSolicitudBorrador())) {
+                throw new ConflictException("La ruta fue creada para la solicitud: " + existente.getIdSolicitudBorrador());
+            }
+            existente.setSolicitud(solicitud);
+        }
+
+
         
 
         return repositorio.save(existente);
@@ -128,6 +141,7 @@ public class RutaServicio {
                     .tiempoEstimado(r.getDuration())
                     .cantidadTramos(r.getLegs().size()) // cada leg equivale a un tramo
                     .cantidadDepositos(depositos.size()) 
+                    .idSolicitudBorrador(solicitud.getId())
                     .build();
             ruta = crear(ruta);
 
@@ -186,6 +200,19 @@ public class RutaServicio {
 
         return rutas;
     }
+
+    @Transactional public Ruta asignarSolicitud(Long idRuta, Long idSolicitud) {
+        // Ruta ruta = rutaServicio.obtenerPorId(idRuta);
+        // Solicitud solicitud = obtenerPorId(idRuta); -> no hace falta porque el servicio de actualizar ruta ya comprueba todo esto antes
+
+        RutaDtoIn rutaCambio = new RutaDtoIn(null, null, null, null, idSolicitud);
+        Ruta rutaNueva = actualizar(idRuta, rutaCambio);
+
+        SolicitudDtoIn solicitudCambio = new SolicitudDtoIn("PROGRAMADA", null, null);
+
+        solicitudServicio.actualizar(idSolicitud, solicitudCambio);
+        return rutaNueva;
+    } 
 
     @Transactional
     public void eliminar(Long id) {

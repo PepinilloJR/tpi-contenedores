@@ -15,19 +15,23 @@ public class ResourceServerConfig {
         http.authorizeHttpRequests(auth -> 
         auth
 
-        .requestMatchers(HttpMethod.GET,"/protected/solicitudes")
+        .requestMatchers(HttpMethod.GET,"/protected/solicitudes/cliente/**")
             .hasAnyRole("CLIENTE", "ADMIN")
+        .requestMatchers(HttpMethod.GET,"/protected/solicitudes")
+            .hasAnyRole( "ADMIN")
         .requestMatchers(HttpMethod.POST,"/protected/solicitudes")
             .hasAnyRole( "CLIENTE", "ADMIN")
 
-        .requestMatchers(HttpMethod.PUT,"/protected/tramos")
+        .requestMatchers(HttpMethod.GET,"/protected/tramos/transportista/**")
+            .hasAnyRole( "TRANSPORTISTA", "ADMIN")
+        .requestMatchers(HttpMethod.PUT,"/protected/tramos/**")
             .hasAnyRole( "TRANSPORTISTA", "ADMIN")
         .requestMatchers(HttpMethod.GET,"/protected/tramos")
             .hasAnyRole( "TRANSPORTISTA", "ADMIN")
 
-        .requestMatchers(HttpMethod.PUT, "/controlled/tramos/finalizar")
+        .requestMatchers(HttpMethod.PUT, "/controlled/tramos/finalizar/**")
             .hasAnyRole( "TRANSPORTISTA", "ADMIN")
-        .requestMatchers(HttpMethod.PUT, "/controlled/rutas")
+        .requestMatchers(HttpMethod.PUT, "/controlled/rutas/**")
             .hasAnyRole( "TRANSPORTISTA", "ADMIN")
             
         .requestMatchers("/protected/**")
