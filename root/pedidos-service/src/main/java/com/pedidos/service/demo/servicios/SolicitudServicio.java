@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.commonlib.Enums.EstadoSolicitud;
+import com.commonlib.Enums.EstadosContenedor;
 import com.commonlib.Enums.TiposUbicacion;
 import com.commonlib.entidades.Cliente;
 import com.commonlib.entidades.Seguimiento;
@@ -54,7 +55,7 @@ public class SolicitudServicio {
             cliente = clienteServicio.crearSiNoExiste(cliente);
 
             // Contenedor 
-            var contenedorDto = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(), null, null);
+            var contenedorDto = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(), EstadosContenedor.EN_PREPARACION, null);
             var contenedor = contenedorServicio.crear(contenedorDto);
             
             // Origen
