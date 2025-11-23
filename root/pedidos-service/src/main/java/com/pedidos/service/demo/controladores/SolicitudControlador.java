@@ -2,190 +2,73 @@ package com.pedidos.service.demo.controladores;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
- 
-import com.commonlib.dto.DtoHandler;
-import com.commonlib.dto.SeguimientoDto;
-import com.commonlib.dto.SolicitudDto;
-import com.pedidos.service.demo.servicios.ClienteServicio;
-import com.pedidos.service.demo.servicios.ContenedorServicio;
+
+import com.pedidos.service.demo.dto.SolicitudDtoCreacion;
+import com.pedidos.service.demo.dto.SolicitudDtoIn;
 import com.pedidos.service.demo.servicios.SolicitudServicio;
-import com.pedidos.service.demo.servicios.UbicacionServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 
-import java.util.stream.Collectors;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.commonlib.entidades.*;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
+import com.commonlib.entidades.Solicitud;
 
 @RestController
 @RequestMapping("/api/solicitudes")
+@RequiredArgsConstructor
 public class SolicitudControlador {
-    private final SolicitudServicio servicioSolicitud;
-    private final ClienteServicio servicioCliente;
-    private final ContenedorServicio servicioContenedor;
-    private final UbicacionServicio servicioUbicacion;
+    
+    private final SolicitudServicio solicitudServicio;
 
-    public SolicitudControlador(SolicitudServicio servicioSolicitud, ClienteServicio servicioCliente,
-            ContenedorServicio servicioContenedor, UbicacionServicio servicioUbicacion) {
-        this.servicioSolicitud = servicioSolicitud;
-        this.servicioCliente = servicioCliente;
-        this.servicioContenedor = servicioContenedor;
-        this.servicioUbicacion = servicioUbicacion;
-    }
-
-    @Operation(summary = "Crear una Solicitud", description = "Crea una Solicitud")
+    @Operation(summary = "Crear una Solicitud", description = "Crea una nueva solicitud con estado BORRADOR")
     @PostMapping
-    public ResponseEntity<SolicitudDto> crear(@RequestBody SolicitudDto solicitudDto) {
-
-        System.out.println(solicitudDto);
-
-        // 1) Validaciones previas antes de convertir
-        if (solicitudDto == null || solicitudDto.cliente() == null || solicitudDto.contenedor() == null
-                || solicitudDto.origen() == null || solicitudDto.destino() == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        // 2) Convertir seguro (ya sabemos que cliente y contenedor no son null)
-        Solicitud solicitudEntidad;
-        try {
-            solicitudEntidad = DtoHandler.convertirSolicitudEntidad(solicitudDto);
-        } catch (Exception e) {
-            // Si la conversión falla por otro motivo, devolvemos 400 con info mínima
-            return ResponseEntity.badRequest().build();
-        }
-
-        // 3) Persistir/obtener cliente y contenedor y reasignarlos
-        var cliente = servicioCliente.crearSiNoExiste(solicitudEntidad.getCliente());
-        System.out.println(cliente);
-        var contenedor = servicioContenedor.crear(solicitudEntidad.getContenedor());
-        var origen = servicioUbicacion.crearSiNoExiste(solicitudEntidad.getOrigen());
-        var destino = servicioUbicacion.crearSiNoExiste(solicitudEntidad.getDestino());
-
-        // 4) Preparar y guardar la solicitud
-        solicitudEntidad.setEstado("borrador");
-        solicitudEntidad.setCliente(cliente);
-        solicitudEntidad.setContenedor(contenedor);
-        solicitudEntidad.setOrigen(origen);
-        solicitudEntidad.setDestino(destino);
-
-        Solicitud solicitudCreada = servicioSolicitud.crear(solicitudEntidad);
-
-        Seguimiento primerSeguimiento = new Seguimiento();
-        primerSeguimiento.setEstado("borrador");
-        primerSeguimiento.setFecha(LocalDateTime.now());
-
-        if (solicitudCreada.getSeguimiento() == null) {
-            solicitudCreada.setSeguimiento(new ArrayList<>());
-        }
-
-        solicitudCreada.getSeguimiento().add(primerSeguimiento);
-
-        servicioSolicitud.actualizar(solicitudCreada.getId(), solicitudCreada);
-
-        // 5) Responder 201 con el DTO resultante
-        return ResponseEntity.status(201).body(DtoHandler.convertirSolicitudDto(solicitudCreada));
+    public ResponseEntity<Solicitud> crear(@RequestBody SolicitudDtoCreacion solicitud) {
+        Solicitud nuevaSolicitud = solicitudServicio.crear(solicitud);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaSolicitud);
     }
 
-    @Operation(summary = "Actualizar una Solicitud", description = "Actualiza una Solicitud dada segun id")
+    @Operation(summary = "Actualizar una Solicitud", description = "Actualiza el estado, costos de una solicitud. Registra cambios de estado en el seguimiento")
     @PutMapping("/{id}")
-    public ResponseEntity<SolicitudDto> actualizar(@PathVariable Long id, @RequestBody SolicitudDto solicitudDto) {
-        // costoFinal? costoEstima?
-        // tiempoReal? tiempoEstimado
-        // Estado
-
-        Solicitud solicitudActual = servicioSolicitud.obtenerPorId(id);
-
-        String estadoAnterior = solicitudActual.getEstado();
-
-        solicitudActual.setTiempoEstimado(solicitudDto.tiempoEstimado() != null ? solicitudDto.tiempoEstimado()
-                : solicitudActual.getTiempoEstimado());
-
-        solicitudActual.setCostoEstimado(solicitudDto.costoEstimado() != null ? solicitudDto.costoEstimado()
-                : solicitudActual.getCostoEstimado());
-
-        solicitudActual.setTiempoReal(solicitudDto.tiempoReal() != null ? solicitudDto.tiempoReal()
-                : solicitudActual.getTiempoReal());
-
-        solicitudActual.setCostoFinal(solicitudDto.costoFinal() != null ? solicitudDto.costoFinal()
-                : solicitudActual.getCostoFinal());
-
-        solicitudActual.setEstado(solicitudDto.estado() != null ? solicitudDto.estado()
-                : solicitudActual.getEstado());
-
-        if (!solicitudActual.getEstado().equals(estadoAnterior)) {
-            Seguimiento nuevoSeguimiento = new Seguimiento();
-            nuevoSeguimiento.setEstado(solicitudActual.getEstado());
-            nuevoSeguimiento.setFecha(LocalDateTime.now());
-
-            if (solicitudActual.getSeguimiento() == null) {
-                solicitudActual.setSeguimiento(new ArrayList<>());
-            }
-
-            solicitudActual.getSeguimiento().add(nuevoSeguimiento);
-
-        }
-        Solicitud SolicitudActualizada = servicioSolicitud.actualizar(id, solicitudActual);
-
-        return ResponseEntity.ok(DtoHandler.convertirSolicitudDto(SolicitudActualizada));
+    public ResponseEntity<Solicitud> actualizar(@PathVariable Long id, @RequestBody SolicitudDtoIn datos) {
+        Solicitud solicitudActualizada = solicitudServicio.actualizar(id, datos);
+        return ResponseEntity.ok(solicitudActualizada);
     }
 
-    @Operation(summary = "Obtener solicitudes por cliente", description = "Obtiene todas las solicitudes de un cliente dado por id")
-    @GetMapping("/cliente/{clienteId}")
-    public ResponseEntity<?> obtenerPorCliente(@PathVariable Long clienteId) {
-
-        var cliente = servicioCliente.obtenerPorId(clienteId);
-
-        if (cliente == null) {
-            return ResponseEntity.badRequest()
-                    .body("El cliente ingresado no existe, no tiene solicitudes por lo tanto");
-        }
-
-        List<Solicitud> solicitudes = servicioSolicitud.obtenerPorClienteId(clienteId);
-        List<SolicitudDto> dtos = solicitudes.stream()
-                .map(DtoHandler::convertirSolicitudDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
-    }
-
-    @Operation(summary = "Obtener una Solicitud", description = "Obtiene una Solicitud dada segun id")
+    @Operation(summary = "Obtener una Solicitud", description = "Obtiene una solicitud por su ID")
     @GetMapping("/{id}")
-    public ResponseEntity<SolicitudDto> obtener(@PathVariable Long id) {
-        Solicitud solicitud = servicioSolicitud.obtenerPorId(id);
-        return ResponseEntity.ok(DtoHandler.convertirSolicitudDto(solicitud));
+    public ResponseEntity<Solicitud> obtenerPorId(@PathVariable Long id) {
+        Solicitud solicitud = solicitudServicio.obtenerPorId(id);
+        return ResponseEntity.ok(solicitud);
     }
 
-    @Operation(summary = "Obtener el Seguimiento de una Solicitud", description = "Obtiene el Seguimiento de una Solicitud dada segun id")
-    @GetMapping("/{id}/seguimiento")
-    public ResponseEntity<List<SeguimientoDto>> obtenerSegumiento(@PathVariable Long id) {
-        Solicitud solicitud = servicioSolicitud.obtenerPorId(id);
-        return ResponseEntity.ok(DtoHandler.convertirSeguimientosDto(solicitud.getSeguimiento()));
+    @Operation(summary = "Obtener solicitudes por cliente", description = "Obtiene todas las solicitudes de un cliente específico")
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<Solicitud>> obtenerPorCliente(@PathVariable Long clienteId) {
+        List<Solicitud> solicitudes = solicitudServicio.obtenerPorClienteId(clienteId);
+        return ResponseEntity.ok(solicitudes);
     }
 
-    @Operation(summary = "Obtener todos las Solicitudes", description = "Obtiene todas las Solicitudes")
+    @Operation(summary = "Obtener todas las Solicitudes", description = "Lista todas las solicitudes del sistema")
     @GetMapping
-    public ResponseEntity<List<SolicitudDto>> obtenerTodos() {
-        List<Solicitud> lista = servicioSolicitud.listarTodos();
-        List<SolicitudDto> dtos = lista.stream().map(DtoHandler::convertirSolicitudDto).collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<List<Solicitud>> listarTodas() {
+        List<Solicitud> solicitudes = solicitudServicio.listarTodos();
+        return ResponseEntity.ok(solicitudes);
     }
 
-    @Operation(summary = "Eliminar una Solicitud", description = "Elimina una Solicitud dada segun id")
+    @Operation(summary = "Eliminar una Solicitud", description = "Elimina una solicitud por su ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        servicioSolicitud.eliminar(id);
+        solicitudServicio.eliminar(id);
         return ResponseEntity.noContent().build();
     }
-
 }
