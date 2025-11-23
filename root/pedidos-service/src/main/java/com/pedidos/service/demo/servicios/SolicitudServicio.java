@@ -4,19 +4,19 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.cglib.core.Local;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.commonlib.Enums.EstadoSolicitud;
+import com.commonlib.Enums.TiposUbicacion;
 import com.commonlib.entidades.Cliente;
-import com.commonlib.entidades.Contenedor;
 import com.commonlib.entidades.Seguimiento;
 import com.commonlib.entidades.Solicitud;
+import com.commonlib.entidades.Ubicacion;
 import com.pedidos.service.demo.dto.ContenedorDtoIn;
 import com.pedidos.service.demo.dto.SolicitudDtoCreacion;
 import com.pedidos.service.demo.dto.SolicitudDtoIn;
-import com.pedidos.service.demo.dto.UbicacionDtoIn;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.repositorios.SolicitudRepositorio;
 
@@ -55,11 +55,12 @@ public class SolicitudServicio {
             // Contenedor crearlo se construyo en el controlelr
             var contenedor = new ContenedorDtoIn(null, solicitud.peso(), solicitud.volumen(), null, null);
             contenedorServicio.crear(contenedor);
-
+            
             // Origen
-            var origen = new UbicacionDtoIn(solicitud.latitudOrigen(), solicitud.longitudOrigen(), null, null, null);
-            // Destino
-            var destino = new UbicacionDtoIn(solicitud.latitudDestino(), solicitud.longitudOrigen(), null, null, null);
+            TiposUbicacion tipoOrigen = TiposUbicacion.valueOf(solicitud.tipoOrigen().toUpperCase());
+            TiposUbicacion tipoDestino = TiposUbicacion.valueOf(solicitud.tipoDestino().toUpperCase());
+            var origen = new Ubicacion(null, solicitud.nombreOrigen(), tipoOrigen, solicitud.latitudOrigen(), solicitud.longitudOrigen(), null);
+            var destino = new Ubicacion(null, solicitud.nombreDestino(), tipoDestino, solicitud.latitudDestino(), solicitud.longitudDestino(), null);
             ubicacionServicio.crearSiNoExiste(origen);
             ubicacionServicio.crearSiNoExiste(destino);
 
