@@ -7,6 +7,7 @@ import com.pedidos.service.demo.dto.SolicitudDtoCreacion;
 import com.pedidos.service.demo.dto.SolicitudDtoIn;
 import com.pedidos.service.demo.dto.SolicitudDtoOut;
 import com.pedidos.service.demo.dto.DtoHandler;
+import com.pedidos.service.demo.dto.SeguimientoDtoOut;
 import com.pedidos.service.demo.servicios.SolicitudServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,13 +25,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+
 import com.commonlib.entidades.Solicitud;
 
 @RestController
 @RequestMapping("/api/solicitudes")
 @RequiredArgsConstructor
 public class SolicitudControlador {
-    
+
     private final SolicitudServicio solicitudServicio;
 
     @Operation(summary = "Crear una Solicitud", description = "Crea una nueva solicitud con estado BORRADOR")
@@ -38,7 +40,7 @@ public class SolicitudControlador {
     public ResponseEntity<SolicitudDtoOut> crear(@RequestBody SolicitudDtoCreacion solicitud) {
         Solicitud nuevaSolicitud = solicitudServicio.crear(solicitud);
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(DtoHandler.convertirSolicitudDtoOut(nuevaSolicitud));
+                .body(DtoHandler.convertirSolicitudDtoOut(nuevaSolicitud));
     }
 
     @Operation(summary = "Actualizar una Solicitud", description = "Actualiza el estado, costos de una solicitud. Registra cambios de estado en el seguimiento")
@@ -57,11 +59,28 @@ public class SolicitudControlador {
 
     @Operation(summary = "Obtener solicitudes por cliente", description = "Obtiene todas las solicitudes de un cliente específico")
     @GetMapping("/cliente/{clienteId}")
-    public ResponseEntity<List<SolicitudDtoOut>> obtenerPorCliente(@PathVariable Long clienteId) {
+    public ResponseEntity<List<SolicitudDtoOut>> obtenerTodosPorCliente(@PathVariable Long clienteId) {
         List<Solicitud> solicitudes = solicitudServicio.obtenerPorClienteId(clienteId);
         List<SolicitudDtoOut> dtos = solicitudes.stream()
-            .map(DtoHandler::convertirSolicitudDtoOut)
-            .collect(Collectors.toList());
+                .map(DtoHandler::convertirSolicitudDtoOut)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    @Operation(summary = "Obtener una solicitud por cliente", description = "Obtiene una solicitude de un cliente específico dada un id de solicitud")
+    @GetMapping("/{id}/cliente/{clienteId}")
+    public ResponseEntity<SolicitudDtoOut> obtenerPorCliente(@PathVariable Long id, @PathVariable Long clienteId) {
+        Solicitud solicitud = solicitudServicio.obtenerPorIdyClienteId(id, clienteId);
+        return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitud));
+    }
+
+    @Operation(summary = "Obtener el seguimiento de una solicitud por cliente", description = "Obtiene el seguimiento de una solicitud dada de un cliente dado")
+    @GetMapping("/{id}/cliente/{clienteId}/seguimiento")
+    public ResponseEntity<List<SeguimientoDtoOut>> obtenerSeguimientoPorCliente(@PathVariable Long id,
+            @PathVariable Long clienteId) {
+        Solicitud solicitud = solicitudServicio.obtenerPorIdyClienteId(id, clienteId);
+        List<SeguimientoDtoOut> dtos = solicitud.getSeguimiento().stream().map(DtoHandler::convertirSeguimientoDtoOut)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
@@ -70,8 +89,8 @@ public class SolicitudControlador {
     public ResponseEntity<List<SolicitudDtoOut>> listarTodas() {
         List<Solicitud> solicitudes = solicitudServicio.listarTodos();
         List<SolicitudDtoOut> dtos = solicitudes.stream()
-            .map(DtoHandler::convertirSolicitudDtoOut)
-            .collect(Collectors.toList());
+                .map(DtoHandler::convertirSolicitudDtoOut)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 

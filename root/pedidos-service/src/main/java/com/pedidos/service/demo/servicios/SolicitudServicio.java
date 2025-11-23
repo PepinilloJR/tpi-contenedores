@@ -72,7 +72,14 @@ public class SolicitudServicio {
 
             var solicitudNueva = new Solicitud(null, EstadoSolicitud.BORRADOR, null, null, cliente, contenedor, origen,
                     destino,
-                    null);
+                    new ArrayList<>());
+
+            Seguimiento seguimientoInicial = new Seguimiento();
+            seguimientoInicial.setEstadoAnterior(EstadoSolicitud.BORRADOR);
+            seguimientoInicial.setFecha(LocalDateTime.now());
+            seguimientoInicial.setComentario("La solicitud se encuentra en estado de BORRADOR.");
+            solicitudNueva.getSeguimiento().add(seguimientoInicial);
+
             return repositorio.save(solicitudNueva);
 
         } catch (IllegalArgumentException e) {
@@ -102,6 +109,13 @@ public class SolicitudServicio {
         return repositorio.findByClienteId(id);
     }
 
+    @Transactional(readOnly = true)
+    public Solicitud obtenerPorIdyClienteId(Long id, Long idCliente) {
+        return repositorio.findByIdAndClienteId(id, idCliente)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Solicitud no encontrada con id " + id + "de cliente con id " + idCliente));
+    }
+
     @Transactional
     public Solicitud actualizar(Long id, SolicitudDtoIn datos) {
         Solicitud existente = repositorio.findById(id)
@@ -109,9 +123,9 @@ public class SolicitudServicio {
 
         if (datos.estado() != null && !datos.estado().equals(existente.getEstado())) {
             Seguimiento seguimiento = new Seguimiento();
-            seguimiento.setEstadoAnterior(existente.getEstado().name());
+            seguimiento.setEstadoAnterior(datos.estado()); // Guardar el NUEVO estado
             seguimiento.setFecha(LocalDateTime.now());
-            seguimiento.setComentario("Cambio de estado: " + existente.getEstado() + " -> " + datos.estado());
+            seguimiento.setComentario("La solicitud se encuentra en estado de " + datos.estado());
 
             if (existente.getSeguimiento() == null) {
                 existente.setSeguimiento(new ArrayList<>());
@@ -121,7 +135,8 @@ public class SolicitudServicio {
             existente.setEstado(datos.estado());
         }
 
-        existente.setCostoEstimado(datos.costoEstimado() != null ? datos.costoEstimado() : existente.getCostoEstimado());
+        existente
+                .setCostoEstimado(datos.costoEstimado() != null ? datos.costoEstimado() : existente.getCostoEstimado());
         existente.setCostoFinal(datos.costoFinal() != null ? datos.costoFinal() : existente.getCostoFinal());
 
         return repositorio.save(existente);

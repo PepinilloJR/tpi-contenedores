@@ -28,12 +28,24 @@ Content-Type: {{contentType}}
 GET {{baseUrl}}/api/solicitudes
 Content-Type: {{contentType}}
 
-### 3. Obtener una solicitud por ID (cambiar el ID según necesites)
+### 3. Obtener una solicitud por ID
 GET {{baseUrl}}/api/solicitudes/1
 Content-Type: {{contentType}}
 
-### 4. Obtener solicitudes por cliente ID
+### 4. Obtener todas las solicitudes de un cliente por su ID
 GET {{baseUrl}}/api/solicitudes/cliente/1
+Content-Type: {{contentType}}
+
+### 4.1. Obtener una solicitud específica de un cliente
+GET {{baseUrl}}/api/solicitudes/2/cliente/1
+Content-Type: {{contentType}}
+
+### 4.2. Test: Obtener solicitud con ID que no pertenece al cliente (debe fallar)
+GET {{baseUrl}}/api/solicitudes/1/cliente/999
+Content-Type: {{contentType}}
+
+### 4.3. Test: Obtener solicitud inexistente de un cliente (debe fallar)
+GET {{baseUrl}}/api/solicitudes/999/cliente/1
 Content-Type: {{contentType}}
 
 ### 5. Actualizar una solicitud (solo estado y costos)
@@ -75,11 +87,53 @@ Content-Type: {{contentType}}
   "costoFinal": 5200.0
 }
 
-### 9. Eliminar una solicitud
+### 9. Obtener seguimiento de una solicitud de un cliente (después de cambios de estado)
+GET {{baseUrl}}/api/solicitudes/1/cliente/1/seguimiento
+Content-Type: {{contentType}}
+
+### 9.1. Obtener seguimiento de otra solicitud
+GET {{baseUrl}}/api/solicitudes/1/cliente/1/seguimiento
+Content-Type: {{contentType}}
+
+### 9.2. Test: Obtener seguimiento de solicitud que no pertenece al cliente (debe fallar)
+GET {{baseUrl}}/api/solicitudes/1/cliente/999/seguimiento
+Content-Type: {{contentType}}
+
+### 9.3. Test: Obtener seguimiento de solicitud inexistente (debe fallar)
+GET {{baseUrl}}/api/solicitudes/999/cliente/1/seguimiento
+Content-Type: {{contentType}}
+
+### 9.4. Test: Obtener seguimiento de solicitud sin cambios de estado (lista vacía)
+POST {{baseUrl}}/api/solicitudes
+Content-Type: {{contentType}}
+
+{
+  "nombreCliente": "Pedro",
+  "apellidoCliente": "López",
+  "telefonoCliente": "351-5555555",
+  "direccionCliente": "Calle Test 123",
+  "dniCliente": "99999999",
+  "peso": 50.0,
+  "volumen": 1.0,
+  "nombreOrigen": "Origen Test",
+  "tipoOrigen": "ORIGEN",
+  "latitudOrigen": -31.4000,
+  "longitudOrigen": -64.1800,
+  "nombreDestino": "Destino Test",
+  "tipoDestino": "DESTINO",
+  "latitudDestino": -31.3900,
+  "longitudDestino": -64.1700
+}
+
+###
+GET {{baseUrl}}/api/solicitudes/3/cliente/2/seguimiento
+Content-Type: {{contentType}}
+
+### 10. Eliminar una solicitud
 DELETE {{baseUrl}}/api/solicitudes/1
 Content-Type: {{contentType}}
 
-### 10. Crear solicitud con cliente existente (mismo DNI)
+### 11. Crear solicitud con cliente existente (mismo DNI)
 POST {{baseUrl}}/api/solicitudes
 Content-Type: {{contentType}}
 
@@ -101,7 +155,7 @@ Content-Type: {{contentType}}
   "longitudDestino": -64.1700
 }
 
-### 11. Test: Crear con tipo de ubicación inválido (debe fallar)
+### 12. Test: Crear con tipo de ubicación inválido (debe fallar)
 POST {{baseUrl}}/api/solicitudes
 Content-Type: {{contentType}}
 
@@ -123,7 +177,7 @@ Content-Type: {{contentType}}
   "longitudDestino": -64.1750
 }
 
-### 12. Test: Actualizar con estado inválido (debe fallar)
+### 13. Test: Actualizar con estado inválido (debe fallar)
 PUT {{baseUrl}}/api/solicitudes/1
 Content-Type: {{contentType}}
 

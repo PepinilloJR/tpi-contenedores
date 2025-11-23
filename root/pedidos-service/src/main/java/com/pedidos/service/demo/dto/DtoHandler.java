@@ -35,4 +35,13 @@ public interface DtoHandler {
                 s.getOrigen() != null ? s.getOrigen().getId() : null,
                 s.getDestino() != null ? s.getDestino().getId() : null);
     }
+
+    public static SeguimientoDtoOut convertirSeguimientoDtoOut(Seguimiento seg) {
+        if (seg == null)
+            return null;
+        return new SeguimientoDtoOut(
+                seg.getEstadoAnterior(),
+                seg.getFecha(),
+                seg.getComentario());
+    }
 }

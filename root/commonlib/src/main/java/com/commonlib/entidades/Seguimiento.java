@@ -2,6 +2,8 @@ package com.commonlib.entidades;
 
 import java.time.LocalDateTime;
 
+import com.commonlib.Enums.EstadoSolicitud;
+
 import jakarta.persistence.Entity;
 
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +28,7 @@ public class Seguimiento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String estadoAnterior;
+    private EstadoSolicitud estadoAnterior;
     private LocalDateTime fecha;
     private String comentario;
 }
