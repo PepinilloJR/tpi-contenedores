@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class TramoServicio {
 
     private final TramoRepositorio repositorio;
+    //private final SolicitudServicio solicitudServicio;
 
     @Autowired
     private RestClient camionesClient;
@@ -64,6 +65,12 @@ public class TramoServicio {
                 .orElseThrow(() -> new ResourceNotFoundException("Tramo no encontrado con id " + id));
 
         // traer camion si se incluye en el dto
+
+        if (existente.getRuta().getSolicitud() == null) {
+            throw new ConflictException("No se pueden realizar acciones sobre un tramo cuya ruta no esta asignada a ningun pedido");
+
+        }
+
         CamionDtoHttp camion = null; 
         if (tramoActualizado.idCamion() != null) {
             camion = camionesClient.get().uri("/" + tramoActualizado.idCamion()).retrieve().toEntity(CamionDtoHttp.class).getBody();
@@ -79,7 +86,7 @@ public class TramoServicio {
 
         manejarAsignacionCamion(existente, camion);
 
-        if (camion != null) {
+        if (existente.getIdCamion() != null) {
             manejarCostoAproximado(existente, camion);
         }
         
@@ -170,12 +177,16 @@ public class TramoServicio {
 
     private void manejarCostoAproximado(Tramo existente, CamionDtoHttp camionDtoHttp) {
         TarifaDtoHttp tarifaDtoHttp; 
-        if (existente.getIdCamion() != null) {
-            tarifaDtoHttp = tarifasClient.get().uri("/" + camionDtoHttp.idTarifa()).retrieve().toEntity(TarifaDtoHttp.class).getBody();
-        }
+        
+        tarifaDtoHttp = tarifasClient.get().uri("/" + camionDtoHttp.idTarifa()).retrieve().toEntity(TarifaDtoHttp.class).getBody();
 
         // debo obtener los datos del contenedor del tramo para poder realizar el calculo aproximado
+        Double volumen = existente.getRuta().getSolicitud().getContenedor().getVolumen();
 
+        Double parteCombustible = tarifaDtoHttp.costoKilometro() * camionDtoHttp.consumoCombustiblePromedio();
+        Double parteContenedor = tarifaDtoHttp.costoVolumen() * volumen;
+
+        existente.setCostoAproximado(parteContenedor + parteCombustible);
     }
 
 

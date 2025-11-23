@@ -13,8 +13,18 @@ public class RestClientsConfig {
     }
 
     @Bean
+    RestClient camionesClient() {
+        return RestClient.create("http://camiones:8002/api/camiones");
+    } 
+
+    @Bean
     RestClient tarifasClient() {
         return RestClient.create("http://camiones:8002/api/tarifas");
+    }
+
+    @Bean
+    RestClient distanciaClient() {
+        return RestClient.create("http://osrm:5000/route/v1/");
     }
 
 }
