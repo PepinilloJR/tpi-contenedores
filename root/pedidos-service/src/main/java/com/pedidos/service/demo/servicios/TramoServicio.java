@@ -58,68 +58,56 @@ public class TramoServicio {
     // }
 
     /* ----------------- UPDATE ----------------- */
-
     @Transactional
     public Tramo actualizar(Long id, TramoDtoIn tramoActualizado) {
         Tramo existente = repositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tramo no encontrado con id " + id));
 
-        if (tramoActualizado == null) {
-            throw new IllegalArgumentException("Datos de actualización inválidos");
-        }
+        // traer camion si se incluye en el dto
+        CamionDtoHttp camion = null; 
+        if (tramoActualizado.idCamion() != null) {
+            camion = camionesClient.get().uri("/" + tramoActualizado.idCamion()).retrieve().toEntity(CamionDtoHttp.class).getBody();
+            if (!camion.disponible()) {
+                throw new ConflictException("El camion que se quiere asignar esta ocupado en otro tramo");
+            }
 
-        Long idCamionActual = existente.getIdCamion();
-        Long nuevoIdCamion = tramoActualizado.idCamion();
+            if (existente.getEstado().equals(EstadosTramo.INICIADO) || existente.getEstado().equals(EstadosTramo.FINALIZADO)) {
+                throw new ConflictException("No se puede asignar un camion a un tramo que esta " + existente.getEstado().toString());
 
-        // Si intenta CAMBIAR el camión (id distinto) y el tramo está INICIADO o FINALIZADO
-        if (!Objects.equals(idCamionActual, nuevoIdCamion)
-                && (existente.getEstado().equals(EstadosTramo.INICIADO)
-                        || existente.getEstado().equals(EstadosTramo.FINALIZADO))) {
-            throw new ConflictException(
-                    "No se puede asignar o cambiar un camión a un tramo que está " + existente.getEstado());
-        }
-
-        // Manejar asignación / reasignación / liberación de camión
-        if (nuevoIdCamion != null || idCamionActual != null) {
-            manejarAsignacionCamion(existente, nuevoIdCamion);
-        }
-
-        // --- Estados y fechas ---
-
-        // Iniciar tramo: solo si viene fechaInicio en el DTO
-        if (tramoActualizado.fechaInicio() != null) {
-            if (existente.getEstado().equals(EstadosTramo.ASIGNADO)) {
-                existente.setFechaHoraInicio(tramoActualizado.fechaInicio());
-                existente.setEstado(EstadosTramo.INICIADO);
-            } else {
-                throw new ConflictException(
-                        "Solo se puede iniciar un tramo que está ASIGNADO. Estado actual: " + existente.getEstado());
             }
         }
 
-        // Finalizar tramo: solo si viene fechaFin en el DTO
-        if (tramoActualizado.fechaFin() != null) {
-            if (existente.getEstado().equals(EstadosTramo.INICIADO)) {
-                existente.setFechaHoraFin(tramoActualizado.fechaFin());
-                existente.setEstado(EstadosTramo.FINALIZADO);
-            } else {
-                throw new ConflictException(
-                        "Solo se puede finalizar un tramo que está INICIADO. Estado actual: " + existente.getEstado());
-            }
+        // esta logica no resuelve la disponibilidad del camion, y nunca lo hara
+
+        if (camion != null) {
+            existente.setIdCamion(camion.id());
+            
+        } else if (existente.getEstado().equals(EstadosTramo.FINALIZADO)) {
+            existente.setIdCamion(null);
         }
 
-        // Campos opcionales de costos y combustible
-        if (tramoActualizado.combustibleConsumido() != null) {
-            existente.setCombustibleConsumido(tramoActualizado.combustibleConsumido());
+        if (tramoActualizado.fechaInicio() != null && existente.getEstado().equals(EstadosTramo.ASIGNADO)) {
+            existente.setFechaHoraInicio(tramoActualizado.fechaInicio());
+            existente.setEstado(EstadosTramo.INICIADO);
+        } else {
+            throw new ConflictException("No se iniciar un tramo que esta " + existente.getEstado().toString());
         }
 
-        if (tramoActualizado.costoAproximado() != null) {
-            existente.setCostoAproximado(tramoActualizado.costoAproximado());
+        if (tramoActualizado.fechaFin() != null && existente.getEstado().equals(EstadosTramo.INICIADO)) {
+            existente.setFechaHoraFin(tramoActualizado.fechaFin());
+            existente.setEstado(EstadosTramo.FINALIZADO);
+        } else {
+            throw new ConflictException("No se finalizar un tramo que esta " + existente.getEstado().toString());
         }
 
-        if (tramoActualizado.costoReal() != null) {
-            existente.setCostoReal(tramoActualizado.costoReal());
-        }
+        //existente.setEstado(tramoActualizado.estado() != null ? tramoActualizado.estado() : tramoActualizado.getEstado());
+        //existente.setFechaHoraFin(tramoActualizado.getFechaHoraFin());
+        existente.setCombustibleConsumido(tramoActualizado.combustibleConsumido() != null ? tramoActualizado.combustibleConsumido() : existente.getCombustibleConsumido());
+
+        existente.setCostoAproximado(tramoActualizado.costoAproximado() != null ? tramoActualizado.costoAproximado() : existente.getCostoAproximado());
+
+        existente.setCostoReal(tramoActualizado.costoReal() != null ? tramoActualizado.costoReal() : existente.getCostoReal());
+
 
         return repositorio.save(existente);
     }
