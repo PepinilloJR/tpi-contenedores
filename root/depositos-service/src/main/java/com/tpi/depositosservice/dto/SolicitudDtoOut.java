@@ -8,7 +8,7 @@ public record SolicitudDtoOut(
         Double costoEstimado,
         Double costoFinal,
         Long idCliente,
-        Long idContedor,
+        Long idContenedor,
         Long idOrigen,
         Long idDestino
     ) {
