@@ -24,7 +24,6 @@ import com.pedidos.service.demo.servicios.RutaServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
 // Hacer una interfaz de uso comun para el manejo de los dto
 
 @RestController
@@ -70,9 +69,15 @@ public class RutaControlador {
 
         if (rutaActualizada.getTiempoEstimado() != null) {
             Estimado = Math.round(rutaActualizada.getTiempoEstimado() / 86400.0);
+            if (Estimado == 0L) {
+                Estimado = 1L;
+            }
         }
         if (rutaActualizada.getTiempoReal() != null) {
             Real = Math.round(rutaActualizada.getTiempoReal() / 86400.0);
+            if (Real == 0L) {
+                Real = 1L;
+            }
         }
 
         RutaDtoOut rutaDtoOut = new RutaDtoOut(
@@ -105,9 +110,15 @@ public class RutaControlador {
 
         if (ruta.getTiempoEstimado() != null) {
             Estimado = Math.round(ruta.getTiempoEstimado() / 86400.0);
+            if (Estimado == 0L) {
+                Estimado = 1L;
+            }
         }
         if (ruta.getTiempoReal() != null) {
             Real = Math.round(ruta.getTiempoReal() / 86400.0);
+            if (Real == 0L) {
+                Real = 1L;
+            }
         }
 
         RutaDtoOut rutaDtoOut = new RutaDtoOut(
@@ -133,9 +144,15 @@ public class RutaControlador {
 
             if (r.getTiempoEstimado() != null) {
                 Estimado = Math.round(r.getTiempoEstimado() / 86400.0);
+                if (Estimado == 0L) {
+                    Estimado = 1L;
+                }
             }
             if (r.getTiempoReal() != null) {
                 Real = Math.round(r.getTiempoReal() / 86400.0);
+                if (Real == 0L) {
+                    Real = 1L;
+                }
             }
 
             return new RutaDtoOut(
@@ -175,9 +192,15 @@ public class RutaControlador {
 
         if (ruta.getTiempoEstimado() != null) {
             Estimado = Math.round(ruta.getTiempoEstimado() / 86400.0);
+            if (Estimado == 0L) {
+                Estimado = 1L;
+            }
         }
         if (ruta.getTiempoReal() != null) {
             Real = Math.round(ruta.getTiempoReal() / 86400.0);
+            if (Real == 0L) {
+                Real = 1L;
+            }
         }
 
         RutaDtoOut rutaDtoOut = new RutaDtoOut(
@@ -190,41 +213,6 @@ public class RutaControlador {
                 ruta.getCantidadDepositos(),
                 ruta.getCantidadTramos());
 
-        return ResponseEntity.ok(rutaDtoOut);
-    }
-
-
-    @GetMapping("/solicitud/{idSolicitud}")
-    public ResponseEntity<?> obtenerRutasPorSolicitud(@PathVariable Long idSolicitud) {
-        Ruta ruta;
-        try {
-            ruta = servicio.obtenerPorIdSolicitud(idSolicitud);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
-        }
-
-        // pasar tiempos a Long para expresarlo en dias
-        Long Estimado = null;
-        Long Real = null;
-
-        if (ruta.getTiempoEstimado() != null) {
-            Estimado = Math.round(ruta.getTiempoEstimado() / 86400.0);
-        }
-        if (ruta.getTiempoReal() != null) {
-            Real = Math.round(ruta.getTiempoReal() / 86400.0);
-        }
-
-        RutaDtoOut rutaDtoOut = new RutaDtoOut(
-                ruta.getId(),
-                ruta.getDistanciaTotal(),
-                ruta.getSolicitud() != null ? ruta.getSolicitud().getId() : null,
-                Estimado,
-                Real,
-                ruta.getCostoPorTramo(),
-                ruta.getCantidadDepositos(),
-                ruta.getCantidadTramos());
         return ResponseEntity.ok(rutaDtoOut);
     }
 

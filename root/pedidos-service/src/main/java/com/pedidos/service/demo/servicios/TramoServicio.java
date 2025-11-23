@@ -65,6 +65,12 @@ public class TramoServicio {
                 .orElseThrow(() -> new ResourceNotFoundException("Tramo no encontrado con id " + id));
 
         // traer camion si se incluye en el dto
+
+        if (existente.getRuta().getSolicitud() == null) {
+            throw new ConflictException("No se pueden realizar acciones sobre un tramo cuya ruta no esta asignada a ningun pedido");
+
+        }
+
         CamionDtoHttp camion = null; 
         if (tramoActualizado.idCamion() != null) {
             camion = camionesClient.get().uri("/" + tramoActualizado.idCamion()).retrieve().toEntity(CamionDtoHttp.class).getBody();
@@ -80,7 +86,7 @@ public class TramoServicio {
 
         manejarAsignacionCamion(existente, camion);
 
-        if (camion != null) {
+        if (existente.getIdCamion() != null) {
             manejarCostoAproximado(existente, camion);
         }
         
