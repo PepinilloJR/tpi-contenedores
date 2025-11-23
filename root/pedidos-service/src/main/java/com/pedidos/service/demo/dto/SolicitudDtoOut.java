@@ -1,8 +1,10 @@
 package com.pedidos.service.demo.dto;
 
+import com.commonlib.Enums.EstadoSolicitud;
+
 public record SolicitudDtoOut(
         Long id,
-        String estado,
+        EstadoSolicitud estado,
         Double costoEstimado,
         Double costoFinal,
         Long idCliente,

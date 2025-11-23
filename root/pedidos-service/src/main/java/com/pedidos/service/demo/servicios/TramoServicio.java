@@ -1,6 +1,7 @@
 package com.pedidos.service.demo.servicios;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,14 +21,20 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TramoServicio {
-    @Autowired
-    RestClient camionesClient;
+
     private final TramoRepositorio repositorio;
+
+    @Autowired
+    private RestClient camionesClient;
+
+    /* ----------------- CREATE ----------------- */
 
     @Transactional
     public Tramo crear(Tramo tramo) {
         return repositorio.save(tramo);
     }
+
+    /* ----------------- READ ----------------- */
 
     @Transactional(readOnly = true)
     public List<Tramo> listarTodos() {
@@ -45,67 +52,79 @@ public class TramoServicio {
         return repositorio.findByRutaId(idR);
     }
 
-    //@Transactional(readOnly = true)
-    //public List<Tramo> obtenerPorTransportista(String transportista) {
-    //    return repositorio.findByCamionNombreTransportista(transportista);
-    //}
+    // @Transactional(readOnly = true)
+    // public List<Tramo> obtenerPorTransportista(String transportista) {
+    //     return repositorio.findByCamionNombreTransportista(transportista);
+    // }
 
-    // Recordar el transportista solo puede modificar el estado y maybe la fecha
-    // hora fin?
+    /* ----------------- UPDATE ----------------- */
 
     @Transactional
     public Tramo actualizar(Long id, TramoDtoIn tramoActualizado) {
         Tramo existente = repositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tramo no encontrado con id " + id));
 
-        // traer camion si se incluye en el dto
-        CamionDtoHttp camion = null; 
-        if (tramoActualizado.idCamion() != null) {
-            camion = camionesClient.get().uri("/" + tramoActualizado.idCamion()).retrieve().toEntity(CamionDtoHttp.class).getBody();
-            if (!camion.disponible()) {
-                throw new ConflictException("El camion que se quiere asignar esta ocupado en otro tramo");
+        if (tramoActualizado == null) {
+            throw new IllegalArgumentException("Datos de actualización inválidos");
+        }
+
+        Long idCamionActual = existente.getIdCamion();
+        Long nuevoIdCamion = tramoActualizado.idCamion();
+
+        // Si intenta CAMBIAR el camión (id distinto) y el tramo está INICIADO o FINALIZADO
+        if (!Objects.equals(idCamionActual, nuevoIdCamion)
+                && (existente.getEstado().equals(EstadosTramo.INICIADO)
+                        || existente.getEstado().equals(EstadosTramo.FINALIZADO))) {
+            throw new ConflictException(
+                    "No se puede asignar o cambiar un camión a un tramo que está " + existente.getEstado());
+        }
+
+        // Manejar asignación / reasignación / liberación de camión
+        if (nuevoIdCamion != null || idCamionActual != null) {
+            manejarAsignacionCamion(existente, nuevoIdCamion);
+        }
+
+        // --- Estados y fechas ---
+
+        // Iniciar tramo: solo si viene fechaInicio en el DTO
+        if (tramoActualizado.fechaInicio() != null) {
+            if (existente.getEstado().equals(EstadosTramo.ASIGNADO)) {
+                existente.setFechaHoraInicio(tramoActualizado.fechaInicio());
+                existente.setEstado(EstadosTramo.INICIADO);
+            } else {
+                throw new ConflictException(
+                        "Solo se puede iniciar un tramo que está ASIGNADO. Estado actual: " + existente.getEstado());
             }
+        }
 
-            if (existente.getEstado().equals(EstadosTramo.INICIADO) || existente.getEstado().equals(EstadosTramo.FINALIZADO)) {
-                throw new ConflictException("No se puede asignar un camion a un tramo que esta " + existente.getEstado().toString());
-
+        // Finalizar tramo: solo si viene fechaFin en el DTO
+        if (tramoActualizado.fechaFin() != null) {
+            if (existente.getEstado().equals(EstadosTramo.INICIADO)) {
+                existente.setFechaHoraFin(tramoActualizado.fechaFin());
+                existente.setEstado(EstadosTramo.FINALIZADO);
+            } else {
+                throw new ConflictException(
+                        "Solo se puede finalizar un tramo que está INICIADO. Estado actual: " + existente.getEstado());
             }
         }
 
-        // esta logica no resuelve la disponibilidad del camion, y nunca lo hara
-
-        if (camion != null) {
-            existente.setIdCamion(camion.id());
-            
-        } else if (existente.getEstado().equals(EstadosTramo.FINALIZADO)) {
-            existente.setIdCamion(null);
+        // Campos opcionales de costos y combustible
+        if (tramoActualizado.combustibleConsumido() != null) {
+            existente.setCombustibleConsumido(tramoActualizado.combustibleConsumido());
         }
 
-        if (tramoActualizado.fechaInicio() != null && existente.getEstado().equals(EstadosTramo.ASIGNADO)) {
-            existente.setFechaHoraInicio(tramoActualizado.fechaInicio());
-            existente.setEstado(EstadosTramo.INICIADO);
-        } else {
-            throw new ConflictException("No se iniciar un tramo que esta " + existente.getEstado().toString());
+        if (tramoActualizado.costoAproximado() != null) {
+            existente.setCostoAproximado(tramoActualizado.costoAproximado());
         }
 
-        if (tramoActualizado.fechaFin() != null && existente.getEstado().equals(EstadosTramo.INICIADO)) {
-            existente.setFechaHoraFin(tramoActualizado.fechaFin());
-            existente.setEstado(EstadosTramo.FINALIZADO);
-        } else {
-            throw new ConflictException("No se finalizar un tramo que esta " + existente.getEstado().toString());
+        if (tramoActualizado.costoReal() != null) {
+            existente.setCostoReal(tramoActualizado.costoReal());
         }
-
-        //existente.setEstado(tramoActualizado.estado() != null ? tramoActualizado.estado() : tramoActualizado.getEstado());
-        //existente.setFechaHoraFin(tramoActualizado.getFechaHoraFin());
-        existente.setCombustibleConsumido(tramoActualizado.combustibleConsumido() != null ? tramoActualizado.combustibleConsumido() : existente.getCombustibleConsumido());
-
-        existente.setCostoAproximado(tramoActualizado.costoAproximado() != null ? tramoActualizado.costoAproximado() : existente.getCostoAproximado());
-
-        existente.setCostoReal(tramoActualizado.costoReal() != null ? tramoActualizado.costoReal() : existente.getCostoReal());
-
 
         return repositorio.save(existente);
     }
+
+    /* ----------------- DELETE ----------------- */
 
     @Transactional
     public void eliminar(Long id) {
@@ -113,6 +132,62 @@ public class TramoServicio {
             throw new ResourceNotFoundException("Tramo no encontrado con id " + id);
         }
         repositorio.deleteById(id);
+    }
+
+    /* ----------------- HELPER: manejo de camiones ----------------- */
+
+    /**
+     * Maneja la lógica de:
+     * - liberar el camión actual (si hay y cambia)
+     * - validar que el nuevo camión exista y esté disponible
+     * - marcar como ocupado el nuevo camión
+     * - actualizar el idCamion del tramo
+     */
+    private void manejarAsignacionCamion(Tramo existente, Long nuevoIdCamion) {
+        Long idCamionActual = existente.getIdCamion();
+
+        // 0) Si no cambia el camión, no hacemos nada
+        if (Objects.equals(idCamionActual, nuevoIdCamion)) {
+            return;
+        }
+
+        // 1) Liberar el camión anterior si había uno
+        if (idCamionActual != null) {
+            camionesClient.put()
+                    .uri("/{id}/liberar", idCamionActual)
+                    .retrieve()
+                    .toBodilessEntity();
+        }
+
+        // 2) Si el nuevo id es null, dejamos el tramo sin camión
+        if (nuevoIdCamion == null) {
+            existente.setIdCamion(null);
+            return;
+        }
+
+        // 3) Traer el nuevo camión y validar disponibilidad
+        CamionDtoHttp camionNuevo = camionesClient.get()
+                .uri("/{id}", nuevoIdCamion)
+                .retrieve()
+                .toEntity(CamionDtoHttp.class)
+                .getBody();
+
+        if (camionNuevo == null) {
+            throw new ResourceNotFoundException("Camión no encontrado con id " + nuevoIdCamion);
+        }
+
+        if (!camionNuevo.disponible()) {
+            throw new ConflictException("El camión que se quiere asignar está ocupado en otro tramo");
+        }
+
+        // 4) Marcarlo como ocupado en el microservicio de camiones
+        camionesClient.put()
+                .uri("/{id}/ocupar", nuevoIdCamion)
+                .retrieve()
+                .toBodilessEntity();
+
+        // 5) Guardar relación en el tramo
+        existente.setIdCamion(nuevoIdCamion);
     }
 
 }
