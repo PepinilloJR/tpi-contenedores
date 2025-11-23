@@ -149,10 +149,7 @@ public class RutaServicio {
                     .build();
             ruta = crear(ruta);
 
-<<<<<<< HEAD
-=======
             Tramo tramoAnterior = null;
->>>>>>> 866cc556ca5d3e2485a7af5972d677dfd10efc72
             // creo los tramos de la ruta
 
             // si no hay depositos, es un tramo origen-destino
