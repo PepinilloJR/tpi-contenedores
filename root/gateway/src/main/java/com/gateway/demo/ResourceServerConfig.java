@@ -15,7 +15,7 @@ public class ResourceServerConfig {
 
         http.authorizeHttpRequests(auth -> auth
 
-                .requestMatchers(HttpMethod.GET, "/protected/solicitudes/**/cliente/**/seguimiento")
+                .requestMatchers(HttpMethod.GET, "/protected/solicitudes/*/cliente/*/seguimiento")
                 .hasAnyRole("CLIENTE", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/protected/solicitudes/**/cliente/**")
                 .hasAnyRole("CLIENTE", "ADMIN")
