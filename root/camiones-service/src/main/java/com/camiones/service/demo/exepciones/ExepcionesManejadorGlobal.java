@@ -1,18 +1,15 @@
 package com.camiones.service.demo.exepciones;
 
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-
 import com.commonlib.error.ErrorRequest;
 
 @RestControllerAdvice
 public class ExepcionesManejadorGlobal {
-  
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorRequest> manejarNoEncontrado(ResourceNotFoundException ex) {
@@ -41,5 +38,11 @@ public class ExepcionesManejadorGlobal {
     public ResponseEntity<ErrorRequest> manejarExcepcionGeneral(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorRequest(500, "Error interno del servidor"));
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorRequest> manejarConflicto(ConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorRequest(409, ex.getMessage()));
     }
 }

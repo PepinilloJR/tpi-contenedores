@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.camiones.service.demo.exepciones.ConflictException;
 import com.camiones.service.demo.exepciones.ResourceNotFoundException;
 import com.camiones.service.demo.repositorios.CamionRepositorio;
 import com.commonlib.entidades.Camion;
@@ -29,7 +30,7 @@ public class CamionServicio {
 
         // patente única
         if (camion.getPatente() != null && repositorio.existsByPatente(camion.getPatente())) {
-            throw new IllegalArgumentException("Ya existe un camión con patente " + camion.getPatente());
+            throw new ConflictException("Ya existe un camión con patente " + camion.getPatente());
         }
 
         // disponible por defecto = true
@@ -85,7 +86,7 @@ public class CamionServicio {
         // si intenta cambiar la patente, validar unicidad (comparando con la existente)
         if (datos.getPatente() != null && !datos.getPatente().equals(existente.getPatente())
                 && repositorio.existsByPatente(datos.getPatente())) {
-            throw new IllegalArgumentException("Ya existe un camión con patente " + datos.getPatente());
+            throw new ConflictException("Ya existe un camión con patente " + datos.getPatente());
         }
 
         // Merge: aplicar solo los campos no nulos de 'datos' sobre 'existente'
@@ -104,7 +105,8 @@ public class CamionServicio {
         if (datos.getDisponible() != null)
             existente.setDisponible(datos.getDisponible());
 
-        // Tarifa: si 'datos' trae una tarifa no nula, la aplicamos; si no, mantenemos la existente
+        // Tarifa: si 'datos' trae una tarifa no nula, la aplicamos; si no, mantenemos
+        // la existente
         Tarifa tarifaNueva = datos.getTarifa();
         if (tarifaNueva != null) {
             existente.setTarifa(tarifaNueva);
