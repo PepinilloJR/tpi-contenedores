@@ -6,7 +6,6 @@ public record RutaDtoOut(
     Long solicitudId,
     Long tiempoEstimado, // en dias
     Long tiempoReal,
-    Double costoPorTramo,
     Integer cantidadDepositos,
     Integer cantidadTramos
 ) {

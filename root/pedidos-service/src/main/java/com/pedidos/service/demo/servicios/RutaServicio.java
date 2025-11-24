@@ -83,8 +83,6 @@ public class RutaServicio {
 
         existente.setCantidadTramos(rutaActualizada.cantidadTramos() != null ? rutaActualizada.cantidadTramos()
                 : existente.getCantidadTramos());
-        existente.setCostoPorTramo(rutaActualizada.costoPorTramo() != null ? rutaActualizada.costoPorTramo()
-                : existente.getCostoPorTramo());
         existente.setTiempoReal(
                 rutaActualizada.tiempoReal() != null ? rutaActualizada.tiempoReal() : existente.getTiempoReal());
 
@@ -220,10 +218,10 @@ public class RutaServicio {
         // Solicitud solicitud = obtenerPorId(idRuta); -> no hace falta porque el
         // servicio de actualizar ruta ya comprueba todo esto antes
 
-        RutaDtoIn rutaCambio = new RutaDtoIn(null, null, null, null, idSolicitud);
+        RutaDtoIn rutaCambio = new RutaDtoIn(null, null, null, idSolicitud);
         Ruta rutaNueva = actualizar(idRuta, rutaCambio);
 
-        SolicitudDtoIn solicitudCambio = new SolicitudDtoIn(EstadoSolicitud.PROGRAMADA, null, null);
+        SolicitudDtoIn solicitudCambio = new SolicitudDtoIn(EstadoSolicitud.PROGRAMADA, null);
 
         solicitudServicio.actualizar(idSolicitud, solicitudCambio);
         return rutaNueva;
@@ -262,7 +260,7 @@ public class RutaServicio {
         }
         
         Double totalCosto = totalTramos + totalEstadias;
-        SolicitudDtoIn solicitudDtoIn = new SolicitudDtoIn(EstadoSolicitud.ENTREGADA, null, totalCosto);
+        SolicitudDtoIn solicitudDtoIn = new SolicitudDtoIn(EstadoSolicitud.ENTREGADA, totalCosto);
         solicitudServicio.actualizar(existente.getSolicitud().getId(), solicitudDtoIn);
 
         // CALCULAR TIEMPO REAL DE DURACION
@@ -271,7 +269,7 @@ public class RutaServicio {
 
         double segundos = ChronoUnit.SECONDS.between(fechaInicio, fechaFinal);
 
-        RutaDtoIn rutaDtoIn = new RutaDtoIn(null, null, null, segundos, null);
+        RutaDtoIn rutaDtoIn = new RutaDtoIn(null, null, segundos, null);
 
         actualizar(existente.getId(), rutaDtoIn);
 

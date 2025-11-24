@@ -136,9 +136,17 @@ public class TramoServicio {
 
             // si es el primer tramo, entonces debo setear que la solicitud esta en viaje
 
+            if (existente.getTramoAnterior() != null) {
+            if (!existente.getTramoAnterior().getEstado().equals(EstadosTramo.FINALIZADO)) {
+                throw new ConflictException(
+                        "No se puede iniciar el tramo si su tramo anterior no fue finalizado, tramo anterior: "
+                                + existente.getTramoAnterior().getId());
+            }
+            }
+
             if (existente.getTipo().equals(TiposTramos.ORIGEN_DEPOSITO)
                     || existente.getTipo().equals(TiposTramos.ORIGEN_DESTINO)) {
-                SolicitudDtoIn solicitudDtoIn = new SolicitudDtoIn(EstadoSolicitud.EN_TRANSITO, null, null);
+                SolicitudDtoIn solicitudDtoIn = new SolicitudDtoIn(EstadoSolicitud.EN_TRANSITO, null);
                 solicitudServicio.actualizar(existente.getRuta().getSolicitud().getId(), solicitudDtoIn);
             }
 
@@ -150,21 +158,6 @@ public class TramoServicio {
             contenedorServicio.actualizar(existente.getRuta().getSolicitud().getContenedor().getId(), contenedorDtoIn);
         }
 
-        // existente.setEstado(tramoActualizado.estado() != null ?
-        // tramoActualizado.estado() : tramoActualizado.getEstado());
-        // existente.setFechaHoraFin(tramoActualizado.getFechaHoraFin());
-        // existente.setCombustibleConsumido(
-        // tramoActualizado.combustibleConsumido() != null ?
-        // tramoActualizado.combustibleConsumido()
-        // : existente.getCombustibleConsumido());
-
-        // existente.setCostoAproximado(tramoActualizado.costoAproximado() != null ?
-        // tramoActualizado.costoAproximado() : existente.getCostoAproximado());
-
-        // existente.setCostoReal(
-        // tramoActualizado.costoReal() != null ? tramoActualizado.costoReal() :
-        // existente.getCostoReal());
-
         return repositorio.save(existente);
     }
 
@@ -173,6 +166,7 @@ public class TramoServicio {
         Tramo existente = repositorio.findById(idTramo)
                 .orElseThrow(() -> new ResourceNotFoundException("Tramo no encontrado con id " + idTramo));
 
+                /* 
         if (existente.getTramoAnterior() != null) {
             if (!existente.getTramoAnterior().getEstado().equals(EstadosTramo.FINALIZADO)) {
                 throw new ConflictException(
@@ -180,7 +174,7 @@ public class TramoServicio {
                                 + existente.getTramoAnterior().getId());
             }
         }
-
+        */
         // Mandarle al dtoIn el id del camion apto
         Long camionAptoId = null;
         if (existente.getIdCamion() == null) {
@@ -210,14 +204,6 @@ public class TramoServicio {
         }
 
         Integer combustible = tramoActualizado.combustibleConsumido();
-        // Double volumen =
-        // existente.getRuta().getSolicitud().getContenedor().getVolumen();
-        /*
-         * Double parteCombustible = combustible * existente.getCostoKilometro();
-         * Double parteVolumen = volumen * existente.getCostoVolumen();
-         * 
-         * Double costoReal = parteCombustible + parteVolumen;
-         */
 
         TramoDtoIn tramoDtoIn = new TramoDtoIn(null, LocalDateTime.now(), combustible, null, null, null);
 
@@ -227,10 +213,12 @@ public class TramoServicio {
     }
 
     private void manejarCalculoReal(Tramo tramo) {
-        Integer combustible = tramo.getCombustibleConsumido();
+        //Integer combustible = tramo.getCombustibleConsumido();
         Double volumen = tramo.getRuta().getSolicitud().getContenedor().getVolumen();
 
-        Double parteCombustible = combustible * tramo.getCostoKilometro();
+        Double distanciaKm = tramo.getDistancia() / 1000;
+
+        Double parteCombustible = distanciaKm * tramo.getCostoKilometro();
         Double parteVolumen = volumen * tramo.getCostoVolumen();
 
         Double costoReal = parteCombustible + parteVolumen;

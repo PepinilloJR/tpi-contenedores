@@ -28,7 +28,6 @@ public interface DtoHandler {
         return new SolicitudDtoOut(
                 s.getId(),
                 s.getEstado(),
-                s.getCostoEstimado(),
                 s.getCostoFinal(),
                 s.getCliente() != null ? s.getCliente().getId() : null,
                 s.getContenedor() != null ? s.getContenedor().getId() : null,
