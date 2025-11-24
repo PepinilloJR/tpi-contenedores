@@ -63,7 +63,7 @@ public class ContenedorServicio {
 
     @Transactional(readOnly = true)
     public List<Contenedor> listarPendientes() {
-        return repositorio.findByEstado(EstadosContenedor.EN_PREPARACION);
+        return repositorio.findByEstado(EstadosContenedor.EN_DEPOSITO);
     }
 
     @Transactional
