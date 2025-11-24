@@ -20,7 +20,7 @@ public class ContenedorServicio {
 
     private final ContenedorRepositorio repositorio;
     private final UbicacionServicio ubicacionServicio;
-    private final SolicitudServicio solicitudServicio;
+    //private final SolicitudServicio solicitudServicio;
 
 
     // NO CONTROLA QUE PESO, VOLUMEN SEAN MAYOR A 0
@@ -54,22 +54,6 @@ public class ContenedorServicio {
                 .orElseThrow(() -> new ResourceNotFoundException("Contenedor no encontrado con id " + id));
     }
 
-    @Transactional(readOnly = true)
-    public Contenedor obtenerPorIdyClienteId(Long idContenedor, Long idCliente) {
-        var contenedor = repositorio.findById(idContenedor);
-        var solicitud = solicitudServicio.obtenerPorIdContenedor(idContenedor);
-        if (contenedor == null && solicitud == null) {
-            throw new ResourceNotFoundException("El contenedor o la solicitud no fueron encontrados.");
-        }
-
-        if (solicitud.getCliente().getId() != idCliente) {
-            throw new IllegalArgumentException(
-                    "El id del cliente ingresado no coincide con el cliente de la solicitud");
-        }
-        return contenedor
-                .orElseThrow(() -> new ResourceNotFoundException("Contenedor no encontrado con id " + idContenedor));
-
-    }
 
     @Transactional(readOnly = true)
     public Contenedor obtenerPorEstado(EstadosContenedor estado) {

@@ -78,26 +78,6 @@ public class ContenedorControlador {
         return ResponseEntity.ok(contenedorDtoOut);
     }
 
-    @Operation(summary = "Obtener un Contenedor", description = "Obtener un contenedor dado segun id solicitud")
-    @GetMapping("{idContenedor}/cliente/{idCliente}/estado")
-    public ResponseEntity<?> obtenerPorCliente(@PathVariable Long idContenedor, @PathVariable Long idCliente) {
-        Contenedor contenedor;
-        try {
-            contenedor = servicio.obtenerPorIdyClienteId(idContenedor, idCliente);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        }
-
-        catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
-        }
-
-        ContenedorDtoOutSimple contenedorDtoOutSimple = new ContenedorDtoOutSimple(
-                contenedor.getId(),
-                contenedor.getEstado(),
-                contenedor.getUbicacion() != null ? contenedor.getUbicacion().getId() : null);
-        return ResponseEntity.ok().body(contenedorDtoOutSimple);
-    }
 
     @Operation(summary = "Obtener un Contenedor", description = "Obtener un Contenedor dado segun id")
     @GetMapping("/{id}")

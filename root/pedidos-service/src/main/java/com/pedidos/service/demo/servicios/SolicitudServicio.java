@@ -11,6 +11,7 @@ import com.commonlib.Enums.EstadoSolicitud;
 import com.commonlib.Enums.EstadosContenedor;
 import com.commonlib.Enums.TiposUbicacion;
 import com.commonlib.entidades.Cliente;
+import com.commonlib.entidades.Contenedor;
 import com.commonlib.entidades.Seguimiento;
 import com.commonlib.entidades.Solicitud;
 import com.commonlib.entidades.Ubicacion;
@@ -148,6 +149,21 @@ public class SolicitudServicio {
         existente.setCostoFinal(datos.costoFinal() != null ? datos.costoFinal() : existente.getCostoFinal());
 
         return repositorio.save(existente);
+    }
+
+    @Transactional(readOnly = true)
+    public Contenedor obtenerContenedorPorIdyClienteId(Long idContenedor, Long idCliente) {
+        var contenedor = contenedorServicio.obtenerPorId(idContenedor);
+        var solicitud = obtenerPorIdContenedor(idContenedor);
+        if (contenedor == null) {
+            throw new ResourceNotFoundException("El contenedor o la solicitud no fueron encontrados.");
+        }
+
+        if (solicitud.getCliente().getId() != idCliente) {
+            throw new IllegalArgumentException(
+                    "El id del cliente ingresado no coincide con el cliente de la solicitud");
+        }
+        return contenedor;
     }
 
     @Transactional
