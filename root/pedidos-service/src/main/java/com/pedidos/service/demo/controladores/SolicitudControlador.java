@@ -53,12 +53,6 @@ public class SolicitudControlador {
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitudActualizada));
     }
 
-<<<<<<< HEAD
-    
-    
-
-=======
->>>>>>> 8b684e02d75a88f06b40cbf680d5a12a87d16740
     @Operation(summary = "Obtener solicitud por ID de contenedor", description = "Obtiene la solicitud asociada a un contenedor específico")
     @GetMapping("/contenedor/{idContenedor}")
     public ResponseEntity<SolicitudDtoOut> obtenerPorContenedor(@PathVariable Long idContenedor) {
