@@ -23,6 +23,11 @@ public class RestClientsConfig {
     }
 
     @Bean
+    RestClient estadiasClient() {
+        return RestClient.create("http://depositos:8002/api/estadias");
+    }
+
+    @Bean
     RestClient distanciaClient() {
         return RestClient.create("http://osrm:5000/route/v1/");
     }

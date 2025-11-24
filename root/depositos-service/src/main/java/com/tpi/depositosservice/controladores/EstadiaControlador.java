@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.commonlib.entidades.Estadia;
+import com.tpi.depositosservice.dto.DtoHandler;
 import com.tpi.depositosservice.dto.EstadiaDtoIn;
 import com.tpi.depositosservice.dto.EstadiaDtoOut;
-import com.tpi.depositosservice.dto.DtoHandler;
 import com.tpi.depositosservice.servicios.EstadiaServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -68,7 +68,7 @@ public class EstadiaControlador {
         return ResponseEntity.ok(dtos);
     }
 
-    @Operation(summary = "Obtener todas las estadías", description = "Lista todas las estadías del sistema")
+    @Operation(summary = "Obtener todas las estadías de un contenedor", description = "Lista todas las estadías del contenedor")
     @GetMapping("/contenedor/{idContenedor}")
     public ResponseEntity<List<EstadiaDtoOut>> listarTodasPorContenedor(@PathVariable Long idContenedor) {
         List<Estadia> estadias = estadiaServicio.obtenerEstadiasPorContenedor(idContenedor);

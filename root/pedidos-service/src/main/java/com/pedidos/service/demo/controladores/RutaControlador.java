@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.commonlib.entidades.Ruta;
 import com.commonlib.error.ErrorRequest;
@@ -19,11 +20,11 @@ import com.pedidos.service.demo.dto.RutaDtoIn;
 import com.pedidos.service.demo.dto.RutaDtoOut;
 import com.pedidos.service.demo.dto.RutaTentativaDtoIn;
 import com.pedidos.service.demo.dto.RutaTentativaDtoOut;
+import com.pedidos.service.demo.exepciones.ConflictException;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.servicios.RutaServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.web.bind.annotation.RequestParam;
 
 // Hacer una interfaz de uso comun para el manejo de los dto
 
@@ -48,6 +49,56 @@ public class RutaControlador {
      * ResponseEntity.status(201).body(DtoHandler.convertirRutaDto(rutaCreada));
      * }
      */
+
+    @Operation(summary = "Finalizar solicitud de una ruta", description = "Finaliza la solicitud de una ruta")
+    @PutMapping("/solicitud/{id}/finalizar")
+    public ResponseEntity<?> finalizar(@PathVariable Long id) {
+
+        Ruta rutaActualizada;
+        try {
+            rutaActualizada = servicio.finalizaRuta(id);
+
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
+        } catch (ConflictException e) {
+            return ResponseEntity.status(409).body(new ErrorRequest(409, e.getMessage()));
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.status(404).body(e.getResponseBodyAs(ErrorRequest.class));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+        }
+
+        // pasar tiempos a Long para expresarlo en dias
+        Long Estimado = null;
+        Long Real = null;
+
+        if (rutaActualizada.getTiempoEstimado() != null) {
+            Estimado = Math.round(rutaActualizada.getTiempoEstimado() / 86400.0);
+            if (Estimado == 0L) {
+                Estimado = 1L;
+            }
+        }
+        if (rutaActualizada.getTiempoReal() != null) {
+            Real = Math.round(rutaActualizada.getTiempoReal() / 86400.0);
+            if (Real == 0L) {
+                Real = 1L;
+            }
+        }
+
+        RutaDtoOut rutaDtoOut = new RutaDtoOut(
+                rutaActualizada.getId(),
+                rutaActualizada.getDistanciaTotal(),
+                rutaActualizada.getSolicitud() != null ? rutaActualizada.getSolicitud().getId() : null,
+                Estimado,
+                Real,
+                rutaActualizada.getCostoPorTramo(),
+                rutaActualizada.getCantidadDepositos(),
+                rutaActualizada.getCantidadTramos());
+        return ResponseEntity.ok(rutaDtoOut);
+    }
+
     // Recordar siempre lo de actualizacion parcial
 
     @Operation(summary = "Actualizar una Ruta", description = "Actualiza una Ruta")
@@ -60,6 +111,8 @@ public class RutaControlador {
 
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
         }

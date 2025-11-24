@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -17,6 +18,7 @@ import com.commonlib.entidades.Ruta;
 import com.commonlib.entidades.Solicitud;
 import com.commonlib.entidades.Tramo;
 import com.commonlib.entidades.Ubicacion;
+import com.pedidos.service.demo.dto.EstadiaDtoHttp;
 import com.pedidos.service.demo.dto.RutaDtoIn;
 import com.pedidos.service.demo.dto.RutaTentativaDtoIn;
 import com.pedidos.service.demo.dto.RutaTentativaDtoOut;
@@ -41,6 +43,9 @@ public class RutaServicio {
     @Autowired
     RestClient distanciaClient;
 
+    @Autowired
+    RestClient estadiasClient;
+
     @Transactional
     public Ruta crear(Ruta ruta) {
         return repositorio.save(ruta);
@@ -60,7 +65,8 @@ public class RutaServicio {
     @Transactional(readOnly = true)
     public Ruta obtenerPorIdSolicitud(Long idSolicitud) {
         return repositorio.findBySolicitudId(idSolicitud)
-                .orElseThrow(() -> new ResourceNotFoundException("Ruta no encontrada con solicitud cuya id es " + idSolicitud));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Ruta no encontrada con solicitud cuya id es " + idSolicitud));
     }
 
     // Fijarse bien esto
@@ -139,7 +145,7 @@ public class RutaServicio {
         // voy creando las rutas y sus tramos con distancia y tiempo estimado
 
         for (Route r : osrmResponse.getRoutes()) {
-            
+
             Ruta ruta = Ruta.builder()
                     .distanciaTotal(r.getDistance())
                     .tiempoEstimado(r.getDuration())
@@ -219,6 +225,44 @@ public class RutaServicio {
 
         solicitudServicio.actualizar(idSolicitud, solicitudCambio);
         return rutaNueva;
+    }
+
+    @Transactional
+    public Ruta finalizaRuta(long idSolicitud) {
+        Ruta existente = obtenerPorIdSolicitud(idSolicitud);
+
+        List<Tramo> tramos = tramoServicio.obtenerPorIdRuta(existente.getId());
+        List<EstadiaDtoHttp> estadias = estadiasClient.get()
+                .uri("/contenedor/" + existente.getSolicitud().getContenedor().getId()).retrieve()
+                .toEntity(new ParameterizedTypeReference<List<EstadiaDtoHttp>>() {
+                }).getBody();
+
+        if (existente.getCantidadDepositos() > estadias.size()) {
+            throw new ConflictException(
+                        "No todas las estadias en los depositos estan cargadas, carga las estadias del contenedor: " 
+                        + existente.getSolicitud().getContenedor().getId());
+        }
+        // obtener tramos
+        // obtener
+        Double totalTramos = 0.0;
+        Double totalEstadias = 0.0;
+        for (Tramo tramo : tramos) {
+            if (tramo.getEstado() != EstadosTramo.FINALIZADO) {
+                throw new ConflictException(
+                        "Para finalizar una solicitud, todos los tramos de su ruta deben estar finalizados, finaliza el tramo: "
+                                + tramo.getId());
+            }
+            totalTramos += tramo.getCostoReal();
+        }
+
+        for (EstadiaDtoHttp estadia : estadias) {
+            totalEstadias += estadia.costo();
+        }
+        Double totalCosto = totalTramos + totalEstadias;
+        SolicitudDtoIn solicitudDtoIn = new SolicitudDtoIn(EstadoSolicitud.ENTREGADA, null, totalCosto);
+        solicitudServicio.actualizar(existente.getSolicitud().getId(), solicitudDtoIn);
+
+        return existente;
     }
 
     @Transactional

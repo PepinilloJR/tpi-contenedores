@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.commonlib.Enums.EstadosTramo;
 import com.commonlib.Enums.TiposTramos;
 import com.commonlib.Enums.TiposUbicacion;
@@ -133,7 +134,7 @@ public class EstadiaServicio {
 
         // 2) la ruta
 
-        var ruta = solicitudesClient.obtenerRutaPorSolicitud(solicitud.idContenedor());
+        var ruta = solicitudesClient.obtenerRutaPorSolicitud(solicitud.id());
 
         // 3) los tramos
 

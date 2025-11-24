@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 public class TramoServicio {
 
     private final TramoRepositorio repositorio;
-    // private final SolicitudServicio solicitudServicio;
 
     @Autowired
     private RestClient camionesClient;

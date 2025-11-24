@@ -40,6 +40,7 @@ public class SolicitudServicio {
     private final ClienteServicio clienteServicio;
     private final ContenedorServicio contenedorServicio;
     private final UbicacionServicio ubicacionServicio;
+    //private final TramoServicio tramoServicio;
     // private final RutaServicio rutaServicio;
 
     @Transactional
