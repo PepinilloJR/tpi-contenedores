@@ -51,13 +51,6 @@ public class SolicitudControlador {
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitudActualizada));
     }
 
-    @Operation(summary = "Obtener solicitud por ID de contenedor", description = "Obtiene la solicitud asociada a un contenedor específico")
-    @GetMapping("/contenedor/{idContenedor}")
-    public ResponseEntity<SolicitudDtoOut> obtenerPorContenedor(@PathVariable Long idContenedor) {
-        Solicitud solicitud = solicitudServicio.obtenerPorIdContenedor(idContenedor);
-        return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitud));
-    }
-
     @Operation(summary = "Obtener un Contenedor de un cliente", description = "Obtener un contenedor segun la solicitud y el cliente")
     @GetMapping("/cliente/{idCliente}/contenedor/{idContenedor}/estado")
     public ResponseEntity<?> obtenerCOntenedorPorCliente(@PathVariable Long idCliente,
@@ -80,10 +73,20 @@ public class SolicitudControlador {
         return ResponseEntity.ok().body(contenedorDtoOutSimple);
     }
 
-    @Operation(summary = "Obtener una Solicitud", description = "Obtiene una solicitud por su ID")
-    @GetMapping("/{id}")
-    public ResponseEntity<SolicitudDtoOut> obtenerPorId(@PathVariable Long id) {
-        Solicitud solicitud = solicitudServicio.obtenerPorId(id);
+    @Operation(summary = "Obtener el seguimiento de una solicitud por cliente", description = "Obtiene el seguimiento de una solicitud dada de un cliente dado")
+    @GetMapping("/{id}/cliente/{clienteId}/seguimiento")
+    public ResponseEntity<List<SeguimientoDtoOut>> obtenerSeguimientoPorCliente(@PathVariable Long id,
+            @PathVariable Long clienteId) {
+        Solicitud solicitud = solicitudServicio.obtenerPorIdyClienteId(id, clienteId);
+        List<SeguimientoDtoOut> dtos = solicitud.getSeguimiento().stream().map(DtoHandler::convertirSeguimientoDtoOut)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    @Operation(summary = "Obtener solicitud por ID de contenedor", description = "Obtiene la solicitud asociada a un contenedor específico")
+    @GetMapping("/contenedor/{idContenedor}")
+    public ResponseEntity<SolicitudDtoOut> obtenerPorContenedor(@PathVariable Long idContenedor) {
+        Solicitud solicitud = solicitudServicio.obtenerPorIdContenedor(idContenedor);
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitud));
     }
 
@@ -104,14 +107,11 @@ public class SolicitudControlador {
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitud));
     }
 
-    @Operation(summary = "Obtener el seguimiento de una solicitud por cliente", description = "Obtiene el seguimiento de una solicitud dada de un cliente dado")
-    @GetMapping("/{id}/cliente/{clienteId}/seguimiento")
-    public ResponseEntity<List<SeguimientoDtoOut>> obtenerSeguimientoPorCliente(@PathVariable Long id,
-            @PathVariable Long clienteId) {
-        Solicitud solicitud = solicitudServicio.obtenerPorIdyClienteId(id, clienteId);
-        List<SeguimientoDtoOut> dtos = solicitud.getSeguimiento().stream().map(DtoHandler::convertirSeguimientoDtoOut)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+    @Operation(summary = "Obtener una Solicitud", description = "Obtiene una solicitud por su ID")
+    @GetMapping("/{id}")
+    public ResponseEntity<SolicitudDtoOut> obtenerPorId(@PathVariable Long id) {
+        Solicitud solicitud = solicitudServicio.obtenerPorId(id);
+        return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitud));
     }
 
     @Operation(summary = "Obtener todas las Solicitudes", description = "Lista todas las solicitudes del sistema")
