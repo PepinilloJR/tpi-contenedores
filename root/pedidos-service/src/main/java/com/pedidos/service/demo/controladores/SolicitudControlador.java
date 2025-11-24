@@ -29,8 +29,6 @@ import com.pedidos.service.demo.servicios.SolicitudServicio;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
-
-
 @RestController
 @RequestMapping("/api/solicitudes")
 @RequiredArgsConstructor
@@ -62,8 +60,8 @@ public class SolicitudControlador {
 
     @Operation(summary = "Obtener un Contenedor de un cliente", description = "Obtener un contenedor segun la solicitud y el cliente")
     @GetMapping("/cliente/{idCliente}/contenedor/{idContenedor}/estado")
-    public ResponseEntity<?> obtenerCOntenedorPorCliente(@PathVariable Long idContenedor,
-            @PathVariable Long idCliente) {
+    public ResponseEntity<?> obtenerCOntenedorPorCliente(@PathVariable Long idCliente,
+            @PathVariable Long idContenedor) {
         Contenedor contenedor;
         try {
             contenedor = solicitudServicio.obtenerContenedorPorIdyClienteId(idContenedor, idCliente);
