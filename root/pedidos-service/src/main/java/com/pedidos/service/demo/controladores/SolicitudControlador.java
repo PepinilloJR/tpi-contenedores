@@ -28,7 +28,7 @@ import com.pedidos.service.demo.servicios.SolicitudServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -61,7 +61,7 @@ public class SolicitudControlador {
     }
 
     @Operation(summary = "Obtener un Contenedor de un cliente", description = "Obtener un contenedor segun la solicitud y el cliente")
-    @GetMapping("contenedor/{idContenedor}/cliente/{idCliente}/estado")
+    @GetMapping("cliente/{idCliente}/contenedor/{idContenedor}/estado")
     public ResponseEntity<?> obtenerCOntenedorPorCliente(@PathVariable Long idContenedor,
             @PathVariable Long idCliente) {
         Contenedor contenedor;
