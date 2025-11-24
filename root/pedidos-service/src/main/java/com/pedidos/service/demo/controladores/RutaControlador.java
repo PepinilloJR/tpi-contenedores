@@ -97,7 +97,7 @@ public class RutaControlador {
 
     @Operation(summary = "Obtener una Ruta segun solicitud", description = "Obtiene una Ruta dada segun el id de su solicitud")
     @GetMapping("/solicitud/{idSolicitud}")
-    public ResponseEntity<?> getMethodName(@PathVariable Long idSolicitud) {
+    public ResponseEntity<?> obtenerPorSolicitud(@PathVariable Long idSolicitud) {
         Ruta ruta;
         try {
             ruta = servicio.obtenerPorIdSolicitud(idSolicitud);
