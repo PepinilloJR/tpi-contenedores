@@ -3,7 +3,6 @@ package com.tpi.depositosservice.controladores;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,8 +43,7 @@ public class EstadiaControlador {
     // /estadias/solicitud/{id}
     @Operation(summary = "Crear todas las estadias de un contenedor", description = "Crear todas las estadias de un contenedor")
     @PostMapping("/contenedor/{idContenedor}")
-    public ResponseEntity<List<EstadiaDtoOut>> crearTodas(@PathVariable Long idSolicitud,
-            @PathVariable Long idContenedor) {
+    public ResponseEntity<List<EstadiaDtoOut>> crearTodas(@PathVariable Long idContenedor) {
         List<Estadia> estadias = estadiaServicio.crearTodos(idContenedor);
         List<EstadiaDtoOut> dtos = estadias.stream()
                 .map(DtoHandler::convertirEstadiaDtoOut)
