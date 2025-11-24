@@ -203,9 +203,6 @@ public class TramoServicio {
 
     @Transactional
     public Tramo finalizarTramo(Long idTramo, TramoDtoIn tramoActualizado) {
-        Tramo existente = repositorio.findById(idTramo)
-                .orElseThrow(() -> new ResourceNotFoundException("Tramo no encontrado con id " + idTramo));
-
         // no deberia hacer falta obtener la tarifa ya que los costos quedan guardados
         // al asignarse un camion, y al calcular el costo aproximado
         if (tramoActualizado.combustibleConsumido() == null) {
