@@ -17,8 +17,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ContenedorServicio {
+
     private final ContenedorRepositorio repositorio;
     private final UbicacionServicio ubicacionServicio;
+    private final SolicitudServicio solicitudServicio;
+
 
     // NO CONTROLA QUE PESO, VOLUMEN SEAN MAYOR A 0
 
@@ -26,17 +29,17 @@ public class ContenedorServicio {
     public Contenedor crear(ContenedorDtoIn contenedorDto) {
 
         Ubicacion ubicacion = null;
-        
+
         if (contenedorDto.idUbicacionUltima() != null) {
             ubicacion = ubicacionServicio.obtenerPorId(contenedorDto.idUbicacionUltima());
         }
 
         Contenedor contenedor = new Contenedor(
-            null, 
-            contenedorDto.peso(), 
-            contenedorDto.volumen(), 
-            contenedorDto.estado(), 
-            ubicacion);
+                null,
+                contenedorDto.peso(),
+                contenedorDto.volumen(),
+                contenedorDto.estado(),
+                ubicacion);
         return repositorio.save(contenedor);
     }
 
@@ -52,6 +55,23 @@ public class ContenedorServicio {
     }
 
     @Transactional(readOnly = true)
+    public Contenedor obtenerPorIdyClienteId(Long idContenedor, Long idCliente) {
+        var contenedor = repositorio.findById(idContenedor);
+        var solicitud = solicitudServicio.obtenerPorIdContenedor(idContenedor);
+        if (contenedor == null && solicitud == null) {
+            throw new ResourceNotFoundException("El contenedor o la solicitud no fueron encontrados.");
+        }
+
+        if (solicitud.getCliente().getId() != idCliente) {
+            throw new IllegalArgumentException(
+                    "El id del cliente ingresado no coincide con el cliente de la solicitud");
+        }
+        return contenedor
+                .orElseThrow(() -> new ResourceNotFoundException("Contenedor no encontrado con id " + idContenedor));
+
+    }
+
+    @Transactional(readOnly = true)
     public Contenedor obtenerPorEstado(EstadosContenedor estado) {
         return repositorio.findByEstadoOrderByIdAsc(estado)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontraron contenedores en estado " + estado));
@@ -59,7 +79,7 @@ public class ContenedorServicio {
 
     @Transactional(readOnly = true)
     public List<Contenedor> listarPendientes() {
-        return repositorio.findByEstado(EstadosContenedor.EN_PREPARACION);             
+        return repositorio.findByEstado(EstadosContenedor.EN_PREPARACION);
     }
 
     @Transactional
@@ -77,7 +97,6 @@ public class ContenedorServicio {
         existente.setPeso(contenedorDto.peso() != null ? contenedorDto.peso() : existente.getPeso());
         existente.setVolumen(contenedorDto.volumen() != null ? contenedorDto.volumen() : existente.getVolumen());
         existente.setUbicacion(ubicacion != null ? ubicacion : existente.getUbicacion());
-
 
         return repositorio.save(existente);
     }

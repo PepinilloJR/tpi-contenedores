@@ -3,7 +3,7 @@ package com.pedidos.service.demo.controladores;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.catalina.connector.Response;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,11 +79,11 @@ public class ContenedorControlador {
     }
 
     @Operation(summary = "Obtener un Contenedor", description = "Obtener un contenedor dado segun id solicitud")
-    @GetMapping("/{id}/estado")
-    public ResponseEntity<?> obtenerPorSolicitud(@PathVariable Long id) {
+    @GetMapping("{idContenedor}/cliente/{idCliente}/estado")
+    public ResponseEntity<?> obtenerPorCliente(@PathVariable Long idContenedor, @PathVariable Long idCliente) {
         Contenedor contenedor;
         try {
-            contenedor = servicio.obtenerPorId(id);
+            contenedor = servicio.obtenerPorIdyClienteId(idContenedor, idCliente);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
         }
@@ -119,6 +119,8 @@ public class ContenedorControlador {
                 contenedor.getUbicacion() != null ? contenedor.getUbicacion().getId() : null);
         return ResponseEntity.ok().body(contenedorDtoOut);
     }
+
+    
 
     @Operation(summary = "Obtener todos los Contenedores", description = "Obtiene todos los contenedores")
     @GetMapping
