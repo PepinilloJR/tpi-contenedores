@@ -52,7 +52,7 @@ public class SolicitudControlador {
     }
 
     @Operation(summary = "Obtener un Contenedor de un cliente", description = "Obtener un contenedor segun la solicitud y el cliente")
-    @GetMapping("/clientes/{idCliente}/contenedores/{idContenedor}/estado")
+    @GetMapping("/cliente/{idCliente}/contenedor/{idContenedor}/estado")
     public ResponseEntity<?> obtenerContenedorPorCliente(@PathVariable Long idCliente,
             @PathVariable Long idContenedor) {
         Contenedor contenedor;
