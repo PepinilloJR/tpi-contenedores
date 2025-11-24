@@ -14,17 +14,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.commonlib.entidades.Contenedor;
 import com.commonlib.entidades.Solicitud;
+import com.commonlib.error.ErrorRequest;
+import com.pedidos.service.demo.dto.ContenedorDtoOutSimple;
 import com.pedidos.service.demo.dto.DtoHandler;
 import com.pedidos.service.demo.dto.SeguimientoDtoOut;
 import com.pedidos.service.demo.dto.SolicitudDtoCreacion;
 import com.pedidos.service.demo.dto.SolicitudDtoIn;
 import com.pedidos.service.demo.dto.SolicitudDtoOut;
+import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.servicios.SolicitudServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-
 
 @RestController
 @RequestMapping("/api/solicitudes")
@@ -48,13 +51,33 @@ public class SolicitudControlador {
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitudActualizada));
     }
 
-    
-
     @Operation(summary = "Obtener solicitud por ID de contenedor", description = "Obtiene la solicitud asociada a un contenedor específico")
     @GetMapping("/contenedor/{idContenedor}")
     public ResponseEntity<SolicitudDtoOut> obtenerPorContenedor(@PathVariable Long idContenedor) {
         Solicitud solicitud = solicitudServicio.obtenerPorIdContenedor(idContenedor);
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitud));
+    }
+
+    @Operation(summary = "Obtener un Contenedor de un cliente", description = "Obtener un contenedor segun la solicitud y el cliente")
+    @GetMapping("contenedor/{idContenedor}/cliente/{idCliente}/estado")
+    public ResponseEntity<?> obtenerCOntenedorPorCliente(@PathVariable Long idContenedor,
+            @PathVariable Long idCliente) {
+        Contenedor contenedor;
+        try {
+            contenedor = solicitudServicio.obtenerContenedorPorIdyClienteId(idContenedor, idCliente);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        }
+
+        catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+        }
+
+        ContenedorDtoOutSimple contenedorDtoOutSimple = new ContenedorDtoOutSimple(
+                contenedor.getId(),
+                contenedor.getEstado(),
+                contenedor.getUbicacion() != null ? contenedor.getUbicacion().getId() : null);
+        return ResponseEntity.ok().body(contenedorDtoOutSimple);
     }
 
     @Operation(summary = "Obtener una Solicitud", description = "Obtiene una solicitud por su ID")
