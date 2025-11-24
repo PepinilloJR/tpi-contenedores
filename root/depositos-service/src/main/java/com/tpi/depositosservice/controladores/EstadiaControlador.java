@@ -51,6 +51,16 @@ public class EstadiaControlador {
         return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
     }
 
+    @Operation(summary = "Obtener todas las estadías de un contenedor", description = "Lista todas las estadías del contenedor")
+    @GetMapping("/contenedor/{idContenedor}")
+    public ResponseEntity<List<EstadiaDtoOut>> listarTodasPorContenedor(@PathVariable Long idContenedor) {
+        List<Estadia> estadias = estadiaServicio.obtenerEstadiasPorContenedor(idContenedor);
+        List<EstadiaDtoOut> dtos = estadias.stream()
+                .map(DtoHandler::convertirEstadiaDtoOut)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     @Operation(summary = "Obtener una estadía", description = "Obtiene una estadía por su ID")
     @GetMapping("/{id}")
     public ResponseEntity<EstadiaDtoOut> obtenerPorId(@PathVariable Long id) {
@@ -62,16 +72,6 @@ public class EstadiaControlador {
     @GetMapping
     public ResponseEntity<List<EstadiaDtoOut>> listarTodas() {
         List<Estadia> estadias = estadiaServicio.listarTodos();
-        List<EstadiaDtoOut> dtos = estadias.stream()
-                .map(DtoHandler::convertirEstadiaDtoOut)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
-    }
-
-    @Operation(summary = "Obtener todas las estadías de un contenedor", description = "Lista todas las estadías del contenedor")
-    @GetMapping("/contenedor/{idContenedor}")
-    public ResponseEntity<List<EstadiaDtoOut>> listarTodasPorContenedor(@PathVariable Long idContenedor) {
-        List<Estadia> estadias = estadiaServicio.obtenerEstadiasPorContenedor(idContenedor);
         List<EstadiaDtoOut> dtos = estadias.stream()
                 .map(DtoHandler::convertirEstadiaDtoOut)
                 .collect(Collectors.toList());
