@@ -17,17 +17,19 @@ public class ResourceServerConfig {
 
         .requestMatchers(HttpMethod.GET,"/protected/solicitudes/cliente/**")
             .hasAnyRole("CLIENTE", "ADMIN")
+        .requestMatchers(HttpMethod.GET,"/protected/solicitudes/**/cliente/**")
+            .hasAnyRole("CLIENTE", "ADMIN")
         .requestMatchers(HttpMethod.GET,"/protected/solicitudes")
             .hasAnyRole( "ADMIN")
         .requestMatchers(HttpMethod.POST,"/protected/solicitudes")
             .hasAnyRole( "CLIENTE", "ADMIN")
 
-        .requestMatchers(HttpMethod.GET,"/protected/tramos/transportista/**")
+        .requestMatchers(HttpMethod.GET,"/protected/tramos/camion/**")
             .hasAnyRole( "TRANSPORTISTA", "ADMIN")
         .requestMatchers(HttpMethod.PUT,"/protected/tramos/**")
             .hasAnyRole( "TRANSPORTISTA", "ADMIN")
         .requestMatchers(HttpMethod.GET,"/protected/tramos")
-            .hasAnyRole( "TRANSPORTISTA", "ADMIN")
+            .hasAnyRole( "ADMIN")
 
         .requestMatchers(HttpMethod.PUT, "/controlled/tramos/finalizar/**")
             .hasAnyRole( "TRANSPORTISTA", "ADMIN")
