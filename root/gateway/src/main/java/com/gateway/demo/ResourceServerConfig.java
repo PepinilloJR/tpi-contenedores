@@ -15,10 +15,11 @@ public class ResourceServerConfig {
         http.authorizeHttpRequests(auth -> 
         auth
 
-        .requestMatchers(HttpMethod.GET,"/protected/solicitudes/cliente/**")
-            .hasAnyRole("CLIENTE", "ADMIN")
         .requestMatchers(HttpMethod.GET,"/protected/solicitudes/**/cliente/**")
             .hasAnyRole("CLIENTE", "ADMIN")
+        .requestMatchers(HttpMethod.GET,"/protected/solicitudes/cliente/**")
+            .hasAnyRole("CLIENTE", "ADMIN")
+
         .requestMatchers(HttpMethod.GET,"/protected/solicitudes")
             .hasAnyRole( "ADMIN")
         .requestMatchers(HttpMethod.POST,"/protected/solicitudes")
