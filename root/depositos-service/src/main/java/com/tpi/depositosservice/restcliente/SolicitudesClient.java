@@ -116,7 +116,7 @@ public class SolicitudesClient {
     public RutaDtoOut obtenerRutaPorSolicitud(Long idSolicitud) {
         try {
             return restClient.get()
-                    .uri("/api/rutas/solicitud/{idSolicitud}", idSolicitud)
+                    .uri("/api/rutas/solicitud/" + idSolicitud)
                     .retrieve()
                     .body(RutaDtoOut.class);
         } catch (HttpClientErrorException.NotFound e) {
