@@ -3,6 +3,7 @@ package com.pedidos.service.demo.controladores;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import com.commonlib.entidades.Contenedor;
 import com.commonlib.error.ErrorRequest;
 import com.pedidos.service.demo.dto.ContenedorDtoIn;
 import com.pedidos.service.demo.dto.ContenedorDtoOut;
+import com.pedidos.service.demo.dto.ContenedorDtoOutSimple;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.servicios.ContenedorServicio;
 
@@ -74,6 +76,27 @@ public class ContenedorControlador {
                 contenedorActualizado.getUbicacion() != null ? contenedorActualizado.getUbicacion().getId() : null);
 
         return ResponseEntity.ok(contenedorDtoOut);
+    }
+
+    @Operation(summary = "Obtener un Contenedor", description = "Obtener un contenedor dado segun id solicitud")
+    @GetMapping("/{id}/estado")
+    public ResponseEntity<?> obtenerPorSolicitud(@PathVariable Long id) {
+        Contenedor contenedor;
+        try {
+            contenedor = servicio.obtenerPorId(id);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        }
+
+        catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+        }
+
+        ContenedorDtoOutSimple contenedorDtoOutSimple = new ContenedorDtoOutSimple(
+                contenedor.getId(),
+                contenedor.getEstado(),
+                contenedor.getUbicacion() != null ? contenedor.getUbicacion().getId() : null);
+        return ResponseEntity.ok().body(contenedorDtoOutSimple);
     }
 
     @Operation(summary = "Obtener un Contenedor", description = "Obtener un Contenedor dado segun id")
