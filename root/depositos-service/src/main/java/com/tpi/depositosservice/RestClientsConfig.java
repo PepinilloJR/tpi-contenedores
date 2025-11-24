@@ -9,7 +9,7 @@ public class RestClientsConfig {
 
     @Bean
     RestClient solicitudClient() {
-        return RestClient.create("http://solicitudes:8001");
+        return RestClient.create("http://pedidos:8001");
     }
 
 }
