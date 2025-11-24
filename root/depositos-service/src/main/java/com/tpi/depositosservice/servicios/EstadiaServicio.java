@@ -10,9 +10,7 @@ import com.commonlib.Enums.EstadosTramo;
 import com.commonlib.Enums.TiposTramos;
 import com.commonlib.Enums.TiposUbicacion;
 import com.commonlib.entidades.Estadia;
-
 import com.tpi.depositosservice.dto.EstadiaDtoIn;
-
 import com.tpi.depositosservice.repositorios.EstadiaRepository;
 import com.tpi.depositosservice.restcliente.SolicitudesClient;
 
@@ -42,7 +40,7 @@ public class EstadiaServicio {
         var solicitud = solicitudesClient.obtenerSolicitudPorContenedor(datos.idContenedor());
 
         // 2) Obtener la ruta de la solicitud
-        var ruta = solicitudesClient.obtenerRutaPorSolicitud(solicitud.idContenedor());
+        var ruta = solicitudesClient.obtenerRutaPorSolicitud(solicitud.id());
 
         // 3) Obtener todos los tramos de la ruta
         var tramos = solicitudesClient.obtenerTramosPorRuta(ruta.idRuta());
