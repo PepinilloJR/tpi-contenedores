@@ -9,5 +9,6 @@ import java.util.List;
 public interface TramoRepositorio extends JpaRepository<Tramo, Long>{
     //query con del tramo con un determinado id de ruta
     List<Tramo> findByRutaId(Long id);
+    List<Tramo> findByIdCamion(Long idCamion);
 
 }

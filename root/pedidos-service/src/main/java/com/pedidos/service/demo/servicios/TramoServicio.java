@@ -58,10 +58,10 @@ public class TramoServicio {
         return repositorio.findByRutaId(idR);
     }
 
-    // @Transactional(readOnly = true)
-    // public List<Tramo> obtenerPorTransportista(String transportista) {
-    // return repositorio.findByCamionNombreTransportista(transportista);
-    // }
+    @Transactional(readOnly = true)
+    public List<Tramo> obtenerPorCamion(Long idCamion) {
+        return repositorio.findByIdCamion(idCamion);
+    }
 
     @Transactional
     public Tramo actualizar(Long id, TramoDtoIn tramoActualizado) {
@@ -108,8 +108,8 @@ public class TramoServicio {
             // debo manejar los estados del contendor, dar su ubicacion y si esta en un
             // deposito o si ya llego
             EstadosContenedor nuevoEstadoContenedor;
-            if (existente.getTipo().equals(TiposTramos.ORIGEN_DESTINO) || existente.getTipo().equals(TiposTramos.DEPOSITO_DESTINO))
-            {
+            if (existente.getTipo().equals(TiposTramos.ORIGEN_DESTINO)
+                    || existente.getTipo().equals(TiposTramos.DEPOSITO_DESTINO)) {
                 nuevoEstadoContenedor = EstadosContenedor.ENTREGADO;
             } else {
                 nuevoEstadoContenedor = EstadosContenedor.EN_DEPOSITO;
