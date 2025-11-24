@@ -133,7 +133,7 @@ public class EstadiaServicio {
 
         // 2) la ruta
 
-        var ruta = solicitudesClient.obtenerRutaPorSolicitud(solicitud.idContenedor());
+        var ruta = solicitudesClient.obtenerRutaPorSolicitud(solicitud.id());
 
         // 3) los tramos
 
