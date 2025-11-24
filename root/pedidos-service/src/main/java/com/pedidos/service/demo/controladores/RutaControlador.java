@@ -93,7 +93,6 @@ public class RutaControlador {
                 rutaActualizada.getSolicitud() != null ? rutaActualizada.getSolicitud().getId() : null,
                 Estimado,
                 Real,
-                rutaActualizada.getCostoPorTramo(),
                 rutaActualizada.getCantidadDepositos(),
                 rutaActualizada.getCantidadTramos());
         return ResponseEntity.ok(rutaDtoOut);
@@ -140,7 +139,6 @@ public class RutaControlador {
                 rutaActualizada.getSolicitud() != null ? rutaActualizada.getSolicitud().getId() : null,
                 Estimado,
                 Real,
-                rutaActualizada.getCostoPorTramo(),
                 rutaActualizada.getCantidadDepositos(),
                 rutaActualizada.getCantidadTramos());
         return ResponseEntity.ok(rutaDtoOut);
@@ -183,7 +181,6 @@ public class RutaControlador {
                 ruta.getSolicitud() != null ? ruta.getSolicitud().getId() : null,
                 Estimado,
                 Real,
-                ruta.getCostoPorTramo(),
                 ruta.getCantidadDepositos(),
                 ruta.getCantidadTramos());
         return ResponseEntity.ok(rutaDtoOut);
@@ -224,7 +221,6 @@ public class RutaControlador {
                 ruta.getSolicitud() != null ? ruta.getSolicitud().getId() : null,
                 Estimado,
                 Real,
-                ruta.getCostoPorTramo(),
                 ruta.getCantidadDepositos(),
                 ruta.getCantidadTramos());
         return ResponseEntity.ok(rutaDtoOut);
@@ -258,7 +254,6 @@ public class RutaControlador {
                     r.getSolicitud() != null ? r.getSolicitud().getId() : null,
                     Estimado,
                     Real,
-                    r.getCostoPorTramo(),
                     r.getCantidadDepositos(),
                     r.getCantidadTramos());
 
@@ -306,7 +301,6 @@ public class RutaControlador {
                 ruta.getSolicitud() != null ? ruta.getSolicitud().getId() : null,
                 Estimado,
                 Real,
-                ruta.getCostoPorTramo(),
                 ruta.getCantidadDepositos(),
                 ruta.getCantidadTramos());
 

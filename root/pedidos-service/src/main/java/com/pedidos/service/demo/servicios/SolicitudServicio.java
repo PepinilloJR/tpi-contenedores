@@ -144,8 +144,7 @@ public class SolicitudServicio {
             existente.setEstado(datos.estado());
         }
 
-        existente
-                .setCostoEstimado(datos.costoEstimado() != null ? datos.costoEstimado() : existente.getCostoEstimado());
+        
         existente.setCostoFinal(datos.costoFinal() != null ? datos.costoFinal() : existente.getCostoFinal());
 
         return repositorio.save(existente);
