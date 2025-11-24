@@ -62,7 +62,7 @@ services:
     volumes:
     - ./osrm-data:/data
     command: >
-      osrm-routed /data/argentina-latest.osrm
+      osrm-routed --algorithm mld /data/argentina-latest.osrm
 volumes:
   keycloak_data:
   postgres_data:
