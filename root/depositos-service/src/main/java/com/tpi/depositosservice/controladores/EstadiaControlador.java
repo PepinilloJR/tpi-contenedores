@@ -29,6 +29,7 @@ public class EstadiaControlador {
 
     private final EstadiaServicio estadiaServicio;
 
+    // Esto lo puedo sacar
     @Operation(summary = "Crear una estadía", description = "Crea una nueva estadía entre dos tramos consecutivos en un depósito")
     @PostMapping
     public ResponseEntity<EstadiaDtoOut> crear(@RequestBody EstadiaDtoIn datos) {
@@ -36,6 +37,8 @@ public class EstadiaControlador {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(DtoHandler.convertirEstadiaDtoOut(estadiaCreada));
     }
+
+    
 
     @Operation(summary = "Obtener una estadía", description = "Obtiene una estadía por su ID")
     @GetMapping("/{id}")

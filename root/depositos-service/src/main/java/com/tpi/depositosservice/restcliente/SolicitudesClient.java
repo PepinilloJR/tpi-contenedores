@@ -26,7 +26,7 @@ public class SolicitudesClient {
     public UbicacionDtoOut obtenerUbicacionPorId(Long id) {
         try {
             return restClient.get()
-                    .uri("/api/ubicaciones/{id}", id)
+                    .uri("/api/ubicaciones/" + id)
                     .retrieve()
                     .body(UbicacionDtoOut.class);
         } catch (HttpClientErrorException.NotFound e) {
@@ -41,7 +41,7 @@ public class SolicitudesClient {
     public ContenedorDtoOut obtenerContenedorPorId(Long id) {
         try {
             return restClient.get()
-                    .uri("/api/contenedores/{id}", id)
+                    .uri("/api/contenedores/" + id)
                     .retrieve()
                     .body(ContenedorDtoOut.class);
         } catch (HttpClientErrorException.NotFound e) {
@@ -56,7 +56,7 @@ public class SolicitudesClient {
     public SolicitudDtoOut obtenerSolicitudPorContenedor(Long idContenedor) {
         try {
             return restClient.get()
-                    .uri("/api/solicitudes/contenedor/{idContenedor}", idContenedor)
+                    .uri("/api/solicitudes/contenedor/" + idContenedor)
                     .retrieve()
                     .body(SolicitudDtoOut.class);
         } catch (HttpClientErrorException.NotFound e) {
@@ -71,7 +71,7 @@ public class SolicitudesClient {
     public TramoDtoOut obtenerTramoPorId(Long id) {
         try {
             return restClient.get()
-                    .uri("/api/tramos/{id}", id)
+                    .uri("/api/tramos/" + id)
                     .retrieve()
                     .body(TramoDtoOut.class);
         } catch (HttpClientErrorException.NotFound e) {
