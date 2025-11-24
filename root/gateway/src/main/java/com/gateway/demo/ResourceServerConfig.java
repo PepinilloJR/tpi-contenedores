@@ -7,21 +7,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class ResourceServerConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.addFilterBefore((request, response, chain) -> {
-    System.out.println("SECURITY PATH = " + request.getRemoteAddr());
-    chain.doFilter(request, response);
-}, UsernamePasswordAuthenticationFilter.class);
-
         http.authorizeHttpRequests(auth -> auth
 
-                .requestMatchers(HttpMethod.GET, "/protected/solicitudes/**/cliente/**/seguimiento")
+                .requestMatchers(HttpMethod.GET, "/protected/solicitudes/{idCliente}/cliente/{idContenedor}/seguimiento")
                 .hasAnyRole("CLIENTE", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/protected/solicitudes/cliente/**")
                 .hasAnyRole("CLIENTE", "ADMIN")
