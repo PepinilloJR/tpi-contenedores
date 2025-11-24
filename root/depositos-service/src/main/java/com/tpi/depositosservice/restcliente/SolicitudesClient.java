@@ -32,7 +32,7 @@ public class SolicitudesClient {
         } catch (HttpClientErrorException.NotFound e) {
             throw new ResourceNotFoundException("Ubicación no encontrada con id " + id);
         } catch (Exception e) {
-            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes", e);
+            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes " + e.getMessage());
         }
     }
 
@@ -47,7 +47,7 @@ public class SolicitudesClient {
         } catch (HttpClientErrorException.NotFound e) {
             throw new ResourceNotFoundException("Contenedor no encontrado con id " + id);
         } catch (Exception e) {
-            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes", e);
+            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes " + e.getMessage());
         }
     }
 
@@ -61,8 +61,8 @@ public class SolicitudesClient {
                     .body(SolicitudDtoOut.class);
         } catch (HttpClientErrorException.NotFound e) {
             throw new ResourceNotFoundException("Solicitud no encontrada para el contenedor con id " + idContenedor);
-        } catch (Exception e) {
-            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes", e);
+        } catch (Exception e) {  
+            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes " + e.getMessage());
         }
     }
 
@@ -77,7 +77,7 @@ public class SolicitudesClient {
         } catch (HttpClientErrorException.NotFound e) {
             throw new ResourceNotFoundException("Tramo no encontrado con id " + id);
         } catch (Exception e) {
-            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes", e);
+            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes " + e.getMessage());
         }
     }
 
@@ -94,7 +94,7 @@ public class SolicitudesClient {
             throw new ResourceNotFoundException("No se encontraron tramos" +
                     (rutaId != null ? " para la ruta con id " + rutaId : ""));
         } catch (Exception e) {
-            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes", e);
+            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes " + e.getMessage());
         }
     }
 
@@ -122,7 +122,7 @@ public class SolicitudesClient {
         } catch (HttpClientErrorException.NotFound e) {
             throw new ResourceNotFoundException("Ruta no encontrada para la solicitud con id " + idSolicitud);
         } catch (Exception e) {
-            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes", e);
+            throw new RuntimeException("Error al comunicarse con el servicio de solicitudes " + e.getMessage());
         }
     }
 
