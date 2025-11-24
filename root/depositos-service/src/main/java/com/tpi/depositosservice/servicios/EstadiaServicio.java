@@ -224,8 +224,8 @@ public class EstadiaServicio {
     }
 
     @Transactional(readOnly = true)
-    public List<Estadia> obtenerEstadiasPorContenedor(Long id) {
-        return estadiaRepository.findByIdDeposito(id);
+    public List<Estadia> obtenerEstadiasPorContenedor(Long idContenedor) {
+        return estadiaRepository.findByIdContenedor(idContenedor);
     }
 
     @Transactional(readOnly = true)

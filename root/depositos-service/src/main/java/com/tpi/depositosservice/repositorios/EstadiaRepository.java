@@ -9,5 +9,5 @@ import com.commonlib.entidades.Estadia;
 
 @Repository
 public interface EstadiaRepository extends JpaRepository<Estadia, Long> {
-    List<Estadia> findByIdDeposito(Long idDeposito);
+    List<Estadia> findByIdContenedor(Long idContenedor);
 }
