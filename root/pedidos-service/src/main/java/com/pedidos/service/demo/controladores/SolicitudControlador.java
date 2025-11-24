@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.commonlib.entidades.Contenedor;
 import com.commonlib.entidades.Solicitud;
 import com.pedidos.service.demo.dto.DtoHandler;
 import com.pedidos.service.demo.dto.SeguimientoDtoOut;
@@ -24,6 +25,8 @@ import com.pedidos.service.demo.servicios.SolicitudServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -48,6 +51,7 @@ public class SolicitudControlador {
         return ResponseEntity.ok(DtoHandler.convertirSolicitudDtoOut(solicitudActualizada));
     }
 
+    
     
 
     @Operation(summary = "Obtener solicitud por ID de contenedor", description = "Obtiene la solicitud asociada a un contenedor específico")
