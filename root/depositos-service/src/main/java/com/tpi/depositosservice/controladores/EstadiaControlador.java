@@ -3,6 +3,7 @@ package com.tpi.depositosservice.controladores;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +31,7 @@ public class EstadiaControlador {
     private final EstadiaServicio estadiaServicio;
 
     // Esto lo puedo sacar
-    @Operation(summary = "Crear una estadía", description = "Crea una nueva estadía entre dos tramos consecutivos en un depósito")
+    @Operation(summary = "Crear una estadia", description = "Crea una nueva estadía entre dos tramos consecutivos en un depósito")
     @PostMapping
     public ResponseEntity<EstadiaDtoOut> crear(@RequestBody EstadiaDtoIn datos) {
         Estadia estadiaCreada = estadiaServicio.crear(datos);
@@ -38,7 +39,19 @@ public class EstadiaControlador {
                 .body(DtoHandler.convertirEstadiaDtoOut(estadiaCreada));
     }
 
-    
+    // Hacer la estadia para todos
+    // /estadias/solicitud/ruta/1
+    // /estadias/solicitud/{id}
+    @Operation(summary = "Crear todas las estadias de un contenedor", description = "Crear todas las estadias de un contenedor")
+    @PostMapping("/contenedor/{idContenedor}")
+    public ResponseEntity<List<EstadiaDtoOut>> crearTodas(@PathVariable Long idSolicitud,
+            @PathVariable Long idContenedor) {
+        List<Estadia> estadias = estadiaServicio.crearTodos(idContenedor);
+        List<EstadiaDtoOut> dtos = estadias.stream()
+                .map(DtoHandler::convertirEstadiaDtoOut)
+                .collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+    }
 
     @Operation(summary = "Obtener una estadía", description = "Obtiene una estadía por su ID")
     @GetMapping("/{id}")

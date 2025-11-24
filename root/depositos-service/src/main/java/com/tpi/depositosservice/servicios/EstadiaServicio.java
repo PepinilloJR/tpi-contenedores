@@ -1,11 +1,11 @@
 package com.tpi.depositosservice.servicios;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.commonlib.Enums.EstadosTramo;
 import com.commonlib.Enums.TiposTramos;
 import com.commonlib.Enums.TiposUbicacion;
@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class EstadiaServicio {
-
     private final EstadiaRepository estadiaRepository;
     private final SolicitudesClient solicitudesClient;
 
@@ -122,19 +121,120 @@ public class EstadiaServicio {
         return estadiaRepository.save(estadia);
     }
 
+    @Transactional
+    public List<Estadia> crearTodos(Long idContenedor) {
+        if (idContenedor == null) {
+            throw new IllegalArgumentException("El id del contenedor no puede ser nulo");
+        }
+
+        List<Estadia> estadiasCreadas = new ArrayList<>();
+
+        // 1) la solicitud
+
+        var solicitud = solicitudesClient.obtenerSolicitudPorContenedor(idContenedor);
+
+        // 2) la ruta
+
+        var ruta = solicitudesClient.obtenerRutaPorSolicitud(solicitud.idContenedor());
+
+        // 3) los tramos
+
+        var tramos = solicitudesClient.obtenerTramosPorRuta(ruta.idRuta());
+
+        if (tramos == null || tramos.isEmpty()) {
+            throw new IllegalArgumentException("La ruta no tiene tramos");
+        }
+
+        for (var tramoActual : tramos) {
+
+            try {
+                // 5) Validar que el tramo haya iniciado
+                if (tramoActual.fechaInicio() == null) {
+                    continue; // El tramo no ha iniciado, continuar con el siguiente
+                }
+
+                // 6) Validar que el tramo sea DEPOSITO-DEPOSITO o DEPOSITO-DESTINO
+                if (!(TiposTramos.DEPOSITO_DEPOSITO.equals(tramoActual.tipo())
+                        || TiposTramos.DEPOSITO_DESTINO.equals(tramoActual.tipo()))) {
+                    continue; // No es un tramo que genere estadía
+                }
+
+                // 7) Verificar que exista un tramo anterior
+                if (tramoActual.idTramoAnterior() == null) {
+                    continue; // Es el primer tramo, no hay estadía previa
+                }
+
+                // 8) Obtener el tramo anterior
+                var tramoAnterior = solicitudesClient.obtenerTramoPorId(tramoActual.idTramoAnterior());
+
+                // 9) Validar que el tramo anterior esté finalizado
+                if (tramoAnterior.fechaFin() == null || !EstadosTramo.FINALIZADO.equals(tramoAnterior.estado())) {
+                    continue; // El tramo anterior no está finalizado
+                }
+
+                // 10) Validar que el tramo anterior sea ORIGEN-DEPOSITO o DEPOSITO-DEPOSITO
+                if (!(TiposTramos.ORIGEN_DEPOSITO.equals(tramoAnterior.tipo())
+                        || TiposTramos.DEPOSITO_DEPOSITO.equals(tramoAnterior.tipo()))) {
+                    continue; // El tramo anterior no termina en depósito
+                }
+
+                // 11) Obtener las ubicaciones para validar continuidad
+                var ubicacionTramoActualOrigen = solicitudesClient.obtenerUbicacionPorId(tramoActual.idOrigen());
+                var ubicacionTramoAnteriorDestino = solicitudesClient.obtenerUbicacionPorId(tramoAnterior.idDestino());
+
+                // 12) Validar que el destino del tramo anterior coincida con el origen del
+                // tramo actual
+                if (!ubicacionTramoActualOrigen.id().equals(ubicacionTramoAnteriorDestino.id())) {
+                    continue; // No hay continuidad de la ruta
+                }
+
+                // 13) Validar que la ubicación sea efectivamente un depósito
+                if (!ubicacionTramoActualOrigen.tipo().equals(TiposUbicacion.DEPOSITO.name())) {
+                    continue; // La ubicación no es un depósito
+                }
+
+                // 14) Crear la estadía
+                var estadia = new Estadia(
+                        null,
+                        tramoActual.idOrigen(),
+                        idContenedor,
+                        tramoAnterior.fechaFin(), // Fecha de entrada al depósito
+                        tramoActual.fechaInicio(), // Fecha de salida del depósito
+                        null);
+
+                // 15) Calcular el costo de la estadía según el costo del depósito
+                estadia.calcularCosto(ubicacionTramoActualOrigen.costo());
+
+                // 16) Guardar la estadía
+                var estadiaCreada = estadiaRepository.save(estadia);
+                estadiasCreadas.add(estadiaCreada);
+
+            } catch (Exception e) {
+                throw new RuntimeException("Error al crear estadía para tramo " + tramoActual.id(), e);
+            }
+        }
+
+        return estadiasCreadas;
+
+    }
+
+    @Transactional(readOnly = true)
     public Estadia obtenerPorId(Long id) {
         return estadiaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No se encontró la estadía con id: " + id));
     }
 
+    @Transactional(readOnly = true)
     public List<Estadia> obtenerEstadiasPorContenedor(Long id) {
         return estadiaRepository.findByIdDeposito(id);
     }
 
+    @Transactional(readOnly = true)
     public List<Estadia> listarTodos() {
         return estadiaRepository.findAll();
     }
 
+    @Transactional
     public void eliminar(Long id) {
         if (!estadiaRepository.existsById(id)) {
             throw new NoSuchElementException("No se encontró la estadía con id: " + id);
