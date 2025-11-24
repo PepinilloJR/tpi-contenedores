@@ -8,9 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
+import com.commonlib.Enums.EstadoSolicitud;
+import com.commonlib.Enums.EstadosContenedor;
 import com.commonlib.Enums.EstadosTramo;
+import com.commonlib.Enums.TiposTramos;
 import com.commonlib.entidades.Tramo;
 import com.pedidos.service.demo.dto.CamionDtoHttp;
+import com.pedidos.service.demo.dto.ContenedorDtoIn;
+import com.pedidos.service.demo.dto.SolicitudDtoIn;
 import com.pedidos.service.demo.dto.TarifaDtoHttp;
 import com.pedidos.service.demo.dto.TramoDtoIn;
 import com.pedidos.service.demo.exepciones.ConflictException;
@@ -24,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 public class TramoServicio {
 
     private final TramoRepositorio repositorio;
+    private final SolicitudServicio solicitudServicio;
+    private final ContenedorServicio contenedorServicio;
 
     @Autowired
     private RestClient camionesClient;
@@ -85,14 +92,32 @@ public class TramoServicio {
             }
         }
 
-
         if (tramoActualizado.fechaFin() != null) {
             if (!existente.getEstado().equals(EstadosTramo.INICIADO)) {
                 throw new ConflictException(
                         "No se puede finalizar un tramo que esta " + existente.getEstado().toString());
             }
+            if (tramoActualizado.combustibleConsumido() == null) {
+                throw new IllegalArgumentException("Se debe ingresar el combustible consumido para finalizar un tramo");
+            }
             existente.setFechaHoraFin(tramoActualizado.fechaFin());
+            existente.setCombustibleConsumido(tramoActualizado.combustibleConsumido());
+            manejarCalculoReal(existente);
             existente.setEstado(EstadosTramo.FINALIZADO);
+
+            // debo manejar los estados del contendor, dar su ubicacion y si esta en un
+            // deposito o si ya llego
+            EstadosContenedor nuevoEstadoContenedor;
+            if (existente.getTipo().equals(TiposTramos.ORIGEN_DESTINO) || existente.getTipo().equals(TiposTramos.DEPOSITO_DESTINO))
+            {
+                nuevoEstadoContenedor = EstadosContenedor.ENTREGADO;
+            } else {
+                nuevoEstadoContenedor = EstadosContenedor.EN_DEPOSITO;
+            }
+            ContenedorDtoIn contenedorDtoIn = new ContenedorDtoIn(null, null, null, nuevoEstadoContenedor,
+                    existente.getDestino().getId());
+            contenedorServicio.actualizar(existente.getRuta().getSolicitud().getContenedor().getId(), contenedorDtoIn);
+
         }
 
         manejarAsignacionCamion(existente, camion);
@@ -100,28 +125,45 @@ public class TramoServicio {
         if (camion != null) {
             manejarCostoAproximado(existente, camion);
         }
-        
+
         if (tramoActualizado.fechaInicio() != null) {
             if (!existente.getEstado().equals(EstadosTramo.ASIGNADO)) {
                 throw new ConflictException("No se iniciar un tramo que esta " + existente.getEstado().toString());
             }
+
             existente.setFechaHoraInicio(tramoActualizado.fechaInicio());
             existente.setEstado(EstadosTramo.INICIADO);
-        }
 
+            // si es el primer tramo, entonces debo setear que la solicitud esta en viaje
+
+            if (existente.getTipo().equals(TiposTramos.ORIGEN_DEPOSITO)
+                    || existente.getTipo().equals(TiposTramos.ORIGEN_DESTINO)) {
+                SolicitudDtoIn solicitudDtoIn = new SolicitudDtoIn(EstadoSolicitud.EN_TRANSITO, null, null);
+                solicitudServicio.actualizar(existente.getRuta().getSolicitud().getId(), solicitudDtoIn);
+            }
+
+            // debo manejar los estados del contendor, dar su ubicacion y si esta en un
+            // deposito o si ya llego
+
+            ContenedorDtoIn contenedorDtoIn = new ContenedorDtoIn(null, null, null, EstadosContenedor.EN_VIAJE,
+                    existente.getOrigen().getId());
+            contenedorServicio.actualizar(existente.getRuta().getSolicitud().getContenedor().getId(), contenedorDtoIn);
+        }
 
         // existente.setEstado(tramoActualizado.estado() != null ?
         // tramoActualizado.estado() : tramoActualizado.getEstado());
         // existente.setFechaHoraFin(tramoActualizado.getFechaHoraFin());
-        existente.setCombustibleConsumido(
-                tramoActualizado.combustibleConsumido() != null ? tramoActualizado.combustibleConsumido()
-                        : existente.getCombustibleConsumido());
+        // existente.setCombustibleConsumido(
+        // tramoActualizado.combustibleConsumido() != null ?
+        // tramoActualizado.combustibleConsumido()
+        // : existente.getCombustibleConsumido());
 
         // existente.setCostoAproximado(tramoActualizado.costoAproximado() != null ?
         // tramoActualizado.costoAproximado() : existente.getCostoAproximado());
 
-        existente.setCostoReal(
-                tramoActualizado.costoReal() != null ? tramoActualizado.costoReal() : existente.getCostoReal());
+        // existente.setCostoReal(
+        // tramoActualizado.costoReal() != null ? tramoActualizado.costoReal() :
+        // existente.getCostoReal());
 
         return repositorio.save(existente);
     }
@@ -171,18 +213,32 @@ public class TramoServicio {
         }
 
         Integer combustible = tramoActualizado.combustibleConsumido();
-        Double volumen = existente.getRuta().getSolicitud().getContenedor().getVolumen();
+        // Double volumen =
+        // existente.getRuta().getSolicitud().getContenedor().getVolumen();
+        /*
+         * Double parteCombustible = combustible * existente.getCostoKilometro();
+         * Double parteVolumen = volumen * existente.getCostoVolumen();
+         * 
+         * Double costoReal = parteCombustible + parteVolumen;
+         */
 
-        Double parteCombustible = combustible * existente.getCostoKilometro();
-        Double parteVolumen = volumen * existente.getCostoVolumen();
-
-        Double costoReal = parteCombustible + parteVolumen;
-
-        TramoDtoIn tramoDtoIn = new TramoDtoIn(null, LocalDateTime.now(), combustible, null, null, costoReal);
+        TramoDtoIn tramoDtoIn = new TramoDtoIn(null, LocalDateTime.now(), combustible, null, null, null);
 
         Tramo tramo = actualizar(idTramo, tramoDtoIn);
 
         return tramo;
+    }
+
+    private void manejarCalculoReal(Tramo tramo) {
+        Integer combustible = tramo.getCombustibleConsumido();
+        Double volumen = tramo.getRuta().getSolicitud().getContenedor().getVolumen();
+
+        Double parteCombustible = combustible * tramo.getCostoKilometro();
+        Double parteVolumen = volumen * tramo.getCostoVolumen();
+
+        Double costoReal = parteCombustible + parteVolumen;
+
+        tramo.setCostoReal(costoReal);
     }
 
     private void manejarAsignacionCamion(Tramo existente, CamionDtoHttp camion) {

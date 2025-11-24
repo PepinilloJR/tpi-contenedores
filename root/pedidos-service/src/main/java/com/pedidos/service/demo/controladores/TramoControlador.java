@@ -145,7 +145,10 @@ public class TramoControlador {
             tramoActualizado = servicio.actualizar(id, tramoDto);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (ConflictException e) {
+        }catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
+        }
+         catch (ConflictException e) {
             return ResponseEntity.status(409).body(new ErrorRequest(409, e.getMessage()));
         } catch (HttpClientErrorException.NotFound e) {
             return ResponseEntity.status(404).body(e.getResponseBodyAs(ErrorRequest.class));

@@ -1,5 +1,7 @@
 package com.pedidos.service.demo.servicios;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -258,9 +260,20 @@ public class RutaServicio {
         for (EstadiaDtoHttp estadia : estadias) {
             totalEstadias += estadia.costo();
         }
+        
         Double totalCosto = totalTramos + totalEstadias;
         SolicitudDtoIn solicitudDtoIn = new SolicitudDtoIn(EstadoSolicitud.ENTREGADA, null, totalCosto);
         solicitudServicio.actualizar(existente.getSolicitud().getId(), solicitudDtoIn);
+
+        // CALCULAR TIEMPO REAL DE DURACION
+        LocalDateTime fechaInicio = tramos.get(0).getFechaHoraInicio();
+        LocalDateTime fechaFinal = tramos.get(tramos.size() - 1).getFechaHoraFin();
+
+        double segundos = ChronoUnit.SECONDS.between(fechaInicio, fechaFinal);
+
+        RutaDtoIn rutaDtoIn = new RutaDtoIn(null, null, null, segundos, null);
+
+        actualizar(existente.getId(), rutaDtoIn);
 
         return existente;
     }
