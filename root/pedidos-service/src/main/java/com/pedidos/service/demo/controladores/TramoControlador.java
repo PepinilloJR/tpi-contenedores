@@ -37,26 +37,6 @@ public class TramoControlador {
         this.rutaServicio = rutaServicio;
     }
 
-    /*
-     * // Maybe validate
-     * 
-     * @Operation(summary = "Crear un Tramo", description = "Crea un Tramo")
-     * 
-     * @PostMapping
-     * public ResponseEntity<TramoDto> crear(@RequestBody TramoDto tramoDto) {
-     * System.out.println();
-     * 
-     * Tramo tramoEntidad = DtoHandler.convertirTramoEntidad(tramoDto);
-     * var rutaId = tramoDto.ruta().id();
-     * var rutaBd = rutaServicio.obtenerPorId(rutaId);
-     * tramoEntidad.setRuta(rutaBd);
-     * Tramo tramoCreado = servicio.crear(tramoEntidad);
-     * 
-     * return
-     * ResponseEntity.status(201).body(DtoHandler.convertirTramoDto(tramoCreado));
-     * }
-     */
-
     @PutMapping("/iniciar/{id}")
     public ResponseEntity<?> iniciar(@PathVariable Long id) {
 
