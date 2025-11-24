@@ -23,6 +23,7 @@ import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.servicios.RutaServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.web.bind.annotation.RequestParam;
 
 // Hacer una interfaz de uso comun para el manejo de los dto
 
@@ -89,6 +90,49 @@ public class RutaControlador {
                 rutaActualizada.getCostoPorTramo(),
                 rutaActualizada.getCantidadDepositos(),
                 rutaActualizada.getCantidadTramos());
+        return ResponseEntity.ok(rutaDtoOut);
+    }
+
+    /// api/rutas/solicitud/{idSolicitud}
+
+    @Operation(summary = "Obtener una Ruta segun solicitud", description = "Obtiene una Ruta dada segun el id de su solicitud")
+    @GetMapping("/solicitud/{idSolicitud}")
+    public ResponseEntity<?> getMethodName(@PathVariable Long idSolicitud) {
+        Ruta ruta;
+        try {
+            ruta = servicio.obtenerPorIdSolicitud(idSolicitud);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+        }
+
+        // pasar tiempos a Long para expresarlo en dias
+        Long Estimado = null;
+        Long Real = null;
+
+        if (ruta.getTiempoEstimado() != null) {
+            Estimado = Math.round(ruta.getTiempoEstimado() / 86400.0);
+            if (Estimado == 0L) {
+                Estimado = 1L;
+            }
+        }
+        if (ruta.getTiempoReal() != null) {
+            Real = Math.round(ruta.getTiempoReal() / 86400.0);
+            if (Real == 0L) {
+                Real = 1L;
+            }
+        }
+
+        RutaDtoOut rutaDtoOut = new RutaDtoOut(
+                ruta.getId(),
+                ruta.getDistanciaTotal(),
+                ruta.getSolicitud() != null ? ruta.getSolicitud().getId() : null,
+                Estimado,
+                Real,
+                ruta.getCostoPorTramo(),
+                ruta.getCantidadDepositos(),
+                ruta.getCantidadTramos());
         return ResponseEntity.ok(rutaDtoOut);
     }
 
