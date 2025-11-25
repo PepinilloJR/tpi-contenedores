@@ -3,7 +3,6 @@ package com.pedidos.service.demo.controladores;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.commonlib.Enums.EstadosContenedor;
 import com.commonlib.entidades.Contenedor;
-import com.commonlib.error.ErrorRequest;
 import com.pedidos.service.demo.dto.ContenedorDtoIn;
 import com.pedidos.service.demo.dto.ContenedorDtoOut;
-import com.pedidos.service.demo.dto.ContenedorDtoOutSimple;
-import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.servicios.ContenedorServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,14 +34,8 @@ public class ContenedorControlador {
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody ContenedorDtoIn contenedorDto) {
         Contenedor contenedorCreado;
-        try {
-            contenedorCreado = servicio.crear(contenedorDto);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
 
-        }
+        contenedorCreado = servicio.crear(contenedorDto);
 
         ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(contenedorCreado.getId(),
                 contenedorCreado.getPeso(),
@@ -63,13 +53,8 @@ public class ContenedorControlador {
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody ContenedorDtoIn contenedorDtoIn) {
         Contenedor contenedorActualizado;
-        try {
-            contenedorActualizado = servicio.actualizar(id, contenedorDtoIn);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
-        }
+
+        contenedorActualizado = servicio.actualizar(id, contenedorDtoIn);
 
         ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(contenedorActualizado.getId(),
                 contenedorActualizado.getPeso(), contenedorActualizado.getVolumen(), contenedorActualizado.getEstado(),
@@ -83,15 +68,8 @@ public class ContenedorControlador {
     @GetMapping("/{id}")
     public ResponseEntity<?> obtener(@PathVariable Long id) {
         Contenedor contenedor;
-        try {
-            contenedor = servicio.obtenerPorId(id);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        }
 
-        catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
-        }
+        contenedor = servicio.obtenerPorId(id);
 
         ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(
                 contenedor.getId(), contenedor.getPeso(), contenedor.getVolumen(),
@@ -121,13 +99,8 @@ public class ContenedorControlador {
     @GetMapping("/estado/{estado}")
     public ResponseEntity<?> obtenerPorEstado(@PathVariable EstadosContenedor estado) {
         Contenedor contenedorSegunEstado;
-        try {
-            contenedorSegunEstado = servicio.obtenerPorEstado(estado);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
-        }
+        
+        contenedorSegunEstado = servicio.obtenerPorEstado(estado);
 
         ContenedorDtoOut contenedorDtoOut = new ContenedorDtoOut(
                 contenedorSegunEstado.getId(), contenedorSegunEstado.getPeso(), contenedorSegunEstado.getVolumen(),
@@ -154,13 +127,9 @@ public class ContenedorControlador {
     @Operation(summary = "Eliminar un Contenedor", description = "Elimina un Contenedor dado segun id")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            servicio.eliminar(id);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
-        }
+        
+        servicio.eliminar(id);
+
         return ResponseEntity.noContent().build();
     }
 

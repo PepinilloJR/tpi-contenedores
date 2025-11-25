@@ -105,16 +105,8 @@ public class RutaControlador {
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody RutaDtoIn rutaDto) {
 
         Ruta rutaActualizada;
-        try {
-            rutaActualizada = servicio.actualizar(id, rutaDto);
 
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
-        }
+        rutaActualizada = servicio.actualizar(id, rutaDto);
 
         // pasar tiempos a Long para expresarlo en dias
         Long Estimado = null;

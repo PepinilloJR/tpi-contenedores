@@ -7,6 +7,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.commonlib.error.ErrorRequest;
@@ -24,6 +25,12 @@ public class ExepcionesManejadorGlobal {
     public ResponseEntity<ErrorRequest> manejarBadRequest(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorRequest(400, ex.getMessage()));
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorRequest> manejarConflictException(ConflictException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorRequest(409, ex.getMessage()));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -68,4 +75,20 @@ public class ExepcionesManejadorGlobal {
     public ResponseEntity<?> handleMismatch(MethodArgumentTypeMismatchException ex) {
         return ResponseEntity.badRequest().body(new ErrorRequest(400, "Valor inválido para: " + ex.getName()));
     }
+
+    @ExceptionHandler(HttpClientErrorException.NotFound.class)
+    public ResponseEntity<?> handleRestNotFound(HttpClientErrorException.NotFound ex) {
+        return ResponseEntity.status(404).body(ex.getResponseBodyAs(ErrorRequest.class));
+    }
+
+    @ExceptionHandler(HttpClientErrorException.Conflict.class)
+    public ResponseEntity<?> handleRestNotFound(HttpClientErrorException.Conflict ex) {
+        return ResponseEntity.status(409).body(ex.getResponseBodyAs(ErrorRequest.class));
+    }
+
+    @ExceptionHandler(HttpClientErrorException.BadRequest.class)
+    public ResponseEntity<?> handleRestNotFound(HttpClientErrorException.BadRequest ex) {
+        return ResponseEntity.status(400).body(ex.getResponseBodyAs(ErrorRequest.class));
+    }
+
 }

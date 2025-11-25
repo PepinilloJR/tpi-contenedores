@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.commonlib.entidades.Ubicacion;
-import com.commonlib.error.ErrorRequest;
 import com.pedidos.service.demo.dto.UbicacionDtoIn;
 import com.pedidos.service.demo.dto.UbicacionDtoOut;
-import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.servicios.UbicacionServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,14 +33,8 @@ public class UbicacionControlador {
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody UbicacionDtoIn ubicacionDto) {
         Ubicacion ubicacionCreada;
-        try {
-            ubicacionCreada = servicio.crear(ubicacionDto);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
 
-        }
+        ubicacionCreada = servicio.crear(ubicacionDto);
 
         UbicacionDtoOut ubicacionDtoOut = new UbicacionDtoOut(ubicacionCreada.getId(),
                 ubicacionCreada.getLatitud(), ubicacionCreada.getLongitud(), ubicacionCreada.getTipo().toString(),
@@ -54,19 +46,9 @@ public class UbicacionControlador {
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody UbicacionDtoIn ubicacionDto) {
         Ubicacion ubicacionActualizada;
-        try {
-            ubicacionActualizada = servicio.actualizar(id, ubicacionDto);
+        
+        ubicacionActualizada = servicio.actualizar(id, ubicacionDto);
 
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(new ErrorRequest(400, e.getMessage()));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
-
-        }
         UbicacionDtoOut ubicacionDtoOut = new UbicacionDtoOut(
                 ubicacionActualizada.getId(),
                 ubicacionActualizada.getLatitud(),
@@ -82,15 +64,9 @@ public class UbicacionControlador {
     @GetMapping("/{id}")
     public ResponseEntity<?> obtener(@PathVariable Long id) {
         Ubicacion ubicacion;
-        try {
-            ubicacion = servicio.obtenerPorId(id);
 
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
+        ubicacion = servicio.obtenerPorId(id);
 
-        }
 
         UbicacionDtoOut ubicacionDtoOut = new UbicacionDtoOut(
                 ubicacion.getId(),
@@ -122,15 +98,8 @@ public class UbicacionControlador {
     @Operation(summary = "Eliminar una Ubicacion", description = "Elimina una Ubicacion dada segun id")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            servicio.eliminar(id);
+        servicio.eliminar(id);
 
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ErrorRequest(500, e.getMessage()));
-
-        }
         return ResponseEntity.noContent().build();
     }
 

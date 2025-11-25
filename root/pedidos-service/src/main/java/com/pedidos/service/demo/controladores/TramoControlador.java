@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
 
 import com.commonlib.entidades.Tramo;
 import com.commonlib.error.ErrorRequest;
 import com.pedidos.service.demo.dto.TramoDtoIn;
 import com.pedidos.service.demo.dto.TramoDtoOut;
-import com.pedidos.service.demo.exepciones.ConflictException;
 import com.pedidos.service.demo.exepciones.ResourceNotFoundException;
 import com.pedidos.service.demo.servicios.RutaServicio;
 import com.pedidos.service.demo.servicios.TramoServicio;
@@ -41,15 +39,8 @@ public class TramoControlador {
     public ResponseEntity<?> iniciar(@PathVariable Long id) {
 
         Tramo tramoActualizado;
-        try {
-            tramoActualizado = servicio.iniciarTramo(id);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (ConflictException e) {
-            return ResponseEntity.status(409).body(new ErrorRequest(409, e.getMessage()));
-        } catch (HttpClientErrorException.NotFound e) {
-            return ResponseEntity.status(404).body(e.getResponseBodyAs(ErrorRequest.class));
-        }
+        
+        tramoActualizado = servicio.iniciarTramo(id);
 
         Long idRuta = tramoActualizado.getRuta() != null ? tramoActualizado.getRuta().getId() : null;
         Long idOrigen = tramoActualizado.getOrigen() != null ? tramoActualizado.getOrigen().getId() : null;
@@ -81,15 +72,8 @@ public class TramoControlador {
     public ResponseEntity<?> finalizar(@PathVariable Long id, @RequestBody TramoDtoIn tramoDto) {
 
         Tramo tramoActualizado;
-        try {
-            tramoActualizado = servicio.finalizarTramo(id, tramoDto);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (ConflictException e) {
-            return ResponseEntity.status(409).body(new ErrorRequest(409, e.getMessage()));
-        } catch (HttpClientErrorException.NotFound e) {
-            return ResponseEntity.status(404).body(e.getResponseBodyAs(ErrorRequest.class));
-        }
+
+        tramoActualizado = servicio.finalizarTramo(id, tramoDto);
 
         Long idRuta = tramoActualizado.getRuta() != null ? tramoActualizado.getRuta().getId() : null;
         Long idOrigen = tramoActualizado.getOrigen() != null ? tramoActualizado.getOrigen().getId() : null;
@@ -122,17 +106,9 @@ public class TramoControlador {
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody TramoDtoIn tramoDto) {
         // Soporta la actualizacion parcial, y hay que ver reglas en el servicio
         Tramo tramoActualizado;
-        try {
-            tramoActualizado = servicio.actualizar(id, tramoDto);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ErrorRequest(400, e.getMessage()));
-        } catch (ConflictException e) {
-            return ResponseEntity.status(409).body(new ErrorRequest(409, e.getMessage()));
-        } catch (HttpClientErrorException.NotFound e) {
-            return ResponseEntity.status(404).body(e.getResponseBodyAs(ErrorRequest.class));
-        }
+
+        tramoActualizado = servicio.actualizar(id, tramoDto);
+
 
         Long idRuta = tramoActualizado.getRuta() != null ? tramoActualizado.getRuta().getId() : null;
         Long idOrigen = tramoActualizado.getOrigen() != null ? tramoActualizado.getOrigen().getId() : null;
@@ -191,11 +167,8 @@ public class TramoControlador {
     @GetMapping("/{id}")
     public ResponseEntity<?> obtener(@PathVariable Long id) {
         Tramo tramo;
-        try {
-            tramo = servicio.obtenerPorId(id);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(new ErrorRequest(404, e.getMessage()));
-        }
+
+        tramo = servicio.obtenerPorId(id);
 
         Long idRuta = tramo.getRuta() != null ? tramo.getRuta().getId() : null;
         Long idOrigen = tramo.getOrigen() != null ? tramo.getOrigen().getId() : null;
