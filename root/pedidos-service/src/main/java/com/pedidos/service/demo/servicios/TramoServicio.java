@@ -216,9 +216,9 @@ public class TramoServicio {
         //Integer combustible = tramo.getCombustibleConsumido();
         Double volumen = tramo.getRuta().getSolicitud().getContenedor().getVolumen();
 
-        Double distanciaKm = tramo.getDistancia() / 1000;
+        Double distanciaKm = tramo.getDistancia() / 1000; // no se usa
 
-        Double parteCombustible = distanciaKm * tramo.getCostoKilometro();
+        Double parteCombustible = tramo.getCombustibleConsumido() * tramo.getCostoKilometro();
         Double parteVolumen = volumen * tramo.getCostoVolumen();
 
         Double costoReal = parteCombustible + parteVolumen;
